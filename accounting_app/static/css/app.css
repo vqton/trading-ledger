@@ -1,0 +1,16 @@
+/* Stable frontend base styles generated from assets/scss. */
+:root {
+  --font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto;
+  --primary: #0d6efd;
+}
+
+html, body {
+  font-family: var(--font-family);
+  background: #fff;
+  color: #212529;
+}
+.container {
+  max-width: 1140px;
+  margin: 0 auto;
+  padding: 0 15px;
+}

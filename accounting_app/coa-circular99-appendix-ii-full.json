@@ -1,0 +1,1214 @@
+{
+  "metadata": {
+    "source": "Phụ lục II – Thông tư 99/2025/TT-BTC",
+    "effective_date": "2026-01-01",
+    "max_level": 4,
+    "total_accounts": 160,
+    "description": "Hệ thống tài khoản kế toán doanh nghiệp Việt Nam",
+    "note": "Tự động sinh từ file Excel",
+    "generated": "2026-03"
+  },
+  "accounts": [
+    {
+      "code": "111",
+      "name": "Tiền mặt",
+      "level": 1,
+      "type": "Asset",
+      "normal_balance": "Debit"
+    },
+    {
+      "code": "112",
+      "name": "Tiền gửi Ngân hàng",
+      "level": 1,
+      "type": "Asset",
+      "normal_balance": "Debit"
+    },
+    {
+      "code": "113",
+      "name": "Tiền đang chuyển",
+      "level": 1,
+      "type": "Asset",
+      "normal_balance": "Debit"
+    },
+    {
+      "code": "121",
+      "name": "Chứng khoán kinh doanh",
+      "level": 1,
+      "type": "Asset",
+      "normal_balance": "Debit"
+    },
+    {
+      "code": "128",
+      "name": "Đầu tư nắm giữ đến ngày đáo hạn",
+      "level": 1,
+      "type": "Asset",
+      "normal_balance": "Debit"
+    },
+    {
+      "code": "1282",
+      "name": "Tiền gửi có kỳ hạn",
+      "level": 2,
+      "type": "Asset",
+      "normal_balance": "Debit",
+      "parent": "128"
+    },
+    {
+      "code": "1283",
+      "name": "Trái phiếu",
+      "level": 2,
+      "type": "Asset",
+      "normal_balance": "Debit",
+      "parent": "128"
+    },
+    {
+      "code": "1288",
+      "name": "Cho vay",
+      "level": 2,
+      "type": "Asset",
+      "normal_balance": "Debit",
+      "parent": "128"
+    },
+    {
+      "code": "131",
+      "name": "Phải thu của khách hàng",
+      "level": 1,
+      "type": "Asset",
+      "normal_balance": "Debit"
+    },
+    {
+      "code": "133",
+      "name": "Thuế GTGT được khấu trừ",
+      "level": 1,
+      "type": "Asset",
+      "normal_balance": "Debit"
+    },
+    {
+      "code": "1332",
+      "name": "Thuế GTGT được khấu trừ của hàng hóa, dịch vụ",
+      "level": 2,
+      "type": "Asset",
+      "normal_balance": "Debit",
+      "parent": "133"
+    },
+    {
+      "code": "136",
+      "name": "Phải thu nội bộ",
+      "level": 1,
+      "type": "Asset",
+      "normal_balance": "Debit"
+    },
+    {
+      "code": "1362",
+      "name": "Vốn kinh doanh ở đơn vị trực thuộc",
+      "level": 2,
+      "type": "Asset",
+      "normal_balance": "Debit",
+      "parent": "136"
+    },
+    {
+      "code": "1363",
+      "name": "Phải thu nội bộ về chênh lệch tỷ giá",
+      "level": 2,
+      "type": "Asset",
+      "normal_balance": "Debit",
+      "parent": "136"
+    },
+    {
+      "code": "1368",
+      "name": "Phải thu nội bộ về chi phí đi vay đủ điều kiện được vốn hóa",
+      "level": 2,
+      "type": "Asset",
+      "normal_balance": "Debit",
+      "parent": "136"
+    },
+    {
+      "code": "138",
+      "name": "Phải thu khác",
+      "level": 1,
+      "type": "Asset",
+      "normal_balance": "Debit"
+    },
+    {
+      "code": "1383",
+      "name": "Tài sản thiếu chờ xử lý",
+      "level": 2,
+      "type": "Asset",
+      "normal_balance": "Debit",
+      "parent": "138"
+    },
+    {
+      "code": "1388",
+      "name": "Thuế TTĐB của hàng nhập khẩu",
+      "level": 2,
+      "type": "Asset",
+      "normal_balance": "Debit",
+      "parent": "138"
+    },
+    {
+      "code": "141",
+      "name": "Tạm ứng",
+      "level": 1,
+      "type": "Asset",
+      "normal_balance": "Debit"
+    },
+    {
+      "code": "151",
+      "name": "Hàng mua đang đi đường",
+      "level": 1,
+      "type": "Asset",
+      "normal_balance": "Debit"
+    },
+    {
+      "code": "152",
+      "name": "Nguyên liệu, vật liệu",
+      "level": 1,
+      "type": "Asset",
+      "normal_balance": "Debit"
+    },
+    {
+      "code": "153",
+      "name": "Công cụ, dụng cụ",
+      "level": 1,
+      "type": "Asset",
+      "normal_balance": "Debit"
+    },
+    {
+      "code": "154",
+      "name": "Chi phí sản xuất, kinh doanh dở dang",
+      "level": 1,
+      "type": "Asset",
+      "normal_balance": "Debit"
+    },
+    {
+      "code": "155",
+      "name": "Sản phẩm",
+      "level": 1,
+      "type": "Asset",
+      "normal_balance": "Debit"
+    },
+    {
+      "code": "156",
+      "name": "Hàng hóa",
+      "level": 1,
+      "type": "Asset",
+      "normal_balance": "Debit"
+    },
+    {
+      "code": "157",
+      "name": "Hàng gửi đi bán",
+      "level": 1,
+      "type": "Asset",
+      "normal_balance": "Debit"
+    },
+    {
+      "code": "158",
+      "name": "Nguyên liệu, vật tư tại kho bảo thuế",
+      "level": 1,
+      "type": "Asset",
+      "normal_balance": "Debit"
+    },
+    {
+      "code": "171",
+      "name": "Giao dịch mua, bán lại trái phiếu chính phủ",
+      "level": 1,
+      "type": "Asset",
+      "normal_balance": "Debit"
+    },
+    {
+      "code": "211",
+      "name": "Tài sản cố định hữu hình",
+      "level": 1,
+      "type": "Asset",
+      "normal_balance": "Debit"
+    },
+    {
+      "code": "212",
+      "name": "Tài sản cố định thuê tài chín",
+      "level": 1,
+      "type": "Asset",
+      "normal_balance": "Debit"
+    },
+    {
+      "code": "213",
+      "name": "Tài sản cố định vô hình",
+      "level": 1,
+      "type": "Asset",
+      "normal_balance": "Debit"
+    },
+    {
+      "code": "214",
+      "name": "Hao mòn tài sản cố định",
+      "level": 1,
+      "type": "Asset",
+      "normal_balance": "Debit"
+    },
+    {
+      "code": "2142",
+      "name": "Hao mòn TSCĐ hữu hình",
+      "level": 2,
+      "type": "Asset",
+      "normal_balance": "Debit",
+      "parent": "214"
+    },
+    {
+      "code": "2143",
+      "name": "Hao mòn TSCĐ thuê tài chính",
+      "level": 2,
+      "type": "Asset",
+      "normal_balance": "Debit",
+      "parent": "214"
+    },
+    {
+      "code": "2147",
+      "name": "Hao mòn TSCĐ vô hình",
+      "level": 2,
+      "type": "Asset",
+      "normal_balance": "Debit",
+      "parent": "214"
+    },
+    {
+      "code": "215",
+      "name": "Tài sản sinh học",
+      "level": 1,
+      "type": "Asset",
+      "normal_balance": "Debit"
+    },
+    {
+      "code": "21511",
+      "name": "Súc vật nuôi cho sản phẩm định kỳ",
+      "level": 3,
+      "type": "Asset",
+      "normal_balance": "Debit"
+    },
+    {
+      "code": "21512",
+      "name": "Súc vật nuôi cho sản phẩm định kỳ chưa đạt đến giai đoạn trưởng thành",
+      "level": 3,
+      "type": "Asset",
+      "normal_balance": "Debit"
+    },
+    {
+      "code": "215121",
+      "name": "Súc vật nuôi cho sản phẩm định kỳ đạt đến giai đoạn trưởng thành",
+      "level": 4,
+      "type": "Asset",
+      "normal_balance": "Debit",
+      "parent": "21512"
+    },
+    {
+      "code": "215122",
+      "name": "Nguyên giá",
+      "level": 4,
+      "type": "Asset",
+      "normal_balance": "Debit",
+      "parent": "21512"
+    },
+    {
+      "code": "2152",
+      "name": "Giá trị khẩu hao lũy kế",
+      "level": 2,
+      "type": "Asset",
+      "normal_balance": "Debit",
+      "parent": "215"
+    },
+    {
+      "code": "2153",
+      "name": "Súc vật nuôi lấy sản phẩm một lần",
+      "level": 2,
+      "type": "Asset",
+      "normal_balance": "Debit",
+      "parent": "215"
+    },
+    {
+      "code": "217",
+      "name": "Bất động sản đầu tư",
+      "level": 1,
+      "type": "Asset",
+      "normal_balance": "Debit"
+    },
+    {
+      "code": "221",
+      "name": "Đầu tư vào công ty con",
+      "level": 1,
+      "type": "Asset",
+      "normal_balance": "Debit"
+    },
+    {
+      "code": "222",
+      "name": "Đầu tư vào công ty liên doanh, liên kết",
+      "level": 1,
+      "type": "Asset",
+      "normal_balance": "Debit"
+    },
+    {
+      "code": "228",
+      "name": "Đầu tư khác",
+      "level": 1,
+      "type": "Asset",
+      "normal_balance": "Debit"
+    },
+    {
+      "code": "2288",
+      "name": "Đầu tư góp vốn vào đơn vị khác",
+      "level": 2,
+      "type": "Asset",
+      "normal_balance": "Debit",
+      "parent": "228"
+    },
+    {
+      "code": "229",
+      "name": "Dự phòng tổn thất tài sản",
+      "level": 1,
+      "type": "Asset",
+      "normal_balance": "Debit"
+    },
+    {
+      "code": "2292",
+      "name": "Dự phòng giảm giá chứng khoán kinh doanh",
+      "level": 2,
+      "type": "Asset",
+      "normal_balance": "Debit",
+      "parent": "229"
+    },
+    {
+      "code": "2293",
+      "name": "Dự phòng tổn thất đầu tư vào đơn vị khác",
+      "level": 2,
+      "type": "Asset",
+      "normal_balance": "Debit",
+      "parent": "229"
+    },
+    {
+      "code": "2294",
+      "name": "Dự phòng phải thu khó đòi",
+      "level": 2,
+      "type": "Asset",
+      "normal_balance": "Debit",
+      "parent": "229"
+    },
+    {
+      "code": "2295",
+      "name": "Dự phòng giảm giá hàng tồn kho",
+      "level": 2,
+      "type": "Asset",
+      "normal_balance": "Debit",
+      "parent": "229"
+    },
+    {
+      "code": "241",
+      "name": "Xây dựng cơ bản dở dang",
+      "level": 1,
+      "type": "Asset",
+      "normal_balance": "Debit"
+    },
+    {
+      "code": "2412",
+      "name": "Mua sắm TSCĐ",
+      "level": 2,
+      "type": "Asset",
+      "normal_balance": "Debit",
+      "parent": "241"
+    },
+    {
+      "code": "2413",
+      "name": "Xây dựng cơ bản",
+      "level": 2,
+      "type": "Asset",
+      "normal_balance": "Debit",
+      "parent": "241"
+    },
+    {
+      "code": "2414",
+      "name": "Sửa chữa, bảo dưỡng định kỳ TSCĐ",
+      "level": 2,
+      "type": "Asset",
+      "normal_balance": "Debit",
+      "parent": "241"
+    },
+    {
+      "code": "242",
+      "name": "Chi phí chờ phân bổ",
+      "level": 1,
+      "type": "Asset",
+      "normal_balance": "Debit"
+    },
+    {
+      "code": "243",
+      "name": "Tài sản thuế thu nhập hoãn lại",
+      "level": 1,
+      "type": "Asset",
+      "normal_balance": "Debit"
+    },
+    {
+      "code": "244",
+      "name": "Ký quỹ, ký cược",
+      "level": 1,
+      "type": "Asset",
+      "normal_balance": "Debit"
+    },
+    {
+      "code": "331",
+      "name": "Phải trả cho người bán",
+      "level": 1,
+      "type": "Liability",
+      "normal_balance": "Credit"
+    },
+    {
+      "code": "332",
+      "name": "Phải trả cổ tức, lợi nhuận",
+      "level": 1,
+      "type": "Liability",
+      "normal_balance": "Credit"
+    },
+    {
+      "code": "333",
+      "name": "Thuế và các khoản phải nộp Nhà nước",
+      "level": 1,
+      "type": "Liability",
+      "normal_balance": "Credit"
+    },
+    {
+      "code": "33311",
+      "name": "Thuế giá trị gia tăng phải nộp",
+      "level": 3,
+      "type": "Liability",
+      "normal_balance": "Credit"
+    },
+    {
+      "code": "33312",
+      "name": "Thuế GTGT đầu ra",
+      "level": 3,
+      "type": "Liability",
+      "normal_balance": "Credit"
+    },
+    {
+      "code": "3332",
+      "name": "Thuế GTGT hàng nhập khẩu",
+      "level": 2,
+      "type": "Liability",
+      "normal_balance": "Credit",
+      "parent": "333"
+    },
+    {
+      "code": "3333",
+      "name": "Thuế tiêu thụ đặc biệt",
+      "level": 2,
+      "type": "Liability",
+      "normal_balance": "Credit",
+      "parent": "333"
+    },
+    {
+      "code": "3334",
+      "name": "Thuế xuất, nhập khẩu",
+      "level": 2,
+      "type": "Liability",
+      "normal_balance": "Credit",
+      "parent": "333"
+    },
+    {
+      "code": "3335",
+      "name": "Thuế thu nhập doanh nghiệp",
+      "level": 2,
+      "type": "Liability",
+      "normal_balance": "Credit",
+      "parent": "333"
+    },
+    {
+      "code": "3336",
+      "name": "Thuế thu nhập cá nhân",
+      "level": 2,
+      "type": "Liability",
+      "normal_balance": "Credit",
+      "parent": "333"
+    },
+    {
+      "code": "3337",
+      "name": "Thuế tài nguyên",
+      "level": 2,
+      "type": "Liability",
+      "normal_balance": "Credit",
+      "parent": "333"
+    },
+    {
+      "code": "3338",
+      "name": "Thuế nhà đất, tiền thuê đất",
+      "level": 2,
+      "type": "Liability",
+      "normal_balance": "Credit",
+      "parent": "333"
+    },
+    {
+      "code": "33381",
+      "name": "Thuế bảo vệ môi trường và các loại thuế khác",
+      "level": 3,
+      "type": "Liability",
+      "normal_balance": "Credit",
+      "parent": "3338"
+    },
+    {
+      "code": "33382",
+      "name": "Thuế bảo vệ môi trường",
+      "level": 3,
+      "type": "Liability",
+      "normal_balance": "Credit",
+      "parent": "3338"
+    },
+    {
+      "code": "3339",
+      "name": "Các loại thuế khác",
+      "level": 2,
+      "type": "Liability",
+      "normal_balance": "Credit",
+      "parent": "333"
+    },
+    {
+      "code": "334",
+      "name": "Phải trả người lao động",
+      "level": 1,
+      "type": "Liability",
+      "normal_balance": "Credit"
+    },
+    {
+      "code": "335",
+      "name": "Chi phí phải trả",
+      "level": 1,
+      "type": "Liability",
+      "normal_balance": "Credit"
+    },
+    {
+      "code": "336",
+      "name": "Phải trả nội bộ",
+      "level": 1,
+      "type": "Liability",
+      "normal_balance": "Credit"
+    },
+    {
+      "code": "3362",
+      "name": "Phải trả nội bộ về vốn kinh doanh",
+      "level": 2,
+      "type": "Liability",
+      "normal_balance": "Credit",
+      "parent": "336"
+    },
+    {
+      "code": "3363",
+      "name": "Phải trả nội bộ về chênh lệch tỷ giá",
+      "level": 2,
+      "type": "Liability",
+      "normal_balance": "Credit",
+      "parent": "336"
+    },
+    {
+      "code": "3368",
+      "name": "Phải trả nội bộ về chi phí đi vay đủ điều kiện được vốn hoá",
+      "level": 2,
+      "type": "Liability",
+      "normal_balance": "Credit",
+      "parent": "336"
+    },
+    {
+      "code": "337",
+      "name": "Thanh toán theo tiến độ kế hoạch hợp đồng xây dựng",
+      "level": 1,
+      "type": "Liability",
+      "normal_balance": "Credit"
+    },
+    {
+      "code": "338",
+      "name": "Phải trả, phải nộp khác",
+      "level": 1,
+      "type": "Liability",
+      "normal_balance": "Credit"
+    },
+    {
+      "code": "3382",
+      "name": "Tài sản thừa chờ giải quyết",
+      "level": 2,
+      "type": "Liability",
+      "normal_balance": "Credit",
+      "parent": "338"
+    },
+    {
+      "code": "3383",
+      "name": "Kinh phí công đoàn",
+      "level": 2,
+      "type": "Liability",
+      "normal_balance": "Credit",
+      "parent": "338"
+    },
+    {
+      "code": "3384",
+      "name": "Bảo hiểm xã hội",
+      "level": 2,
+      "type": "Liability",
+      "normal_balance": "Credit",
+      "parent": "338"
+    },
+    {
+      "code": "3386",
+      "name": "Bảo hiểm y tế",
+      "level": 2,
+      "type": "Liability",
+      "normal_balance": "Credit",
+      "parent": "338"
+    },
+    {
+      "code": "3387",
+      "name": "Bảo hiểm thất nghiệp",
+      "level": 2,
+      "type": "Liability",
+      "normal_balance": "Credit",
+      "parent": "338"
+    },
+    {
+      "code": "3388",
+      "name": "Doanh thu chờ phân bổ",
+      "level": 2,
+      "type": "Liability",
+      "normal_balance": "Credit",
+      "parent": "338"
+    },
+    {
+      "code": "341",
+      "name": "Vay và nợ thuê tài chính",
+      "level": 1,
+      "type": "Liability",
+      "normal_balance": "Credit"
+    },
+    {
+      "code": "3412",
+      "name": "Các khoản đi vay",
+      "level": 2,
+      "type": "Liability",
+      "normal_balance": "Credit",
+      "parent": "341"
+    },
+    {
+      "code": "343",
+      "name": "Trái phiếu phát hành",
+      "level": 1,
+      "type": "Liability",
+      "normal_balance": "Credit"
+    },
+    {
+      "code": "3432",
+      "name": "Trái phiếu thường",
+      "level": 2,
+      "type": "Liability",
+      "normal_balance": "Credit",
+      "parent": "343"
+    },
+    {
+      "code": "344",
+      "name": "Nhận ký quỹ, ký cược",
+      "level": 1,
+      "type": "Liability",
+      "normal_balance": "Credit"
+    },
+    {
+      "code": "347",
+      "name": "Thuế thu nhập hoãn lại phải trả",
+      "level": 1,
+      "type": "Liability",
+      "normal_balance": "Credit"
+    },
+    {
+      "code": "352",
+      "name": "Dự phòng phải trả",
+      "level": 1,
+      "type": "Liability",
+      "normal_balance": "Credit"
+    },
+    {
+      "code": "3522",
+      "name": "Dự phòng bảo hành sản phẩm hàng hóa",
+      "level": 2,
+      "type": "Liability",
+      "normal_balance": "Credit",
+      "parent": "352"
+    },
+    {
+      "code": "3523",
+      "name": "Dự phòng bảo hành công trình xây dựng",
+      "level": 2,
+      "type": "Liability",
+      "normal_balance": "Credit",
+      "parent": "352"
+    },
+    {
+      "code": "3524",
+      "name": "Dự phòng tái cơ cấu doanh nghiệp",
+      "level": 2,
+      "type": "Liability",
+      "normal_balance": "Credit",
+      "parent": "352"
+    },
+    {
+      "code": "353",
+      "name": "Quỹ khen thưởng phúc lợi",
+      "level": 1,
+      "type": "Liability",
+      "normal_balance": "Credit"
+    },
+    {
+      "code": "3532",
+      "name": "Quỹ khen thưởng",
+      "level": 2,
+      "type": "Liability",
+      "normal_balance": "Credit",
+      "parent": "353"
+    },
+    {
+      "code": "3533",
+      "name": "Quỹ phúc lợi",
+      "level": 2,
+      "type": "Liability",
+      "normal_balance": "Credit",
+      "parent": "353"
+    },
+    {
+      "code": "3534",
+      "name": "Quỹ phúc lợi đã hình thành TSCĐ",
+      "level": 2,
+      "type": "Liability",
+      "normal_balance": "Credit",
+      "parent": "353"
+    },
+    {
+      "code": "356",
+      "name": "Quỹ phát triển khoa học và công nghệ",
+      "level": 1,
+      "type": "Liability",
+      "normal_balance": "Credit"
+    },
+    {
+      "code": "3562",
+      "name": "Quỹ phát triển khoa học và công nghệ",
+      "level": 2,
+      "type": "Liability",
+      "normal_balance": "Credit",
+      "parent": "356"
+    },
+    {
+      "code": "357",
+      "name": "Quỹ bình ổn giá",
+      "level": 1,
+      "type": "Liability",
+      "normal_balance": "Credit"
+    },
+    {
+      "code": "411",
+      "name": "Vốn đầu tư của chủ sở hữu",
+      "level": 1,
+      "type": "Equity",
+      "normal_balance": "Credit"
+    },
+    {
+      "code": "41111",
+      "name": "Vốn góp của chủ sở hữu",
+      "level": 3,
+      "type": "Equity",
+      "normal_balance": "Credit"
+    },
+    {
+      "code": "41112",
+      "name": "Cổ phiếu phổ thông có quyền biểu quyết",
+      "level": 3,
+      "type": "Equity",
+      "normal_balance": "Credit"
+    },
+    {
+      "code": "4112",
+      "name": "Cổ phiếu ưu đãi",
+      "level": 2,
+      "type": "Equity",
+      "normal_balance": "Credit",
+      "parent": "411"
+    },
+    {
+      "code": "4113",
+      "name": "Thặng dư vốn",
+      "level": 2,
+      "type": "Equity",
+      "normal_balance": "Credit",
+      "parent": "411"
+    },
+    {
+      "code": "4118",
+      "name": "Quyền chọn chuyển đổi trái phiếu",
+      "level": 2,
+      "type": "Equity",
+      "normal_balance": "Credit",
+      "parent": "411"
+    },
+    {
+      "code": "412",
+      "name": "Chênh lệch đánh giá lại tài sản",
+      "level": 1,
+      "type": "Equity",
+      "normal_balance": "Credit"
+    },
+    {
+      "code": "413",
+      "name": "Chênh lệch tỷ giá hối đoái",
+      "level": 1,
+      "type": "Equity",
+      "normal_balance": "Credit"
+    },
+    {
+      "code": "414",
+      "name": "Quỹ đầu tư phát triển",
+      "level": 1,
+      "type": "Equity",
+      "normal_balance": "Credit"
+    },
+    {
+      "code": "418",
+      "name": "Các quỹ khác thuộc vốn chủ sở hữu",
+      "level": 1,
+      "type": "Equity",
+      "normal_balance": "Credit"
+    },
+    {
+      "code": "419",
+      "name": "Cổ phiếu mua lại của chính mình",
+      "level": 1,
+      "type": "Equity",
+      "normal_balance": "Credit"
+    },
+    {
+      "code": "421",
+      "name": "Lợi nhuận sau thuế chưa phân phối",
+      "level": 1,
+      "type": "Equity",
+      "normal_balance": "Credit"
+    },
+    {
+      "code": "4212",
+      "name": "Lợi nhuận sau thuế chưa phân phối lũy kế đến cuối năm trước",
+      "level": 2,
+      "type": "Equity",
+      "normal_balance": "Credit",
+      "parent": "421"
+    },
+    {
+      "code": "511",
+      "name": "Doanh thu bán hàng và cung cấp dịch vụ",
+      "level": 1,
+      "type": "Revenue",
+      "normal_balance": "Credit"
+    },
+    {
+      "code": "515",
+      "name": "Doanh thu hoạt động tài chính",
+      "level": 1,
+      "type": "Revenue",
+      "normal_balance": "Credit"
+    },
+    {
+      "code": "521",
+      "name": "Các khoản giảm trừ doanh thu",
+      "level": 1,
+      "type": "Revenue",
+      "normal_balance": "Credit"
+    },
+    {
+      "code": "621",
+      "name": "Chi phí nguyên liệu, vật liệu trực tiếp",
+      "level": 1,
+      "type": "Expense",
+      "normal_balance": "Debit"
+    },
+    {
+      "code": "622",
+      "name": "Chi phí nhân công trực tiếp",
+      "level": 1,
+      "type": "Expense",
+      "normal_balance": "Debit"
+    },
+    {
+      "code": "623",
+      "name": "Chi phí sử dụng máy thi công",
+      "level": 1,
+      "type": "Expense",
+      "normal_balance": "Debit"
+    },
+    {
+      "code": "6232",
+      "name": "Chi phí nhân công",
+      "level": 2,
+      "type": "Expense",
+      "normal_balance": "Debit",
+      "parent": "623"
+    },
+    {
+      "code": "6233",
+      "name": "Chi phí vật liệu",
+      "level": 2,
+      "type": "Expense",
+      "normal_balance": "Debit",
+      "parent": "623"
+    },
+    {
+      "code": "6234",
+      "name": "Chi phí dụng cụ sản xuất",
+      "level": 2,
+      "type": "Expense",
+      "normal_balance": "Debit",
+      "parent": "623"
+    },
+    {
+      "code": "6237",
+      "name": "Chi phí khấu hao máy thi công",
+      "level": 2,
+      "type": "Expense",
+      "normal_balance": "Debit",
+      "parent": "623"
+    },
+    {
+      "code": "6238",
+      "name": "Chi phí dịch vụ mua ngoài",
+      "level": 2,
+      "type": "Expense",
+      "normal_balance": "Debit",
+      "parent": "623"
+    },
+    {
+      "code": "627",
+      "name": "Chi phí sản xuất chung",
+      "level": 1,
+      "type": "Expense",
+      "normal_balance": "Debit"
+    },
+    {
+      "code": "6272",
+      "name": "Chi phí nhân viên phân xưởng",
+      "level": 2,
+      "type": "Expense",
+      "normal_balance": "Debit",
+      "parent": "627"
+    },
+    {
+      "code": "6273",
+      "name": "Chi phí vật liệu",
+      "level": 2,
+      "type": "Expense",
+      "normal_balance": "Debit",
+      "parent": "627"
+    },
+    {
+      "code": "6274",
+      "name": "Chi phí dụng cụ sản xuất",
+      "level": 2,
+      "type": "Expense",
+      "normal_balance": "Debit",
+      "parent": "627"
+    },
+    {
+      "code": "6275",
+      "name": "Chi phí khấu hao TSCĐ",
+      "level": 2,
+      "type": "Expense",
+      "normal_balance": "Debit",
+      "parent": "627"
+    },
+    {
+      "code": "6277",
+      "name": "Thuế, phí, lệ phí",
+      "level": 2,
+      "type": "Expense",
+      "normal_balance": "Debit",
+      "parent": "627"
+    },
+    {
+      "code": "6278",
+      "name": "Chi phí dịch vụ mua ngoài",
+      "level": 2,
+      "type": "Expense",
+      "normal_balance": "Debit",
+      "parent": "627"
+    },
+    {
+      "code": "632",
+      "name": "Giá vốn hàng bán",
+      "level": 1,
+      "type": "Expense",
+      "normal_balance": "Debit"
+    },
+    {
+      "code": "635",
+      "name": "Chi phí tài chính",
+      "level": 1,
+      "type": "Expense",
+      "normal_balance": "Debit"
+    },
+    {
+      "code": "641",
+      "name": "Chi phí bán hàng",
+      "level": 1,
+      "type": "Expense",
+      "normal_balance": "Debit"
+    },
+    {
+      "code": "6412",
+      "name": "Chi phí nhân viên",
+      "level": 2,
+      "type": "Expense",
+      "normal_balance": "Debit",
+      "parent": "641"
+    },
+    {
+      "code": "6413",
+      "name": "Chi phí nguyên vật liệu, bao bì",
+      "level": 2,
+      "type": "Expense",
+      "normal_balance": "Debit",
+      "parent": "641"
+    },
+    {
+      "code": "6414",
+      "name": "Chi phí dụng cụ, đồ dùng",
+      "level": 2,
+      "type": "Expense",
+      "normal_balance": "Debit",
+      "parent": "641"
+    },
+    {
+      "code": "6415",
+      "name": "Chi phí khấu hao TSCĐ",
+      "level": 2,
+      "type": "Expense",
+      "normal_balance": "Debit",
+      "parent": "641"
+    },
+    {
+      "code": "6417",
+      "name": "Thuế, phí, lệ phí",
+      "level": 2,
+      "type": "Expense",
+      "normal_balance": "Debit",
+      "parent": "641"
+    },
+    {
+      "code": "6418",
+      "name": "Chi phí dịch vụ mua ngoài",
+      "level": 2,
+      "type": "Expense",
+      "normal_balance": "Debit",
+      "parent": "641"
+    },
+    {
+      "code": "642",
+      "name": "Chi phí quản lý doanh nghiệp",
+      "level": 1,
+      "type": "Expense",
+      "normal_balance": "Debit"
+    },
+    {
+      "code": "6422",
+      "name": "Chi phí nhân viên quản lý",
+      "level": 2,
+      "type": "Expense",
+      "normal_balance": "Debit",
+      "parent": "642"
+    },
+    {
+      "code": "6423",
+      "name": "Chi phí vật liệu quản lý",
+      "level": 2,
+      "type": "Expense",
+      "normal_balance": "Debit",
+      "parent": "642"
+    },
+    {
+      "code": "6424",
+      "name": "Chi phí đồ dùng văn phòng",
+      "level": 2,
+      "type": "Expense",
+      "normal_balance": "Debit",
+      "parent": "642"
+    },
+    {
+      "code": "6425",
+      "name": "Chi phí khấu hao TSCĐ",
+      "level": 2,
+      "type": "Expense",
+      "normal_balance": "Debit",
+      "parent": "642"
+    },
+    {
+      "code": "6426",
+      "name": "Thuế, phí và lệ phí",
+      "level": 2,
+      "type": "Expense",
+      "normal_balance": "Debit",
+      "parent": "642"
+    },
+    {
+      "code": "6427",
+      "name": "Chi phí dự phòng",
+      "level": 2,
+      "type": "Expense",
+      "normal_balance": "Debit",
+      "parent": "642"
+    },
+    {
+      "code": "6428",
+      "name": "Chi phí dịch vụ mua ngoài",
+      "level": 2,
+      "type": "Expense",
+      "normal_balance": "Debit",
+      "parent": "642"
+    },
+    {
+      "code": "711",
+      "name": "Thu nhập khác",
+      "level": 1,
+      "type": "Revenue",
+      "normal_balance": "Credit"
+    },
+    {
+      "code": "811",
+      "name": "Chi phí khác",
+      "level": 1,
+      "type": "Expense",
+      "normal_balance": "Debit"
+    },
+    {
+      "code": "821",
+      "name": "Chi phí thuế thu nhập doanh nghiệp",
+      "level": 1,
+      "type": "Expense",
+      "normal_balance": "Debit"
+    },
+    {
+      "code": "82111",
+      "name": "Chi phí thuế TNDN hiện hành",
+      "level": 3,
+      "type": "Expense",
+      "normal_balance": "Debit"
+    },
+    {
+      "code": "82112",
+      "name": "Chi phí thuế thu nhập doanh nghiệp hiện hành theo quy định của Luật thuế thu nhập doanh nghiệp",
+      "level": 3,
+      "type": "Expense",
+      "normal_balance": "Debit"
+    },
+    {
+      "code": "8212",
+      "name": "Chi phí thuế thu nhập doanh nghiệp bổ sung theo quy định về thuế tối thiểu toàn cầu",
+      "level": 2,
+      "type": "Expense",
+      "normal_balance": "Debit",
+      "parent": "821"
+    },
+    {
+      "code": "911",
+      "name": "Xác định kết quả kinh doanh",
+      "level": 1,
+      "type": "Nominal",
+      "normal_balance": "Debit"
+    }
+  ]
+}

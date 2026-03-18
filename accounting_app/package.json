@@ -1,0 +1,17 @@
+{
+  "name": "accounting-app-frontend",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Frontend assets for Accounting App - stable stack",
+  "scripts": {
+    "build:css": "sass assets/scss:static/css --no-source-map",
+    "watch:css": "sass --watch assets/scss:static/css",
+    "lint:css": "stylelint '**/*.css' || true"
+  },
+  "devDependencies": {
+    "sass": "^1.63.6",
+    "bootstrap": "^5.3.2",
+    "stylelint": "^14.15.1"
+  },
+  "license": "MIT"
+}

@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+
+{% block title %}Danh mục tài khoản{% endblock %}
+
+{% block content %}
+<div class="py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h3">Danh mục tài khoản</h1>
+        {% if current_user.can_create('account') %}
+        <a href="{{ url_for('accounting.create_account') }}" class="btn btn-primary">
+            <i class="fas fa-plus-circle"></i> Thêm tài khoản
+        </a>
+        {% endif %}
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover table-sm" id="accountsTable">
+                    <thead>
+                        <tr>
+                            <th>Mã TK</th>
+                            <th>Tên tài khoản</th>
+                            <th>Loại</th>
+                            <th>Số dư BT</th>
+                            <th>Chi tiết</th>
+                            <th>Trạng thái</th>
+                            <th>Thao tác</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for account in accounts %}
+                        <tr>
+                            <td><strong>{{ account.account_code }}</strong></td>
+                            <td>{{ account.account_name }}</td>
+                            <td>
+                                {% if account.account_type == 'asset' %}
+                                <span class="badge bg-primary">Tài sản</span>
+                                {% elif account.account_type == 'liability' %}
+                                <span class="badge bg-danger">Nợ phải trả</span>
+                                {% elif account.account_type == 'equity' %}
+                                <span class="badge bg-success">Vốn chủ sở hữu</span>
+                                {% elif account.account_type == 'revenue' %}
+                                <span class="badge bg-info">Doanh thu</span>
+                                {% elif account.account_type == 'expense' %}
+                                <span class="badge bg-warning">Chi phí</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if account.normal_balance == 'debit' %}
+                                Nợ
+                                {% else %}
+                                Có
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if account.is_detail %}
+                                <i class="fas fa-check-circle text-success"></i>
+                                {% else %}
+                                <i class="fas fa-folder"></i>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if account.is_active %}
+                                <span class="badge bg-success">Hoạt động</span>
+                                {% else %}
+                                <span class="badge bg-secondary">Khóa</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if current_user.can_update('account') %}
+                                <a href="{{ url_for('accounting.edit_account', account_id=account.id) }}" 
+                                   class="btn btn-sm btn-outline-primary" title="Sửa">
+                                    <i class="fas fa-pencil"></i>
+                                </a>
+                                {% endif %}
+                                {% if current_user.can_delete('account') and not account.children %}
+                                <form method="POST" action="{{ url_for('accounting.delete_account', account_id=account.id) }}" 
+                                      style="display: inline;" class="delete-form">
+                                    <button type="submit" class="btn btn-sm btn-outline-danger" title="Xóa"
+                                            onclick="return confirm('Bạn có chắc muốn xóa?')">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </form>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+$(document).ready(function() {
+    $('#accountsTable').DataTable({
+        language: {
+            url: '//cdn.datatables.net/plug-ins/1.13.7/i18n/vi.json'
+        },
+        pageLength: 25,
+        order: [[0, 'asc']]
+    });
+});
+</script>
+{% endblock %}

@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block title %}Sổ cái{% endblock %}
+
+{% block content %}
+<div class="py-4">
+    <h1 class="h3 mb-4">Sổ cái</h1>
+
+    <div class="card mb-3">
+        <div class="card-body">
+            <form method="GET" class="row g-3">
+                <div class="col-md-4">
+                    <label class="form-label">Chọn tài khoản</label>
+                    <select class="form-select" name="account_id" id="accountSelect">
+                        <option value="">-- Chọn tài khoản --</option>
+                        {% for account in accounts %}
+                        <option value="{{ account.id }}">{{ account.account_code }} - {{ account.account_name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Từ ngày</label>
+                    <input type="date" class="form-control" name="start_date" value="{{ request.args.get('start_date', '') }}">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Đến ngày</label>
+                    <input type="date" class="form-control" name="end_date" value="{{ request.args.get('end_date', '') }}">
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">&nbsp;</label>
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="fas fa-magnifying-glass"></i> Xem
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="alert alert-info">
+        <i class="fas fa-circle-info"></i> Chọn tài khoản để xem sổ cái chi tiết
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Báo cáo nhanh</h5>
+                </div>
+                <div class="card-body">
+                    <a href="{{ url_for('accounting.trial_balance') }}" class="btn btn-outline-primary w-100 mb-2">
+                        <i class="fas fa-table"></i> Bảng cân đối tài khoản
+                    </a>
+                    <a href="{{ url_for('accounting.general_ledger') }}" class="btn btn-outline-primary w-100">
+                        <i class="fas fa-book"></i> Sổ cái tổng hợp
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,53 @@
+# Python                                                                 
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+venv/
+ENV/
+env/
+.venv/
+env.bak/
+
+# Pytest and caches
+.pytest_cache/
+.cache/
+.mypy_cache/
+.pyre/
+
+# Coverage reports
+.coverage
+coverage.xml
+htmlcov/
+
+# Builds
+build/
+dist/
+*.egg-info/
+
+# IDEs and editors
+.idea/
+.vscode/
+.vscode-test/
+*.sublime-project
+.project
+.classpath
+.settings/
+*.tmproj
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Logs
+logs/
+*.log
+
+# SQLite/DB backups
+*.db
+*.sqlite3
+backup/
+
+# Jupyter
+.ipynb_checkpoints

@@ -1,0 +1,206 @@
+{% extends "base.html" %}
+
+{% block title %}Lưu chuyển tiền tệ{% endblock %}
+
+{% block content %}
+<div class="py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h3">Lưu chuyển tiền tệ</h1>
+        <a href="{{ url_for('accounting.reports') }}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Quay lại
+        </a>
+    </div>
+
+    <div class="card mb-3">
+        <div class="card-body">
+            <form method="GET" class="row g-3">
+                <div class="col-md-3">
+                    <label class="form-label">Từ ngày</label>
+                    <input type="date" class="form-control" name="start_date" value="{{ start_date.strftime('%Y-%m-%d') }}">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Đến ngày</label>
+                    <input type="date" class="form-control" name="end_date" value="{{ end_date.strftime('%Y-%m-%d') }}">
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">&nbsp;</label>
+                    <button type="submit" class="btn btn-primary w-100">Xem</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="card mb-3">
+        <div class="card-header text-center">
+            <h4>BÁO CÁO LƯU CHUYỂN TIỀN TỆ</h4>
+            <p class="mb-0">Từ ngày {{ start_date.strftime('%d/%m/%Y') }} đến ngày {{ end_date.strftime('%d/%m/%Y') }}</p>
+            <p class="text-muted">(Phương pháp gián tiếp)</p>
+        </div>
+        <div class="card-body p-0">
+            <table class="table table-bordered mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th style="width: 10%">Mã số</th>
+                        <th>Chỉ tiêu</th>
+                        <th style="width: 20%" class="text-end">Số kỳ này</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="table-primary">
+                        <td colspan="3"><strong>I. LƯU CHUYỂN TIỀN TỪ HOẠT ĐỘNG KINH DOANH</strong></td>
+                    </tr>
+                    <tr>
+                        <td>01</td>
+                        <td>Lợi nhuận trước thuế</td>
+                        <td class="text-end">{{ "{:,.0f}".format(net_profit) }}</td>
+                    </tr>
+                    <tr>
+                        <td>02</td>
+                        <td>Điều chỉnh cho các khoản:</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>03</td>
+                        <td>&nbsp;&nbsp;&nbsp;&nbsp;Khấu hao tài sản cố định</td>
+                        <td class="text-end">0</td>
+                    </tr>
+                    <tr>
+                        <td>04</td>
+                        <td>&nbsp;&nbsp;&nbsp;&nbsp;Các khoản dự phòng</td>
+                        <td class="text-end">0</td>
+                    </tr>
+                    <tr>
+                        <td>05</td>
+                        <td>&nbsp;&nbsp;&nbsp;&nbsp;Lãi, lỗ chênh lệch tỷ giá</td>
+                        <td class="text-end">0</td>
+                    </tr>
+                    <tr>
+                        <td>06</td>
+                        <td>&nbsp;&nbsp;&nbsp;&nbsp;Lãi, lỗ từ hoạt động đầu tư</td>
+                        <td class="text-end">0</td>
+                    </tr>
+                    <tr>
+                        <td>07</td>
+                        <td>&nbsp;&nbsp;&nbsp;&nbsp;Chi phí lãi vay</td>
+                        <td class="text-end">0</td>
+                    </tr>
+                    <tr>
+                        <td>08</td>
+                        <td>Thay đổi vốn lưu động:</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>09</td>
+                        <td>&nbsp;&nbsp;&nbsp;&nbsp;Tăng, giảm hàng tồn kho</td>
+                        <td class="text-end">{{ "{:,.0f}".format(-inventory_change) if inventory_change != 0 else '' }}</td>
+                    </tr>
+                    <tr>
+                        <td>10</td>
+                        <td>&nbsp;&nbsp;&nbsp;&nbsp;Tăng, giảm các khoản phải thu</td>
+                        <td class="text-end">{{ "{:,.0f}".format(-accounts_receivable_change) if accounts_receivable_change != 0 else '' }}</td>
+                    </tr>
+                    <tr>
+                        <td>11</td>
+                        <td>&nbsp;&nbsp;&nbsp;&nbsp;Tăng, giảm các khoản phải trả</td>
+                        <td class="text-end">{{ "{:,.0f}".format(accounts_payable_change) if accounts_payable_change != 0 else '' }}</td>
+                    </tr>
+                    <tr>
+                        <td>12</td>
+                        <td>&nbsp;&nbsp;&nbsp;&nbsp;Tăng, giảm chi phí trả trước</td>
+                        <td class="text-end">0</td>
+                    </tr>
+                    <tr class="table-secondary fw-bold">
+                        <td>13</td>
+                        <td><strong>Lưu chuyển tiền từ HĐKD</strong></td>
+                        <td class="text-end"><strong>{{ "{:,.0f}".format(cash_from_operating) }}</strong></td>
+                    </tr>
+
+                    <tr>
+                        <td colspan="3">&nbsp;</td>
+                    </tr>
+
+                    <tr class="table-primary">
+                        <td colspan="3"><strong>II. LƯU CHUYỂN TIỀN TỪ HOẠT ĐỘNG ĐẦU TƯ</strong></td>
+                    </tr>
+                    <tr>
+                        <td>14</td>
+                        <td>Tiền chi mua sắm, xây dựng TSCĐ</td>
+                        <td class="text-end">0</td>
+                    </tr>
+                    <tr>
+                        <td>15</td>
+                        <td>Tiền thu từ thanh lý TSCĐ</td>
+                        <td class="text-end">0</td>
+                    </tr>
+                    <tr>
+                        <td>16</td>
+                        <td>Tiền chi đầu tư góp vốn</td>
+                        <td class="text-end">0</td>
+                    </tr>
+                    <tr>
+                        <td>17</td>
+                        <td>Tiền thu đầu tư góp vốn</td>
+                        <td class="text-end">0</td>
+                    </tr>
+                    <tr class="table-secondary fw-bold">
+                        <td>18</td>
+                        <td><strong>Lưu chuyển tiền từ HĐT</strong></td>
+                        <td class="text-end"><strong>{{ "{:,.0f}".format(cash_from_investing) }}</strong></td>
+                    </tr>
+
+                    <tr>
+                        <td colspan="3">&nbsp;</td>
+                    </tr>
+
+                    <tr class="table-primary">
+                        <td colspan="3"><strong>III. LƯU CHUYỂN TIỀN TỪ HOẠT ĐỘNG TÀI CHÍNH</strong></td>
+                    </tr>
+                    <tr>
+                        <td>19</td>
+                        <td>Tiền vay nhận được</td>
+                        <td class="text-end">0</td>
+                    </tr>
+                    <tr>
+                        <td>20</td>
+                        <td>Tiền chi trả nợ vay</td>
+                        <td class="text-end">0</td>
+                    </tr>
+                    <tr>
+                        <td>21</td>
+                        <td>Tiền chi trả gốc vay</td>
+                        <td class="text-end">0</td>
+                    </tr>
+                    <tr class="table-secondary fw-bold">
+                        <td>22</td>
+                        <td><strong>Lưu chuyển tiền từ HĐTC</strong></td>
+                        <td class="text-end"><strong>{{ "{:,.0f}".format(cash_from_financing) }}</strong></td>
+                    </tr>
+
+                    <tr>
+                        <td colspan="3">&nbsp;</td>
+                    </tr>
+
+                    <tr class="table-info fw-bold">
+                        <td colspan="2">Lưu chuyển tiền thuần trong kỳ</td>
+                        <td class="text-end"><strong>{{ "{:,.0f}".format(net_cash_flow) }}</strong></td>
+                    </tr>
+
+                    <tr>
+                        <td colspan="3">&nbsp;</td>
+                    </tr>
+
+                    <tr class="table-secondary">
+                        <td></td>
+                        <td>Tiền đầu kỳ</td>
+                        <td class="text-end">{{ "{:,.0f}".format(opening_cash) }}</td>
+                    </tr>
+                    <tr class="table-dark fw-bold">
+                        <td colspan="2">Tiền cuối kỳ</td>
+                        <td class="text-end"><strong>{{ "{:,.0f}".format(closing_cash) }}</strong></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

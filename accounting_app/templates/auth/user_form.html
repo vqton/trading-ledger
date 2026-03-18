@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block title %}{% if user %}Sửa người dùng{% else %}Thêm người dùng{% endif %}{% endblock %}
+
+{% block content %}
+<div class="py-4">
+    <h1 class="h3 mb-4">{% if user %}Sửa người dùng{% else %}Thêm người dùng{% endif %}</h1>
+    
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <form method="POST">
+                        {{ form.hidden_tag() }}
+                        <div class="mb-3">
+                            <label for="username" class="form-label">Tên đăng nhập</label>
+                            <input type="text" class="form-control" id="username" name="username" 
+                                   value="{{ user.username if user else '' }}" {% if user %}readonly{% endif %} required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="email" name="email" 
+                                   value="{{ user.email if user else '' }}" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="password" class="form-label">
+                                Mật khẩu {% if user %}(để trống nếu không đổi){% endif %}
+                            </label>
+                            <input type="password" class="form-control" id="password" name="password" 
+                                   {% if not user %}required{% endif %}>
+                        </div>
+                        <div class="mb-3">
+                            <label for="role_id" class="form-label">Vai trò</label>
+                            <select class="form-select" id="role_id" name="role_id" required>
+                                {% for choice in form.role_id.choices %}
+                                <option value="{{ choice[0] }}" {% if user and user.role_id == choice[0] %}selected{% endif %}>
+                                    {{ choice[1] }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" id="is_active" name="is_active" 
+                                   {% if not user or user.is_active %}checked{% endif %}>
+                            <label class="form-check-label" for="is_active">Hoạt động</label>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Lưu</button>
+                        <a href="{{ url_for('auth.users') }}" class="btn btn-secondary">Hủy</a>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

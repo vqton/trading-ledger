@@ -1,0 +1,116 @@
+{% extends "base.html" %}
+
+{% block title %}Sổ kế toán - Chứng từ{% endblock %}
+
+{% block content %}
+<div class="py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h3">Sổ kế toán - Chứng từ</h1>
+        {% if current_user.can_create('journal') %}
+        <a href="{{ url_for('accounting.create_voucher') }}" class="btn btn-primary">
+            <i class="fas fa-plus-circle"></i> Thêm chứng từ
+        </a>
+        {% endif %}
+    </div>
+
+    <div class="card mb-3">
+        <div class="card-body">
+            <form method="GET" class="row g-3">
+                <div class="col-md-2">
+                    <label class="form-label">Số chứng từ</label>
+                    <input type="text" class="form-control" name="voucher_no" value="{{ request.args.get('voucher_no', '') }}">
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">Từ ngày</label>
+                    <input type="date" class="form-control" name="start_date" value="{{ request.args.get('start_date', '') }}">
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">Đến ngày</label>
+                    <input type="date" class="form-control" name="end_date" value="{{ request.args.get('end_date', '') }}">
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">Trạng thái</label>
+                    <select class="form-select" name="status">
+                        <option value="">Tất cả</option>
+                        <option value="draft" {% if request.args.get('status') == 'draft' %}selected{% endif %}>Nháp</option>
+                        <option value="posted" {% if request.args.get('status') == 'posted' %}selected{% endif %}>Đã ghi sổ</option>
+                        <option value="locked" {% if request.args.get('status') == 'locked' %}selected{% endif %}>Khóa</option>
+                        <option value="cancelled" {% if request.args.get('status') == 'cancelled' %}selected{% endif %}>Hủy</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">&nbsp;</label>
+                    <button type="submit" class="btn btn-secondary w-100">
+                        <i class="fas fa-magnifying-glass"></i> Tìm
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover table-sm">
+                    <thead>
+                        <tr>
+                            <th>Số CT</th>
+                            <th>Ngày CT</th>
+                            <th>Loại</th>
+                            <th>Diễn giải</th>
+                            <th>Tổng Nợ</th>
+                            <th>Tổng Có</th>
+                            <th>Trạng thái</th>
+                            <th>Thao tác</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for voucher in vouchers %}
+                        <tr>
+                            <td><strong>{{ voucher.voucher_no }}</strong></td>
+                            <td>{{ voucher.voucher_date.strftime('%d/%m/%Y') }}</td>
+                            <td>{{ voucher.voucher_type }}</td>
+                            <td>{{ voucher.description or '-' }}</td>
+                            <td class="text-end">{{ "{:,.0f}".format(voucher.total_debit) }}</td>
+                            <td class="text-end">{{ "{:,.0f}".format(voucher.total_credit) }}</td>
+                            <td>
+                                {% if voucher.status == 'draft' %}
+                                <span class="badge bg-secondary">Nháp</span>
+                                {% elif voucher.status == 'posted' %}
+                                <span class="badge bg-success">Đã ghi sổ</span>
+                                {% elif voucher.status == 'locked' %}
+                                <span class="badge bg-danger">Khóa</span>
+                                {% elif voucher.status == 'cancelled' %}
+                                <span class="badge bg-warning">Hủy</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <a href="{{ url_for('accounting.view_voucher', voucher_id=voucher.id) }}" 
+                                   class="btn btn-sm btn-outline-primary" title="Xem">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                                {% if voucher.status == 'draft' and current_user.can_update('journal') %}
+                                <a href="{{ url_for('accounting.edit_voucher', voucher_id=voucher.id) }}" 
+                                   class="btn btn-sm btn-outline-secondary" title="Sửa">
+                                    <i class="fas fa-pencil"></i>
+                                </a>
+                                <form method="POST" action="{{ url_for('accounting.post_voucher', voucher_id=voucher.id) }}" style="display:inline;">
+                                    <button type="submit" class="btn btn-sm btn-outline-success" title="Ghi sổ" onclick="return confirm('Ghi sổ chứng từ này?')">
+                                        <i class="fas fa-check"></i>
+                                    </button>
+                                </form>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="8" class="text-center text-muted">Không có chứng từ nào</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
