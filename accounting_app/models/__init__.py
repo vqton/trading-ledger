@@ -64,6 +64,12 @@ from models.biological_asset import (
     BiologicalAssetCategory,
     BiologicalAssetStatus,
 )
+from models.dividend_payable import (
+    DividendPayable,
+    ShareholderType,
+    DividendPaymentStatus,
+    DividendPaymentMethod,
+)
 
 __all__ = [
     "Account",
@@ -119,4 +125,8 @@ __all__ = [
     "BiologicalAssetType",
     "BiologicalAssetCategory",
     "BiologicalAssetStatus",
+    "DividendPayable",
+    "ShareholderType",
+    "DividendPaymentStatus",
+    "DividendPaymentMethod",
 ]
