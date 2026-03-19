@@ -58,6 +58,12 @@ from models.opening_balance import (
     PeriodType,
     OpeningBalanceSource,
 )
+from models.biological_asset import (
+    BiologicalAsset,
+    BiologicalAssetType,
+    BiologicalAssetCategory,
+    BiologicalAssetStatus,
+)
 
 __all__ = [
     "Account",
@@ -109,4 +115,8 @@ __all__ = [
     "OpeningBalance",
     "PeriodType",
     "OpeningBalanceSource",
+    "BiologicalAsset",
+    "BiologicalAssetType",
+    "BiologicalAssetCategory",
+    "BiologicalAssetStatus",
 ]
