@@ -58,10 +58,10 @@
                     </tr>
                     {% for item in report.assets %}
                     <tr>
-                        <td style="padding-left: {{ (item.level - 1) * 20 + 15 }}px;">{{ item.name }}</td>
-                        <td class="text-center">{{ item.code }}</td>
-                        <td class="text-end">{{ "{:,.0f}".format(item.balance) }}</td>
-                        <td class="text-end">{{ "{:,.0f}".format(item.balance) }}</td>
+                        <td style="padding-left: {{ (item.get('level', 1) - 1) * 20 + 15 }}px;">{{ item.get('name', item.get('account_name', '')) }}</td>
+                        <td class="text-center">{{ item.get('code', item.get('account_code', '')) }}</td>
+                        <td class="text-end">{{ "{:,.0f}".format(item.get('balance', 0)) }}</td>
+                        <td class="text-end">{{ "{:,.0f}".format(item.get('balance', 0)) }}</td>
                     </tr>
                     {% endfor %}
                     <tr class="table-secondary fw-bold">
@@ -76,19 +76,19 @@
                     </tr>
                     {% for item in report.liabilities %}
                     <tr>
-                        <td style="padding-left: {{ (item.level - 1) * 20 + 15 }}px;">{{ item.name }}</td>
-                        <td class="text-center">{{ item.code }}</td>
-                        <td class="text-end">{{ "{:,.0f}".format(item.balance) }}</td>
-                        <td class="text-end">{{ "{:,.0f}".format(item.balance) }}</td>
+                        <td style="padding-left: {{ (item.get('level', 1) - 1) * 20 + 15 }}px;">{{ item.get('name', item.get('account_name', '')) }}</td>
+                        <td class="text-center">{{ item.get('code', item.get('account_code', '')) }}</td>
+                        <td class="text-end">{{ "{:,.0f}".format(item.get('balance', 0)) }}</td>
+                        <td class="text-end">{{ "{:,.0f}".format(item.get('balance', 0)) }}</td>
                     </tr>
                     {% endfor %}
 
                     {% for item in report.equity %}
                     <tr>
-                        <td style="padding-left: {{ (item.level - 1) * 20 + 15 }}px;">{{ item.name }}</td>
-                        <td class="text-center">{{ item.code }}</td>
-                        <td class="text-end">{{ "{:,.0f}".format(item.balance) }}</td>
-                        <td class="text-end">{{ "{:,.0f}".format(item.balance) }}</td>
+                        <td style="padding-left: {{ (item.get('level', 1) - 1) * 20 + 15 }}px;">{{ item.get('name', item.get('account_name', '')) }}</td>
+                        <td class="text-center">{{ item.get('code', item.get('account_code', '')) }}</td>
+                        <td class="text-end">{{ "{:,.0f}".format(item.get('balance', 0)) }}</td>
+                        <td class="text-end">{{ "{:,.0f}".format(item.get('balance', 0)) }}</td>
                     </tr>
                     {% endfor %}
 
