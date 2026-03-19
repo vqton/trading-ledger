@@ -2,137 +2,157 @@
 
 {% block title %}{{ title }}{% endblock %}
 
+{% block breadcrumb_title %}{{ title }}{% endblock %}
+
 {% block content %}
-<div class="py-4">
-    <h1 class="h3 mb-4">{{ title }}</h1>
-    
-    {% if templates %}
-    <div class="card mb-4">
-        <div class="card-header">
-            <h6 class="mb-0"><i class="fas fa-bolt"></i> Mẫu chứng từ nhanh</h6>
+<div class="page-header">
+    <div class="d-flex justify-content-between align-items-center">
+        <h1 class="page-title">{{ title }}</h1>
+        <div class="page-actions">
+            <span class="text-muted" style="font-size: 0.8rem;">
+                <kbd>Ctrl</kbd>+<kbd>S</kbd> Lưu
+            </span>
         </div>
+    </div>
+</div>
+
+{% if templates %}
+<div class="ac-card mb-4">
+    <div class="card-header">
+        <h6 class="card-title"><i class="fas fa-bolt"></i> Mẫu chứng từ nhanh</h6>
+    </div>
+    <div class="card-body">
+        <div class="row g-2">
+            {% for t in templates %}
+            <div class="col-md-2 col-6">
+                <a href="{{ url_for('accounting.create_voucher', template=t.id) }}" 
+                   class="btn {% if selected_template and selected_template.id == t.id %}btn-primary{% else %}btn-secondary{% endif %} w-100">
+                    <i class="fas {{ t.icon }}"></i><br>
+                    <small>{{ t.name_vi }}</small>
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<form method="POST" id="voucherForm">
+    {{ form.hidden_tag() }}
+    
+    <div class="ac-card mb-3">
         <div class="card-body">
-            <div class="row g-2">
-                {% for t in templates %}
-                <div class="col-md-2 col-6">
-                    <a href="{{ url_for('accounting.create_voucher', template=t.id) }}" 
-                       class="btn {% if selected_template and selected_template.id == t.id %}btn-primary{% else %}btn-outline-secondary{% endif %} w-100">
-                        <i class="fas {{ t.icon }}"></i><br>
-                        <small>{{ t.name_vi }}</small>
-                    </a>
+            <div class="form-row">
+                <div class="form-group" style="flex: 0 0 160px;">
+                    <label class="form-label">Ngày chứng từ<span class="required">*</span></label>
+                    <input type="date" class="form-control" name="voucher_date" 
+                           value="{{ form.voucher_date.data or '' }}" required
+                           accesskey="d">
                 </div>
-                {% endfor %}
+                <div class="form-group" style="flex: 0 0 200px;">
+                    <label class="form-label">Loại chứng từ</label>
+                    <select class="form-select" name="voucher_type">
+                        <option value="general" {% if form.voucher_type.data == 'general' %}selected{% endif %}>Chứng từ chung</option>
+                        <option value="cash_receipt" {% if form.voucher_type.data == 'cash_receipt' %}selected{% endif %}>Thu tiền</option>
+                        <option value="cash_payment" {% if form.voucher_type.data == 'cash_payment' %}selected{% endif %}>Chi tiền</option>
+                        <option value="bank_receipt" {% if form.voucher_type.data == 'bank_receipt' %}selected{% endif %}>Thu ngân hàng</option>
+                        <option value="bank_payment" {% if form.voucher_type.data == 'bank_payment' %}selected{% endif %}>Chi ngân hàng</option>
+                        <option value="purchase" {% if form.voucher_type.data == 'purchase' %}selected{% endif %}>Mua hàng</option>
+                        <option value="sales" {% if form.voucher_type.data == 'sales' %}selected{% endif %}>Bán hàng</option>
+                    </select>
+                </div>
+                <div class="form-group" style="flex: 1;">
+                    <label class="form-label">Diễn giải</label>
+                    <textarea class="form-control" name="description" rows="1">{{ form.description.data or '' }}</textarea>
+                </div>
             </div>
         </div>
     </div>
-    {% endif %}
-    
-    <form method="POST">
-        {{ form.hidden_tag() }}
-        
-        <div class="card mb-3">
-            <div class="card-body">
-                <div class="row">
-                    <div class="col-md-3">
-                        <div class="mb-3">
-                            <label class="form-label">Ngày chứng từ</label>
-                            <input type="date" class="form-control" name="voucher_date" 
-                                   value="{{ form.voucher_date.data or '' }}" required>
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="mb-3">
-                            <label class="form-label">Loại chứng từ</label>
-                            <select class="form-select" name="voucher_type">
-                                <option value="general" {% if form.voucher_type.data == 'general' %}selected{% endif %}>Chứng từ chung</option>
-                                <option value="cash_receipt" {% if form.voucher_type.data == 'cash_receipt' %}selected{% endif %}>Thu tiền</option>
-                                <option value="cash_payment" {% if form.voucher_type.data == 'cash_payment' %}selected{% endif %}>Chi tiền</option>
-                                <option value="bank_receipt" {% if form.voucher_type.data == 'bank_receipt' %}selected{% endif %}>Thu ngân hàng</option>
-                                <option value="bank_payment" {% if form.voucher_type.data == 'bank_payment' %}selected{% endif %}>Chi ngân hàng</option>
-                                <option value="purchase" {% if form.voucher_type.data == 'purchase' %}selected{% endif %}>Mua hàng</option>
-                                <option value="sales" {% if form.voucher_type.data == 'sales' %}selected{% endif %}>Bán hàng</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="mb-3">
-                            <label class="form-label">Diễn giải</label>
-                            <textarea class="form-control" name="description" rows="1">{{ form.description.data or '' }}</textarea>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
 
-        <div class="card mb-3">
-            <div class="card-header d-flex justify-content-between align-items-center">
-                <h5 class="mb-0">Dòng kết toán</h5>
-                <button type="button" class="btn btn-sm btn-success" id="addEntry">
-                    <i class="fas fa-plus"></i> Thêm dòng
+    <div class="ac-card mb-3">
+        <div class="card-header">
+            <h5 class="card-title">Dòng kết toán</h5>
+            <div class="d-flex align-items-center gap-3">
+                <div class="balance-status" id="balanceStatus">
+                    <span class="badge bg-success" id="balanceBadge">
+                        <i class="fas fa-check"></i> Cân đối
+                    </span>
+                </div>
+                <button type="button" class="btn btn-primary btn-sm" id="addEntry" accesskey="n">
+                    <i class="fas fa-plus"></i> Thêm dòng <kbd class="bg-dark text-white px-1 rounded" style="font-size: 0.65rem;">N</kbd>
                 </button>
             </div>
-            <div class="card-body p-0">
-                <table class="table table-bordered mb-0" id="entriesTable">
-                    <thead class="table-light">
+        </div>
+        <div class="card-body p-0">
+            <div class="ac-table-container" style="border-radius: 0;">
+                <table class="ac-table journal-table" id="entriesTable">
+                    <thead>
                         <tr>
-                            <th style="width: 35%">Tài khoản</th>
-                            <th style="width: 15%">Nợ</th>
-                            <th style="width: 15%">Có</th>
-                            <th style="width: 25%">Diễn giải</th>
-                            <th style="width: 10%"></th>
+                            <th class="col-stt">STT</th>
+                            <th>Tài khoản</th>
+                            <th class="col-amount">Nợ</th>
+                            <th class="col-amount">Có</th>
+                            <th>Diễn giải</th>
+                            <th style="width: 60px;"></th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for entry in form.entries %}
-                        <tr class="entry-row">
+                        <tr class="entry-row" data-index="{{ loop.index0 }}">
+                            <td class="col-stt text-muted">{{ loop.index }}</td>
                             <td>
                                 {{ entry.account_id(class="form-select form-select-sm") }}
                                 {{ entry.csrf_token if entry.csrf_token }}
                             </td>
                             <td>
-                                <input type="number" class="form-control form-control-sm text-end debit-input" 
+                                <input type="number" class="form-control form-control-sm text-number debit-input" 
                                        name="entries-{{ loop.index0 }}-debit" value="{{ entry.debit.data or '' }}" 
-                                       min="0" step="1">
+                                       min="0" step="1000" placeholder="0">
                             </td>
                             <td>
-                                <input type="number" class="form-control form-control-sm text-end credit-input" 
+                                <input type="number" class="form-control form-control-sm text-number credit-input" 
                                        name="entries-{{ loop.index0 }}-credit" value="{{ entry.credit.data or '' }}" 
-                                       min="0" step="1">
+                                       min="0" step="1000" placeholder="0">
                             </td>
                             <td>
                                 <input type="text" class="form-control form-control-sm" 
-                                       name="entries-{{ loop.index0 }}-description" value="{{ entry.description.data or '' }}">
+                                       name="entries-{{ loop.index0 }}-description" value="{{ entry.description.data or '' }}"
+                                       placeholder="Diễn giải...">
                             </td>
                             <td class="text-center">
-                                <button type="button" class="btn btn-sm btn-outline-danger remove-entry">
-                                    <i class="fas fa-trash"></i>
+                                <button type="button" class="btn btn-ghost btn-sm btn-icon remove-entry" title="Xóa dòng">
+                                    <i class="fas fa-trash-alt text-muted"></i>
                                 </button>
                             </td>
                         </tr>
                         {% endfor %}
                     </tbody>
-                    <tfoot class="table-light">
-                        <tr>
-                            <th class="text-end">Tổng cộng:</th>
-                            <th class="text-end" id="totalDebit">0</th>
-                            <th class="text-end" id="totalCredit">0</th>
-                            <th colspan="2"></th>
+                    <tfoot>
+                        <tr class="row-grand-total">
+                            <td colspan="2" class="text-end">Tổng cộng:</td>
+                            <td class="text-end" id="totalDebit">0</td>
+                            <td class="text-end" id="totalCredit">0</td>
+                            <td colspan="2">
+                                <div class="balance-indicator balanced" id="balanceIndicator">
+                                    <i class="fas fa-check"></i>
+                                </div>
+                            </td>
                         </tr>
                     </tfoot>
                 </table>
             </div>
         </div>
+    </div>
 
-        <div class="d-flex gap-2">
-            <button type="submit" class="btn btn-primary">
-                <i class="fas fa-check-circle"></i> Lưu
-            </button>
-            <a href="{{ url_for('accounting.journal') }}" class="btn btn-secondary">
-                <i class="fas fa-xmark"></i> Hủy
-            </a>
-        </div>
-    </form>
-</div>
+    <div class="form-actions">
+        <button type="submit" class="btn btn-primary" id="btnSave" accesskey="s">
+            <i class="fas fa-save"></i> Lưu <kbd class="bg-white text-dark px-1 rounded" style="font-size: 0.65rem;">Ctrl+S</kbd>
+        </button>
+        <a href="{{ url_for('accounting.journal') }}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Quay lại
+        </a>
+    </div>
+</form>
 {% endblock %}
 
 {% block extra_js %}
@@ -141,13 +161,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const entryCount = {{ form.entries|length }};
     let accounts = [];
     
-    // Fetch accounts from API
-    fetch('/accounting/api/accounts', {
-        method: 'GET',
-        headers: {
-            'X-CSRFToken': csrfToken
-        }
-    })
+    fetch('/accounting/api/accounts')
         .then(response => response.json())
         .then(data => {
             accounts = data;
@@ -162,7 +176,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     function populateDropdown(select) {
-        select.innerHTML = '<option value="">-- Chọn tài khoản --</option>';
+        select.innerHTML = '<option value="">-- Chọn TK --</option>';
         accounts.forEach(account => {
             const option = document.createElement('option');
             option.value = account.id;
@@ -174,76 +188,143 @@ document.addEventListener('DOMContentLoaded', function() {
     function updateTotals() {
         let totalDebit = 0;
         let totalCredit = 0;
+        let isBalanced = true;
         
         document.querySelectorAll('.entry-row').forEach(row => {
             const debit = parseFloat(row.querySelector('.debit-input').value) || 0;
             const credit = parseFloat(row.querySelector('.credit-input').value) || 0;
             totalDebit += debit;
             totalCredit += credit;
+            
+            if (debit > 0 && credit > 0) {
+                row.classList.add('row-error');
+                isBalanced = false;
+            } else {
+                row.classList.remove('row-error');
+            }
         });
         
-        document.getElementById('totalDebit').textContent = totalDebit.toLocaleString('vi-VN');
-        document.getElementById('totalCredit').textContent = totalCredit.toLocaleString('vi-VN');
+        const formattedDebit = totalDebit.toLocaleString('vi-VN');
+        const formattedCredit = totalCredit.toLocaleString('vi-VN');
         
-        if (totalDebit !== totalCredit) {
-            document.getElementById('totalDebit').classList.add('text-danger');
-            document.getElementById('totalCredit').classList.add('text-danger');
+        document.getElementById('totalDebit').textContent = formattedDebit;
+        document.getElementById('totalCredit').textContent = formattedCredit;
+        
+        const badge = document.getElementById('balanceBadge');
+        const indicator = document.getElementById('balanceIndicator');
+        const totalDebitEl = document.getElementById('totalDebit');
+        const totalCreditEl = document.getElementById('totalCredit');
+        
+        if (totalDebit === totalCredit && totalDebit > 0) {
+            badge.className = 'badge bg-success';
+            badge.innerHTML = '<i class="fas fa-check"></i> Cân đối';
+            indicator.className = 'balance-indicator balanced';
+            indicator.innerHTML = '<i class="fas fa-check"></i>';
+            totalDebitEl.classList.remove('amount-negative');
+            totalCreditEl.classList.remove('amount-negative');
+            isBalanced = true;
+        } else if (totalDebit === 0 && totalCredit === 0) {
+            badge.className = 'badge bg-secondary';
+            badge.innerHTML = '<i class="fas fa-minus"></i> Chưa nhập';
+            indicator.className = 'balance-indicator';
+            indicator.innerHTML = '';
+            totalDebitEl.classList.remove('amount-negative');
+            totalCreditEl.classList.remove('amount-negative');
+            isBalanced = true;
         } else {
-            document.getElementById('totalDebit').classList.remove('text-danger');
-            document.getElementById('totalCredit').classList.remove('text-danger');
+            badge.className = 'badge bg-danger';
+            badge.innerHTML = '<i class="fas fa-exclamation"></i> Lệch: ' + Math.abs(totalDebit - totalCredit).toLocaleString('vi-VN');
+            indicator.className = 'balance-indicator unbalanced';
+            indicator.innerHTML = '<i class="fas fa-exclamation"></i>';
+            totalDebitEl.classList.add('amount-negative');
+            totalCreditEl.add('amount-negative');
+            isBalanced = false;
         }
+        
+        return isBalanced;
     }
     
     document.querySelectorAll('.debit-input, .credit-input').forEach(input => {
         input.addEventListener('input', updateTotals);
     });
     
+    let rowIndex = entryCount;
+    
     document.getElementById('addEntry').addEventListener('click', function() {
         const tbody = document.querySelector('#entriesTable tbody');
-        const newRow = tbody.insertRow();
-        const rowCount = tbody.children.length;
+        const newRow = document.createElement('tr');
+        newRow.className = 'entry-row';
+        newRow.dataset.index = rowIndex;
         
         newRow.innerHTML = `
+            <td class="col-stt text-muted">${rowIndex + 1}</td>
             <td>
-                <select class="form-select form-select-sm" name="entries-${rowCount}-account_id">
-                    <option value="">-- Chọn tài khoản --</option>
+                <select class="form-select form-select-sm" name="entries-${rowIndex}-account_id">
+                    <option value="">-- Chọn TK --</option>
                 </select>
             </td>
             <td>
-                <input type="number" class="form-control form-control-sm text-end debit-input" 
-                       name="entries-${rowCount}-debit" min="0" step="1">
+                <input type="number" class="form-control form-control-sm text-number debit-input" 
+                       name="entries-${rowIndex}-debit" min="0" step="1000" placeholder="0">
             </td>
             <td>
-                <input type="number" class="form-control form-control-sm text-end credit-input" 
-                       name="entries-${rowCount}-credit" min="0" step="1">
+                <input type="number" class="form-control form-control-sm text-number credit-input" 
+                       name="entries-${rowIndex}-credit" min="0" step="1000" placeholder="0">
             </td>
             <td>
-                <input type="text" class="form-control form-control-sm" name="entries-${rowCount}-description">
+                <input type="text" class="form-control form-control-sm" name="entries-${rowIndex}-description" placeholder="Diễn giải...">
             </td>
             <td class="text-center">
-                <button type="button" class="btn btn-sm btn-outline-danger remove-entry">
-                    <i class="fas fa-trash"></i>
+                <button type="button" class="btn btn-ghost btn-sm btn-icon remove-entry" title="Xóa dòng">
+                    <i class="fas fa-trash-alt text-muted"></i>
                 </button>
             </td>
         `;
         
+        tbody.appendChild(newRow);
+        
+        const newSelect = newRow.querySelector('select[name$="-account_id"]');
+        populateDropdown(newSelect);
+        
         newRow.querySelector('.debit-input').addEventListener('input', updateTotals);
         newRow.querySelector('.credit-input').addEventListener('input', updateTotals);
         
-        // Populate account dropdown for new row
-        const newSelect = newRow.querySelector('select[name$="-account_id"]');
-        populateDropdown(newSelect);
+        renumberRows();
+        rowIndex++;
     });
+    
+    function renumberRows() {
+        document.querySelectorAll('.entry-row').forEach((row, idx) => {
+            row.querySelector('td:first-child').textContent = idx + 1;
+        });
+    }
     
     document.addEventListener('click', function(e) {
         if (e.target.closest('.remove-entry')) {
             const row = e.target.closest('tr');
             if (document.querySelectorAll('.entry-row').length > 1) {
                 row.remove();
+                renumberRows();
                 updateTotals();
             }
         }
     });
+    
+    document.getElementById('voucherForm').addEventListener('submit', function(e) {
+        if (!updateTotals()) {
+            e.preventDefault();
+            alert('Chứng từ chưa cân đối! Vui lòng kiểm tra lại các dòng kết toán.');
+        }
+    });
+    
+    document.addEventListener('keydown', function(e) {
+        if (e.ctrlKey && e.key === 's') {
+            e.preventDefault();
+            document.getElementById('voucherForm').submit();
+        }
+    });
+    
+    updateTotals();
 });
 </script>
 {% endblock %}
