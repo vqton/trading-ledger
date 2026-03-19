@@ -30,9 +30,11 @@
                 </div>
                 <a href="{{ url_for('index') }}"><i class="fas fa-house"></i> Trang chủ</a>
                 <a href="{{ url_for('accounting.accounts') }}"><i class="fas fa-book"></i> Danh mục tài khoản</a>
+                <a href="{{ url_for('partner.index') }}"><i class="fas fa-address-book"></i> Đối tác</a>
                 <a href="{{ url_for('accounting.journal') }}"><i class="fas fa-file-invoice"></i> Sổ kế toán</a>
                 <a href="{{ url_for('accounting.ledger') }}"><i class="fas fa-book-open"></i> Sổ cái</a>
                 <a href="{{ url_for('accounting.reports') }}"><i class="fas fa-chart-bar"></i> Báo cáo tài chính</a>
+                <a href="{{ url_for('tax.index') }}"><i class="fas fa-file-invoice-dollar"></i> Báo cáo thuế</a>
                 {% if current_user.role.name == 'admin' %}
                 <hr>
                 <a href="{{ url_for('auth.users') }}"><i class="fas fa-users"></i> Quản lý người dùng</a>

@@ -3,14 +3,15 @@ Tax Service - VAT tracking and tax reports.
 Based on Circular 99/2025/TT-BTC for Vietnamese accounting standards.
 """
 
-from datetime import date, datetime
+from datetime import date, datetime, timedelta
 from decimal import Decimal
-from typing import Dict, List, Optional
-from dataclasses import dataclass
+from typing import Dict, List, Optional, Any
+from dataclasses import dataclass, asdict
 
 from models.account import Account
 from models.journal import JournalVoucher, JournalEntry, VoucherStatus
 from models.tax_policy import TaxPolicy, TaxPolicyType, get_active_policy
+from repositories.tax_repository import TaxRepository
 from core.database import db
 
 
@@ -21,10 +22,12 @@ class VATTransaction:
     voucher_date: date
     partner_name: str
     tax_code: str
-    amount: Decimal
-    vat_rate: Decimal
+    base_amount: Decimal
     vat_amount: Decimal
+    total_amount: Decimal
+    vat_rate: Decimal
     vat_input: bool
+    description: str = ""
 
 
 @dataclass
@@ -37,204 +40,243 @@ class VATDeclaration:
     vat_output: Decimal
     vat_payable: Decimal
     vat_refundable: Decimal
-    transactions: List[VATTransaction]
+    transactions_input: List[Dict]
+    transactions_output: List[Dict]
+
+    def to_dict(self) -> Dict[str, Any]:
+        return {
+            "period": self.period,
+            "year": self.year,
+            "month": self.month,
+            "vat_input": self.vat_input,
+            "vat_output": self.vat_output,
+            "vat_payable": self.vat_payable,
+            "vat_refundable": self.vat_refundable,
+            "transactions_input": self.transactions_input,
+            "transactions_output": self.transactions_output,
+        }
+
+
+@dataclass
+class CITEstimate:
+    """CIT estimate data."""
+    year: int
+    total_revenue: Decimal
+    total_expense: Decimal
+    gross_profit: Decimal
+    cit_rate: Decimal
+    estimated_tax: Decimal
+    paid_tax: Decimal
+    outstanding_tax: Decimal
+
+    def to_dict(self) -> Dict[str, Any]:
+        return {
+            "year": self.year,
+            "total_revenue": self.total_revenue,
+            "total_expense": self.total_expense,
+            "gross_profit": self.gross_profit,
+            "cit_rate": self.cit_rate,
+            "estimated_tax": self.estimated_tax,
+            "paid_tax": self.paid_tax,
+            "outstanding_tax": self.outstanding_tax,
+        }
+
+
+@dataclass
+class QuarterlyVATSummary:
+    """Quarterly VAT summary."""
+    quarter: int
+    year: int
+    period: str
+    vat_input: Decimal
+    vat_output: Decimal
+    vat_payable: Decimal
+    vat_refundable: Decimal
+
+    def to_dict(self) -> Dict[str, Any]:
+        return asdict(self)
 
 
 class TaxService:
     """Service for tax calculations and reporting."""
-    
-    VAT_INPUT_ACCOUNTS = ["1331", "1332"]  # VAT receivable
-    VAT_OUTPUT_ACCOUNTS = ["3331", "33311", "33312"]  # VAT payable
+
     VAT_RATES = {
         "0": Decimal("0"),
         "5": Decimal("0.05"),
+        "8": Decimal("0.08"),
         "10": Decimal("0.10"),
     }
-    
-    DEFAULT_CIT_RATE = Decimal("0.20")  # Default 20% as per current regulations
-    
-    @staticmethod
-    def _get_cit_rate(year: int) -> Decimal:
-        """Get CIT rate from policy, fallback to default 20%."""
-        policy = get_active_policy(TaxPolicyType.CIT, year)
-        if policy and policy.rate:
-            return Decimal(str(policy.rate))
-        return TaxService.DEFAULT_CIT_RATE
-    
-    @staticmethod
-    def get_cit_rate(year: int) -> Decimal:
-        """Public method to get CIT rate for a year."""
-        return TaxService._get_cit_rate(year)
-    
-    @staticmethod
-    def get_cit_policy(year: int) -> Optional[TaxPolicy]:
-        """Get CIT policy for a year."""
-        return get_active_policy(TaxPolicyType.CIT, year)
-    
-    @staticmethod
-    def get_vat_rate(year: int, vat_type: str = "vat_output") -> Decimal:
-        """Get VAT rate from policy, fallback to default rates."""
-        policy = get_active_policy(vat_type, year)
-        if policy and policy.rate:
-            return Decimal(str(policy.rate))
-        return TaxService.VAT_RATES.get("10", Decimal("0.10"))
-    
-    @staticmethod
-    def get_vat_input(start_date: date, end_date: date) -> Decimal:
-        """Get total VAT input for a period."""
-        vat_accounts = Account.query.filter(
-            Account.code.in_(TaxService.VAT_INPUT_ACCOUNTS)
-        ).all()
-        
-        if not vat_accounts:
-            return Decimal("0")
-        
-        vat_account_ids = [acc.id for acc in vat_accounts]
-        
-        total = db.session.query(
-            db.func.coalesce(db.func.sum(JournalEntry.debit), 0) -
-            db.func.coalesce(db.func.sum(JournalEntry.credit), 0)
-        ).join(JournalVoucher).filter(
-            JournalEntry.account_id.in_(vat_account_ids),
-            JournalVoucher.voucher_date >= start_date,
-            JournalVoucher.voucher_date <= end_date,
-            JournalVoucher.status == VoucherStatus.POSTED
-        ).scalar() or Decimal("0")
-        
-        return Decimal(str(total))
-    
-    @staticmethod
-    def get_vat_output(start_date: date, end_date: date) -> Decimal:
-        """Get total VAT output for a period."""
-        vat_accounts = Account.query.filter(
-            Account.code.in_(TaxService.VAT_OUTPUT_ACCOUNTS)
-        ).all()
-        
-        if not vat_accounts:
-            return Decimal("0")
-        
-        vat_account_ids = [acc.id for acc in vat_accounts]
-        
-        total = db.session.query(
-            db.func.coalesce(db.func.sum(JournalEntry.credit), 0) -
-            db.func.coalesce(db.func.sum(JournalEntry.debit), 0)
-        ).join(JournalVoucher).filter(
-            JournalEntry.account_id.in_(vat_account_ids),
-            JournalVoucher.voucher_date >= start_date,
-            JournalVoucher.voucher_date <= end_date,
-            JournalVoucher.status == VoucherStatus.POSTED
-        ).scalar() or Decimal("0")
-        
-        return Decimal(str(total))
-    
+
+    DEFAULT_CIT_RATE = Decimal("0.20")
+
     @staticmethod
     def get_vat_declaration(year: int, month: int) -> VATDeclaration:
-        """Get monthly VAT declaration."""
+        """Get monthly VAT declaration with transaction details."""
         start_date = date(year, month, 1)
-        
         if month == 12:
             end_date = date(year, 12, 31)
         else:
-            from datetime import timedelta
             end_date = date(year, month + 1, 1) - timedelta(days=1)
-        
-        vat_input = TaxService.get_vat_input(start_date, end_date)
-        vat_output = TaxService.get_vat_output(start_date, end_date)
-        
-        vat_payable = max(Decimal("0"), vat_output - vat_input)
-        vat_refundable = max(Decimal("0"), vat_input - vat_output)
-        
+
+        vat_input = TaxRepository.get_vat_input_total(start_date, end_date)
+        vat_output = TaxRepository.get_vat_output_total(start_date, end_date)
+
+        transactions_input = TaxRepository.get_vat_transactions(start_date, end_date, "input")
+        transactions_output = TaxRepository.get_vat_transactions(start_date, end_date, "output")
+
         return VATDeclaration(
             period=f"{year}/{month:02d}",
             year=year,
             month=month,
             vat_input=vat_input,
             vat_output=vat_output,
-            vat_payable=vat_payable,
-            vat_refundable=vat_refundable,
-            transactions=[],
+            vat_payable=max(Decimal("0"), vat_output - vat_input),
+            vat_refundable=max(Decimal("0"), vat_input - vat_output),
+            transactions_input=transactions_input,
+            transactions_output=transactions_output,
         )
-    
+
     @staticmethod
-    def estimate_tndn(year: int) -> Dict:
-        """Estimate corporate income tax based on profit using policy rate."""
+    def get_monthly_vat_summary(year: int) -> List[Dict]:
+        """Get monthly VAT summary for a year."""
+        return TaxRepository.get_monthly_vat_summary(year)
+
+    @staticmethod
+    def get_quarterly_vat_summary(year: int) -> List[QuarterlyVATSummary]:
+        """Get quarterly VAT summary for a year."""
+        summaries = TaxRepository.get_quarterly_vat_summary(year)
+        return [QuarterlyVATSummary(**s) for s in summaries]
+
+    @staticmethod
+    def get_cit_estimate(year: int) -> CITEstimate:
+        """Get CIT estimate for a year."""
         start_date = date(year, 1, 1)
         end_date = date(year, 12, 31)
-        
-        revenue_accounts = Account.query.filter(
-            Account.code.like("5%"),
-            Account.is_postable == True
-        ).all()
-        revenue_ids = [acc.id for acc in revenue_accounts]
-        
-        total_revenue = Decimal("0")
-        if revenue_ids:
-            total_revenue = db.session.query(
-                db.func.coalesce(db.func.sum(JournalEntry.credit), 0)
-            ).join(JournalVoucher).filter(
-                JournalEntry.account_id.in_(revenue_ids),
-                JournalVoucher.voucher_date >= start_date,
-                JournalVoucher.voucher_date <= end_date,
-                JournalVoucher.status == VoucherStatus.POSTED
-            ).scalar() or Decimal("0")
-        
-        expense_accounts = Account.query.filter(
-            Account.code.like("6%"),
-            Account.is_postable == True
-        ).all()
-        expense_ids = [acc.id for acc in expense_accounts]
-        
-        total_expense = Decimal("0")
-        if expense_ids:
-            total_expense = db.session.query(
-                db.func.coalesce(db.func.sum(JournalEntry.debit), 0)
-            ).join(JournalVoucher).filter(
-                JournalEntry.account_id.in_(expense_ids),
-                JournalVoucher.voucher_date >= start_date,
-                JournalVoucher.voucher_date <= end_date,
-                JournalVoucher.status == VoucherStatus.POSTED
-            ).scalar() or Decimal("0")
-        
-        gross_profit = Decimal(str(total_revenue)) - Decimal(str(total_expense))
-        
-        cit_rate = TaxService._get_cit_rate(year)
+
+        total_revenue = TaxRepository.get_revenue_total(start_date, end_date)
+        total_expense = TaxRepository.get_expense_total(start_date, end_date)
+        gross_profit = total_revenue - total_expense
+
+        policy = TaxRepository.get_or_create_cit_policy(year)
+        cit_rate = Decimal(str(policy.rate))
+
         estimated_tax = max(Decimal("0"), gross_profit * cit_rate)
-        
-        policy = TaxService.get_cit_policy(year)
-        
+
+        paid_tax = TaxRepository.get_cit_amount(start_date, end_date)
+
+        return CITEstimate(
+            year=year,
+            total_revenue=total_revenue,
+            total_expense=total_expense,
+            gross_profit=gross_profit,
+            cit_rate=cit_rate,
+            estimated_tax=estimated_tax,
+            paid_tax=paid_tax,
+            outstanding_tax=estimated_tax - paid_tax,
+        )
+
+    @staticmethod
+    def get_quarterly_cit_estimate(year: int, quarter: int) -> CITEstimate:
+        """Get CIT estimate for a specific quarter."""
+        start_month = (quarter - 1) * 3 + 1
+        end_month = start_month + 2
+        start_date = date(year, start_month, 1)
+        end_date = date(year, end_month, 1) + timedelta(days=31)
+        end_date = date(end_date.year, end_date.month, 1) - timedelta(days=1)
+
+        total_revenue = TaxRepository.get_revenue_total(start_date, end_date)
+        total_expense = TaxRepository.get_expense_total(start_date, end_date)
+        gross_profit = total_revenue - total_expense
+
+        policy = TaxRepository.get_or_create_cit_policy(year)
+        cit_rate = Decimal(str(policy.rate))
+
+        estimated_tax = max(Decimal("0"), gross_profit * cit_rate)
+        paid_tax = TaxRepository.get_cit_amount(start_date, end_date)
+
+        return CITEstimate(
+            year=year,
+            total_revenue=total_revenue,
+            total_expense=total_expense,
+            gross_profit=gross_profit,
+            cit_rate=cit_rate,
+            estimated_tax=estimated_tax,
+            paid_tax=paid_tax,
+            outstanding_tax=estimated_tax - paid_tax,
+        )
+
+    @staticmethod
+    def get_cit_rate(year: int) -> Decimal:
+        """Get CIT rate for a year."""
+        policy = TaxRepository.get_or_create_cit_policy(year)
+        return Decimal(str(policy.rate))
+
+    @staticmethod
+    def calculate_vat_from_amount(amount: Decimal, vat_rate_str: str = "10") -> Dict[str, Decimal]:
+        """Calculate VAT from amount including VAT."""
+        vat_rate = TaxService.VAT_RATES.get(vat_rate_str, Decimal("0.10"))
+        vat_amount = amount * vat_rate / (Decimal("1") + vat_rate)
+        base_amount = amount - vat_amount
+        return {
+            "base_amount": base_amount,
+            "vat_amount": vat_amount,
+            "total_amount": amount,
+            "vat_rate": vat_rate,
+        }
+
+    @staticmethod
+    def calculate_vat_exclusive(amount: Decimal, vat_rate_str: str = "10") -> Dict[str, Decimal]:
+        """Calculate VAT from amount excluding VAT."""
+        vat_rate = TaxService.VAT_RATES.get(vat_rate_str, Decimal("0.10"))
+        vat_amount = amount * vat_rate
+        total_amount = amount + vat_amount
+        return {
+            "base_amount": amount,
+            "vat_amount": vat_amount,
+            "total_amount": total_amount,
+            "vat_rate": vat_rate,
+        }
+
+    @staticmethod
+    def get_vat_account_balances(end_date: date) -> Dict[str, Decimal]:
+        """Get VAT account balances."""
+        return {
+            "vat_input": TaxRepository.get_account_balance("1331", end_date),
+            "vat_input_import": TaxRepository.get_account_balance("1332", end_date),
+            "vat_output": TaxRepository.get_account_balance("3331", end_date),
+        }
+
+    @staticmethod
+    def get_tax_summary(year: int) -> Dict[str, Any]:
+        """Get comprehensive tax summary for a year."""
+        monthly_vat = TaxService.get_monthly_vat_summary(year)
+        quarterly_vat = [s.to_dict() for s in TaxService.get_quarterly_vat_summary(year)]
+        cit_estimate = TaxService.get_cit_estimate(year)
+
+        total_vat_payable = sum(m["vat_payable"] for m in monthly_vat)
+        total_vat_refundable = sum(m["vat_refundable"] for m in monthly_vat)
+
         return {
             "year": year,
-            "total_revenue": Decimal(str(total_revenue)),
-            "total_expense": Decimal(str(total_expense)),
-            "gross_profit": gross_profit,
-            "cit_rate": cit_rate,
-            "cit_rate_percentage": int(cit_rate * 100),
-            "tax_rate": f"{int(cit_rate * 100)}%",
-            "estimated_tax": estimated_tax,
-            "policy_name": policy.rate_name if policy else "Thuế suất TNDN",
-            "policy_description": policy.description if policy else f"Áp dụng năm {year}",
+            "monthly_vat": monthly_vat,
+            "quarterly_vat": quarterly_vat,
+            "cit_estimate": cit_estimate.to_dict(),
+            "total_vat_payable": total_vat_payable,
+            "total_vat_refundable": total_vat_refundable,
         }
-    
+
     @staticmethod
-    def get_tax_summary(year: int) -> List[Dict]:
-        """Get monthly tax summary for a year."""
-        summaries = []
-        
-        for month in range(1, 13):
-            declaration = TaxService.get_vat_declaration(year, month)
-            
-            if declaration.vat_input > 0 or declaration.vat_output > 0:
-                summaries.append({
-                    "month": month,
-                    "period": declaration.period,
-                    "vat_input": declaration.vat_input,
-                    "vat_output": declaration.vat_output,
-                    "vat_payable": declaration.vat_payable,
-                })
-        
-        return summaries
-    
+    def get_tax_policies(tax_type: Optional[str] = None) -> List[TaxPolicy]:
+        """Get all tax policies."""
+        return TaxRepository.get_all_tax_policies(tax_type)
+
     @staticmethod
-    def get_all_cit_policies() -> List[TaxPolicy]:
-        """Get all CIT policies."""
-        return TaxPolicy.query.filter_by(tax_type=TaxPolicyType.CIT).order_by(TaxPolicy.year.desc()).all()
+    def create_tax_policy(
+        tax_type: str,
+        year: int,
+        rate: Decimal,
+        rate_name: str,
+        description: str = ""
+    ) -> TaxPolicy:
+        """Create or update tax policy."""
+        return TaxRepository.create_tax_policy(tax_type, year, rate, rate_name, description)

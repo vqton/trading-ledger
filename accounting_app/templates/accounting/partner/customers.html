@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+
+{% block title %}Khách hàng - VAS Accounting{% endblock %}
+
+{% block content %}
+<h1 class="mt-4">Danh sách Khách hàng</h1>
+<ol class="breadcrumb mb-4">
+    <li class="breadcrumb-item"><a href="{{ url_for('index') }}">Trang chủ</a></li>
+    <li class="breadcrumb-item"><a href="{{ url_for('partner.index') }}">Đối tác</a></li>
+    <li class="breadcrumb-item active">Khách hàng</li>
+</ol>
+
+<div class="card mb-4">
+    <div class="card-body">
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <a href="{{ url_for('partner.customer_new') }}" class="btn btn-success">
+                    <i class="fas fa-plus"></i> Thêm khách hàng
+                </a>
+            </div>
+            <div class="col-md-6">
+                <form method="get" class="d-flex">
+                    <input type="text" name="search" class="form-control me-2" 
+                           placeholder="Tìm kiếm..." value="{{ request.args.get('search', '') }}">
+                    <select name="customer_type" class="form-select me-2" style="width: auto;">
+                        <option value="">Tất cả loại</option>
+                        {% for ct in customer_types %}
+                        <option value="{{ ct.value }}" {% if request.args.get('customer_type') == ct.value %}selected{% endif %}>
+                            {{ ct.label }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                    <button type="submit" class="btn btn-primary"><i class="fas fa-search"></i></button>
+                </form>
+            </div>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Mã KH</th>
+                        <th>Tên khách hàng</th>
+                        <th>Mã số thuế</th>
+                        <th>Email</th>
+                        <th>Điện thoại</th>
+                        <th>Loại</th>
+                        <th>Trạng thái</th>
+                        <th>Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for c in customers %}
+                    <tr>
+                        <td>{{ c.code }}</td>
+                        <td>{{ c.name }}</td>
+                        <td>{{ c.tax_id or '-' }}</td>
+                        <td>{{ c.email or '-' }}</td>
+                        <td>{{ c.phone or '-' }}</td>
+                        <td>{{ c.customer_type }}</td>
+                        <td>
+                            {% if c.is_active %}
+                            <span class="badge bg-success">Hoạt động</span>
+                            {% else %}
+                            <span class="badge bg-secondary">Không hoạt động</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <a href="{{ url_for('partner.customer_detail', customer_id=c.id) }}" class="btn btn-sm btn-info">
+                                <i class="fas fa-eye"></i>
+                            </a>
+                            <a href="{{ url_for('partner.customer_edit', customer_id=c.id) }}" class="btn btn-sm btn-warning">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="8" class="text-center">Không có khách hàng nào</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        {% if total > per_page %}
+        <nav>
+            <ul class="pagination justify-content-center">
+                {% for p in range(1, (total // per_page) + 2) %}
+                <li class="page-item {% if p == page %}active{% endif %}">
+                    <a class="page-link" href="{{ url_for('partner.customers', page=p) }}">{{ p }}</a>
+                </li>
+                {% endfor %}
+            </ul>
+        </nav>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,166 @@
+{% extends "base.html" %}
+
+{% block title %}{{ 'Sửa' if employee else 'Thêm' }} Nhân viên - VAS Accounting{% endblock %}
+
+{% block content %}
+<h1 class="mt-4">{{ 'Sửa' if employee else 'Thêm mới' }} Nhân viên</h1>
+<ol class="breadcrumb mb-4">
+    <li class="breadcrumb-item"><a href="{{ url_for('index') }}">Trang chủ</a></li>
+    <li class="breadcrumb-item"><a href="{{ url_for('partner.index') }}">Đối tác</a></li>
+    <li class="breadcrumb-item"><a href="{{ url_for('partner.employees') }}">Nhân viên</a></li>
+    <li class="breadcrumb-item active">{{ 'Sửa' if employee else 'Thêm mới' }}</li>
+</ol>
+
+<div class="card">
+    <div class="card-body">
+        <form method="post">
+            <div class="row mb-3">
+                <div class="col-md-4">
+                    <label for="employee_id" class="form-label">Mã số nhân viên</label>
+                    <input type="text" class="form-control" id="employee_id" name="employee_id" 
+                           value="{{ employee.employee_id if employee else '' }}">
+                </div>
+                <div class="col-md-4">
+                    <label for="name" class="form-label">Họ tên <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" id="name" name="name" 
+                           value="{{ employee.name if employee else '' }}" required>
+                </div>
+                <div class="col-md-4">
+                    <label for="date_of_birth" class="form-label">Ngày sinh</label>
+                    <input type="date" class="form-control" id="date_of_birth" name="date_of_birth" 
+                           value="{{ employee.date_of_birth if employee else '' }}">
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-4">
+                    <label for="email" class="form-label">Email</label>
+                    <input type="email" class="form-control" id="email" name="email" 
+                           value="{{ employee.email if employee else '' }}">
+                </div>
+                <div class="col-md-4">
+                    <label for="phone" class="form-label">Điện thoại</label>
+                    <input type="text" class="form-control" id="phone" name="phone" 
+                           value="{{ employee.phone if employee else '' }}">
+                </div>
+                <div class="col-md-4">
+                    <label for="gender" class="form-label">Giới tính</label>
+                    <select class="form-select" id="gender" name="gender">
+                        <option value="">-- Chọn --</option>
+                        <option value="male" {% if employee and employee.gender == 'male' %}selected{% endif %}>Nam</option>
+                        <option value="female" {% if employee and employee.gender == 'female' %}selected{% endif %}>Nữ</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label for="address" class="form-label">Địa chỉ</label>
+                    <input type="text" class="form-control" id="address" name="address" 
+                           value="{{ employee.address if employee else '' }}">
+                </div>
+                <div class="col-md-3">
+                    <label for="city" class="form-label">Thành phố</label>
+                    <input type="text" class="form-control" id="city" name="city" 
+                           value="{{ employee.city if employee else '' }}">
+                </div>
+                <div class="col-md-3">
+                    <label for="department" class="form-label">Phòng ban</label>
+                    <input type="text" class="form-control" id="department" name="department" 
+                           value="{{ employee.department if employee else '' }}" list="dept-list">
+                    <datalist id="dept-list">
+                        {% for dept in departments %}
+                        <option value="{{ dept }}">
+                        {% endfor %}
+                    </datalist>
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-4">
+                    <label for="position" class="form-label">Chức vụ</label>
+                    <input type="text" class="form-control" id="position" name="position" 
+                           value="{{ employee.position if employee else '' }}">
+                </div>
+                <div class="col-md-4">
+                    <label for="employee_type" class="form-label">Loại nhân viên</label>
+                    <select class="form-select" id="employee_type" name="employee_type">
+                        {% for et in employee_types %}
+                        <option value="{{ et.value }}" {% if employee and employee.employee_type == et.value %}selected{% endif %}>
+                            {{ et.label }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label for="join_date" class="form-label">Ngày vào làm</label>
+                    <input type="date" class="form-control" id="join_date" name="join_date" 
+                           value="{{ employee.join_date if employee else '' }}">
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-4">
+                    <label for="id_card" class="form-label">Số CMND/CCCD</label>
+                    <input type="text" class="form-control" id="id_card" name="id_card" 
+                           value="{{ employee.id_card if employee else '' }}">
+                </div>
+                <div class="col-md-4">
+                    <label for="tax_id" class="form-label">Mã số thuế</label>
+                    <input type="text" class="form-control" id="tax_id" name="tax_id" 
+                           value="{{ employee.tax_id if employee else '' }}">
+                </div>
+                <div class="col-md-4">
+                    <label for="social_insurance_no" class="form-label">Số BHXH</label>
+                    <input type="text" class="form-control" id="social_insurance_no" name="social_insurance_no" 
+                           value="{{ employee.social_insurance_no if employee else '' }}">
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-4">
+                    <label for="bank_account" class="form-label">Tài khoản ngân hàng</label>
+                    <input type="text" class="form-control" id="bank_account" name="bank_account" 
+                           value="{{ employee.bank_account if employee else '' }}">
+                </div>
+                <div class="col-md-4">
+                    <label for="bank_name" class="form-label">Ngân hàng</label>
+                    <input type="text" class="form-control" id="bank_name" name="bank_name" 
+                           value="{{ employee.bank_name if employee else '' }}">
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-12">
+                    <label for="notes" class="form-label">Ghi chú</label>
+                    <textarea class="form-control" id="notes" name="notes" rows="3">{{ employee.notes if employee else '' }}</textarea>
+                </div>
+            </div>
+
+            {% if employee %}
+            <div class="row mb-3">
+                <div class="col-md-4">
+                    <label class="form-label">Trạng thái</label>
+                    <select class="form-select" name="is_active">
+                        <option value="true" {% if employee.is_active %}selected{% endif %}>Hoạt động</option>
+                        <option value="false" {% if not employee.is_active %}selected{% endif %}>Không hoạt động</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label for="leave_date" class="form-label">Ngày nghỉ việc</label>
+                    <input type="date" class="form-control" id="leave_date" name="leave_date" 
+                           value="{{ employee.leave_date if employee else '' }}">
+                </div>
+            </div>
+            {% endif %}
+
+            <div class="mt-3">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save"></i> Lưu
+                </button>
+                <a href="{{ url_for('partner.employees') }}" class="btn btn-secondary">Hủy</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

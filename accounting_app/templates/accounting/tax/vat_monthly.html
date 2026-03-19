@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+
+{% block title %}VAT theo tháng - {{ year }}{% endblock %}
+
+{% block content %}
+<div class="py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h3 mb-0">
+            <i class="fas fa-calendar-month"></i> VAT theo tháng - {{ year }}
+        </h1>
+        <div class="btn-group">
+            <a href="{{ url_for('tax.summary', year=year) }}" class="btn btn-outline-secondary">
+                <i class="fas fa-chart-pie"></i> Tổng hợp
+            </a>
+            <a href="{{ url_for('tax.vat_quarterly', year=year) }}" class="btn btn-outline-primary">
+                <i class="fas fa-calendar"></i> Theo quý
+            </a>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Tháng</th>
+                            <th class="text-end">VAT vào</th>
+                            <th class="text-end">VAT ra</th>
+                            <th class="text-end">Phải nộp</th>
+                            <th class="text-end">Hoàn thuế</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for summary in vat_summary %}
+                        <tr>
+                            <td>Tháng {{ summary.month }}</td>
+                            <td class="text-end text-info">{{ "{:,.0f}".format(summary.vat_input) }}</td>
+                            <td class="text-end text-warning">{{ "{:,.0f}".format(summary.vat_output) }}</td>
+                            <td class="text-end text-danger">{{ "{:,.0f}".format(summary.vat_payable) }}</td>
+                            <td class="text-end text-success">{{ "{:,.0f}".format(summary.vat_refundable) }}</td>
+                            <td class="text-center">
+                                <a href="{{ url_for('tax.vat_declaration', year=year, month=summary.month) }}" class="btn btn-sm btn-primary">
+                                    <i class="fas fa-file-invoice"></i> Chi tiết
+                                </a>
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="6" class="text-center text-muted">Chưa có dữ liệu thuế cho năm {{ year }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                    <tfoot class="table-secondary">
+                        <tr>
+                            <td><strong>Tổng cộng</strong></td>
+                            <td class="text-end text-info"><strong>{{ "{:,.0f}".format(vat_summary|sum(attribute='vat_input')) }}</strong></td>
+                            <td class="text-end text-warning"><strong>{{ "{:,.0f}".format(vat_summary|sum(attribute='vat_output')) }}</strong></td>
+                            <td class="text-end text-danger"><strong>{{ "{:,.0f}".format(vat_summary|sum(attribute='vat_payable')) }}</strong></td>
+                            <td class="text-end text-success"><strong>{{ "{:,.0f}".format(vat_summary|sum(attribute='vat_refundable')) }}</strong></td>
+                            <td></td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

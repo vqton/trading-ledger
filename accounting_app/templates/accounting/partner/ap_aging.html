@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+
+{% block title %}Tuổi nợ phải trả - VAS Accounting{% endblock %}
+
+{% block content %}
+<h1 class="mt-4">Báo cáo tuổi nợ phải trả (AP Aging)</h1>
+<ol class="breadcrumb mb-4">
+    <li class="breadcrumb-item"><a href="{{ url_for('index') }}">Trang chủ</a></li>
+    <li class="breadcrumb-item"><a href="{{ url_for('partner.index') }}">Đối tác</a></li>
+    <li class="breadcrumb-item active">Tuổi nợ phải trả</li>
+</ol>
+
+<div class="card mb-4">
+    <div class="card-header">
+        <i class="fas fa-filter"></i> Bộ lọc
+    </div>
+    <div class="card-body">
+        <form method="get" class="row">
+            <div class="col-md-4">
+                <label for="end_date" class="form-label">Ngày báo cáo</label>
+                <input type="date" class="form-control" id="end_date" name="end_date" 
+                       value="{{ end_date.strftime('%Y-%m-%d') }}">
+            </div>
+            <div class="col-md-4 align-self-end">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-search"></i> Xem báo cáo
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <i class="fas fa-table"></i> Chi tiết công nợ - Đến ngày {{ end_date.strftime('%d/%m/%Y') }}
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead class="table-danger">
+                    <tr>
+                        <th>Mã NCC</th>
+                        <th>Tên nhà cung cấp</th>
+                        <th class="text-end">Tổng công nợ</th>
+                        <th class="text-end">Hiện tại</th>
+                        <th class="text-end">1-30 ngày</th>
+                        <th class="text-end">31-60 ngày</th>
+                        <th class="text-end">61-90 ngày</th>
+                        <th class="text-end">> 90 ngày</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in aging %}
+                    <tr>
+                        <td>{{ item.vendor_code }}</td>
+                        <td>{{ item.vendor_name }}</td>
+                        <td class="text-end">{{ "{:,.0f}".format(item.balance) }}</td>
+                        <td class="text-end">{{ "{:,.0f}".format(item.current) }}</td>
+                        <td class="text-end">{{ "{:,.0f}".format(item.overdue_30) }}</td>
+                        <td class="text-end">{{ "{:,.0f}".format(item.overdue_60) }}</td>
+                        <td class="text-end">{{ "{:,.0f}".format(item.overdue_90) }}</td>
+                        <td class="text-end">{{ "{:,.0f}".format(item.overdue_180) }}</td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="8" class="text-center">Không có công nợ phải trả</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+                <tfoot class="table-secondary">
+                    <tr>
+                        <th colspan="2" class="text-end">Tổng cộng:</th>
+                        <th class="text-end">{{ "{:,.0f}".format(aging|sum(attribute='balance')) }}</th>
+                        <th class="text-end">{{ "{:,.0f}".format(aging|sum(attribute='current')) }}</th>
+                        <th class="text-end">{{ "{:,.0f}".format(aging|sum(attribute='overdue_30')) }}</th>
+                        <th class="text-end">{{ "{:,.0f}".format(aging|sum(attribute='overdue_60')) }}</th>
+                        <th class="text-end">{{ "{:,.0f}".format(aging|sum(attribute='overdue_90')) }}</th>
+                        <th class="text-end">{{ "{:,.0f}".format(aging|sum(attribute='overdue_180')) }}</th>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

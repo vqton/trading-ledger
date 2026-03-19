@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+
+{% block title %}Nhân viên - VAS Accounting{% endblock %}
+
+{% block content %}
+<h1 class="mt-4">Danh sách Nhân viên</h1>
+<ol class="breadcrumb mb-4">
+    <li class="breadcrumb-item"><a href="{{ url_for('index') }}">Trang chủ</a></li>
+    <li class="breadcrumb-item"><a href="{{ url_for('partner.index') }}">Đối tác</a></li>
+    <li class="breadcrumb-item active">Nhân viên</li>
+</ol>
+
+<div class="card mb-4">
+    <div class="card-body">
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <a href="{{ url_for('partner.employee_new') }}" class="btn btn-success">
+                    <i class="fas fa-plus"></i> Thêm nhân viên
+                </a>
+            </div>
+            <div class="col-md-6">
+                <form method="get" class="d-flex">
+                    <input type="text" name="search" class="form-control me-2" 
+                           placeholder="Tìm kiếm..." value="{{ request.args.get('search', '') }}">
+                    <select name="department" class="form-select me-2" style="width: auto;">
+                        <option value="">Tất cả phòng</option>
+                        {% for dept in departments %}
+                        <option value="{{ dept }}" {% if request.args.get('department') == dept %}selected{% endif %}>
+                            {{ dept }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                    <button type="submit" class="btn btn-primary"><i class="fas fa-search"></i></button>
+                </form>
+            </div>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Mã NV</th>
+                        <th>Tên nhân viên</th>
+                        <th>Mã số NV</th>
+                        <th>Phòng ban</th>
+                        <th>Chức vụ</th>
+                        <th>Email</th>
+                        <th>Loại</th>
+                        <th>Trạng thái</th>
+                        <th>Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for e in employees %}
+                    <tr>
+                        <td>{{ e.code }}</td>
+                        <td>{{ e.name }}</td>
+                        <td>{{ e.employee_id or '-' }}</td>
+                        <td>{{ e.department or '-' }}</td>
+                        <td>{{ e.position or '-' }}</td>
+                        <td>{{ e.email or '-' }}</td>
+                        <td>{{ e.employee_type }}</td>
+                        <td>
+                            {% if e.is_active %}
+                            <span class="badge bg-success">Hoạt động</span>
+                            {% else %}
+                            <span class="badge bg-secondary">Không hoạt động</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <a href="{{ url_for('partner.employee_detail', employee_id=e.id) }}" class="btn btn-sm btn-info">
+                                <i class="fas fa-eye"></i>
+                            </a>
+                            <a href="{{ url_for('partner.employee_edit', employee_id=e.id) }}" class="btn btn-sm btn-warning">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="9" class="text-center">Không có nhân viên nào</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
