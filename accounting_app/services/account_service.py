@@ -33,6 +33,11 @@ class AccountService:
         return AccountRepository.get_detail_accounts()
 
     @staticmethod
+    def get_all_active_for_journal() -> List[Account]:
+        """Get all active accounts for journal entry (postable + non-postable)."""
+        return AccountRepository.get_active()
+
+    @staticmethod
     def create_account(account_data: Dict, user_id: int, ip_address: Optional[str] = None) -> Account:
         """Create new account with validation."""
         existing = AccountRepository.get_by_code(account_data["code"])

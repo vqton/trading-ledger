@@ -5,8 +5,10 @@ from typing import List, Optional
 from sqlalchemy.orm import selectinload
 
 from models.journal import JournalVoucher, JournalEntry, VoucherStatus, VoucherType
+from models.account import Account
 from core.database import db
 from core.utils import utc_now
+from services.coa_engine import COAEngine
 
 
 class JournalRepository:
@@ -158,7 +160,10 @@ class JournalRepository:
 
     @staticmethod
     def post_voucher(voucher_id: int, user_id: int) -> JournalVoucher:
-        """Post a voucher (change status to posted)."""
+        """Post a voucher (change status to posted).
+        
+        Validates using COA Engine for posting rules.
+        """
         voucher = db.session.get(JournalVoucher, voucher_id)
         if not voucher:
             raise ValueError(f"Voucher {voucher_id} not found")
@@ -168,6 +173,28 @@ class JournalRepository:
 
         if not voucher.is_balanced:
             raise ValueError("Chứng từ không cân bằng (Tổng Nợ ≠ Tợ Có)")
+
+        coa_engine = COAEngine()
+        entries = JournalEntry.query.filter_by(voucher_id=voucher_id).all()
+        
+        for entry in entries:
+            account = db.session.get(Account, entry.account_id)
+            if not account:
+                raise ValueError(f"Tài khoản ID {entry.account_id} không tồn tại")
+            
+            result = coa_engine.validate_posting(account.code)
+            if not result.success:
+                raise ValueError(result.message)
+            
+            result = coa_engine.validate_subledger(
+                account.code,
+                customer_id=entry.customer_id,
+                vendor_id=entry.vendor_id,
+                bank_account_id=entry.bank_account_id,
+                inventory_item_id=entry.inventory_item_id,
+            )
+            if not result.success:
+                raise ValueError(result.message)
 
         voucher.status = VoucherStatus.POSTED
         voucher.posted_by = user_id

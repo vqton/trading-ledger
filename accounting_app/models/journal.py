@@ -92,6 +92,11 @@ class JournalEntry(db.Model):
     reference = db.Column(db.String(100), nullable=True)
     cost_center = db.Column(db.String(50), nullable=True)
     created_at = db.Column(db.DateTime, default=utc_now, nullable=False)
+    
+    customer_id = db.Column(db.Integer, nullable=True, index=True)
+    vendor_id = db.Column(db.Integer, nullable=True, index=True)
+    bank_account_id = db.Column(db.Integer, nullable=True, index=True)
+    inventory_item_id = db.Column(db.Integer, nullable=True, index=True)
 
     __table_args__ = (
         db.Index("ix_entry_voucher_account", "voucher_id", "account_id"),

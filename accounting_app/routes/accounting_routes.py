@@ -199,7 +199,7 @@ def create_voucher():
     
     form = JournalVoucherForm()
     
-    accounts = AccountService.get_detail_accounts()
+    accounts = AccountService.get_all_active_for_journal()
     form.entries[0].account_id.choices = [(0, "-- Chọn tài khoản --")] + [
         (a.id, f"{a.code} - {a.name_vi}") for a in accounts
     ]
@@ -316,7 +316,7 @@ def edit_voucher(voucher_id: int):
     from datetime import date
     form = JournalVoucherForm(obj=voucher)
     
-    accounts = AccountService.get_detail_accounts()
+    accounts = AccountService.get_all_active_for_journal()
     choices = [(a.id, f"{a.code} - {a.name_vi}") for a in accounts]
     
     if request.method == "POST":
@@ -441,7 +441,7 @@ def delete_voucher(voucher_id: int):
 @permission_required("journal", "read")
 def api_accounts():
     """API endpoint for account list."""
-    accounts = AccountService.get_detail_accounts()
+    accounts = AccountService.get_all_active_for_journal()
     return jsonify([
         {"id": a.id, "code": a.code, "name": a.name_vi, "type": a.account_type}
         for a in accounts
@@ -458,7 +458,7 @@ def ledger():
                                start_date=request.args.get("start_date"),
                                end_date=request.args.get("end_date")))
     
-    accounts = AccountService.get_detail_accounts()
+    accounts = AccountService.get_all_active_for_journal()
     return render_template("accounting/ledger.html", accounts=accounts)
 
 
