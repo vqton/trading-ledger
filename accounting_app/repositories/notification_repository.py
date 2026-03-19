@@ -1,7 +1,8 @@
-from datetime import datetime
+from datetime import timedelta
 from typing import List, Optional, Tuple
 
 from core.database import db
+from core.utils import utc_now
 from models.notification import Notification
 
 
@@ -79,7 +80,7 @@ class NotificationRepository:
     def cleanup_expired() -> int:
         """Delete expired notifications."""
         count = Notification.query.filter(
-            Notification.expires_at < datetime.utcnow(),
+            Notification.expires_at < utc_now(),
             Notification.is_read == True
         ).delete()
         db.session.commit()

@@ -88,7 +88,7 @@ class Notification(db.Model):
     def is_expired(self) -> bool:
         """Check if notification is expired."""
         if self.expires_at:
-            return datetime.utcnow() > self.expires_at
+            return utc_now() > self.expires_at
         return False
 
     @property
@@ -134,7 +134,7 @@ class Notification(db.Model):
         ).filter(
             db.or_(
                 cls.expires_at.is_(None),
-                cls.expires_at > datetime.utcnow()
+                cls.expires_at > utc_now()
             )
         ).count()
 

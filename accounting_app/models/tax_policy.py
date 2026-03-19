@@ -3,9 +3,9 @@ Tax Policy Model - Store tax rates by year and type.
 Based on Circular 99/2025/TT-BTC for Vietnamese accounting standards.
 """
 
-from datetime import datetime
 from decimal import Decimal
 from core.database import db
+from core.utils import utc_now
 
 
 class TaxPolicy(db.Model):
@@ -20,8 +20,8 @@ class TaxPolicy(db.Model):
     rate_name = db.Column(db.String(100), nullable=True)  # e.g., "Thuế suất thu nhập doanh nghiệp"
     active = db.Column(db.Boolean, default=True, nullable=False)
     description = db.Column(db.String(500), nullable=True)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
-    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    created_at = db.Column(db.DateTime, default=utc_now)
+    updated_at = db.Column(db.DateTime, default=utc_now, onupdate=utc_now)
     
     __table_args__ = (
         db.Index("ix_tax_policies_type_year", "tax_type", "year"),

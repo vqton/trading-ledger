@@ -2,8 +2,9 @@
 Accounting Period Model - For managing fiscal periods.
 """
 
-from datetime import datetime, date
+from datetime import date
 from core.database import db
+from core.utils import utc_now
 from typing import Optional
 
 
@@ -23,7 +24,7 @@ class AccountingPeriod(db.Model):
     is_closed = db.Column(db.Boolean, default=False, nullable=False)
     closed_at = db.Column(db.DateTime, nullable=True)
     closed_by = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=True)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    created_at = db.Column(db.DateTime, default=utc_now)
     
     __table_args__ = (
         db.Index("ix_periods_year_month", "year", "month"),

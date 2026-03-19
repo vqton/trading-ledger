@@ -1,7 +1,8 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 from typing import List, Optional, Tuple
 
 from core.database import db
+from core.utils import utc_now
 from models.backup import Backup, BackupSchedule, BackupType, BackupStatus
 
 
@@ -81,7 +82,7 @@ class BackupRepository:
     def cleanup_old_backups(retention_days: int = 30) -> int:
         """Delete backups older than retention days."""
         from datetime import timedelta
-        cutoff = datetime.utcnow() - timedelta(days=retention_days)
+        cutoff = utc_now() - timedelta(days=retention_days)
         count = Backup.query.filter(
             Backup.created_at < cutoff,
             Backup.status.in_([BackupStatus.COMPLETED, BackupStatus.VERIFIED])

@@ -1,6 +1,7 @@
 from typing import List, Optional, Tuple, Any
 
 from core.database import db
+from core.utils import utc_now
 from models.system_setting import SystemSetting, SettingCategory, SettingKey
 
 
@@ -47,7 +48,7 @@ class SystemSettingRepository:
 
         setting.set_typed_value(value)
         setting.modified_by = user_id
-        setting.modified_at = datetime.utcnow()
+        setting.modified_at = utc_now()
         db.session.commit()
         return setting
 

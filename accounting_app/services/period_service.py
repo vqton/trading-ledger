@@ -2,12 +2,13 @@
 Period Service - Manage accounting periods.
 """
 
-from datetime import datetime, date
+from datetime import date
 from typing import List, Optional
 from decimal import Decimal
 
 from models.accounting_period import AccountingPeriod
 from core.database import db
+from core.utils import utc_now
 
 
 class PeriodService:
@@ -126,7 +127,7 @@ class PeriodService:
         
         period.is_closed = True
         period.is_open = False
-        period.closed_at = datetime.utcnow()
+        period.closed_at = utc_now()
         period.closed_by = user_id
         db.session.commit()
         
