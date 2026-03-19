@@ -1,0 +1,144 @@
+{% extends "base.html" %}
+
+{% block title %}Tổng hợp cổ tức năm - VAS Accounting{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1><i class="fas fa-chart-bar"></i> Tổng hợp cổ tức năm {{ fiscal_year }}</h1>
+    <form method="get" class="d-flex gap-2">
+        <select name="fiscal_year" class="form-select">
+            {% for y in range(current_year-5, current_year+1) %}
+            <option value="{{ y }}" {{ 'selected' if y == fiscal_year|int else '' }}>{{ y }}</option>
+            {% endfor %}
+        </select>
+        <button type="submit" class="btn btn-primary">Xem</button>
+    </form>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="card border-primary">
+            <div class="card-body text-center">
+                <h3 class="text-primary">{{ summary.total_dividends }}</h3>
+                <p>Đợt chia cổ tức</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card border-success">
+            <div class="card-body text-center">
+                <h3 class="text-success">{{ "{:,.0f}".format(summary.total_declared) }}</h3>
+                <p>Tổng công bố (VND)</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card border-info">
+            <div class="card-body text-center">
+                <h3 class="text-info">{{ "{:,.0f}".format(summary.total_paid) }}</h3>
+                <p>Đã chi trả (VND)</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card border-warning">
+            <div class="card-body text-center">
+                <h3 class="text-warning">{{ "{:,.0f}".format(summary.total_declared - summary.total_paid) }}</h3>
+                <p>Chưa chi trả (VND)</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card mb-4">
+    <div class="card-header">
+        <i class="fas fa-coins"></i> Chi tiết theo đợt
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Đợt</th>
+                        <th>Loại</th>
+                        <th>Ngày công bố</th>
+                        <th class="text-end">Tổng cổ tức</th>
+                        <th class="text-end">Đã chi trả</th>
+                        <th class="text-end">Còn lại</th>
+                        <th class="text-end">Tỷ lệ</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for d in dividends %}
+                    <tr>
+                        <td><strong>{{ d.dividend_no }}</strong></td>
+                        <td>
+                            {% if d.dividend_type == 'cash' %}Tiền mặt{% endif %}
+                            {% if d.dividend_type == 'stock' %}Cổ phiếu{% endif %}
+                        </td>
+                        <td>{{ d.declaration_date.strftime('%d/%m/%Y') if d.declaration_date else '-' }}</td>
+                        <td class="text-end">{{ "{:,.0f}".format(d.total_amount) }}</td>
+                        <td class="text-end text-success">{{ "{:,.0f}".format(d.paid_amount) }}</td>
+                        <td class="text-end text-warning">{{ "{:,.0f}".format(d.total_amount - d.paid_amount) }}</td>
+                        <td class="text-end">
+                            {% if d.total_amount > 0 %}
+                            {{ "%.1f"|format((d.paid_amount / d.total_amount) * 100) }}%
+                            {% else %}
+                            -
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="7" class="text-center text-muted">Không có dữ liệu</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+                <tfoot>
+                    <tr class="fw-bold">
+                        <td colspan="3">Tổng cộng</td>
+                        <td class="text-end text-primary">{{ "{:,.0f}".format(summary.total_declared) }}</td>
+                        <td class="text-end text-success">{{ "{:,.0f}".format(summary.total_paid) }}</td>
+                        <td class="text-end text-warning">{{ "{:,.0f}".format(summary.total_declared - summary.total_paid) }}</td>
+                        <td class="text-end">
+                            {% if summary.total_declared > 0 %}
+                            {{ "%.1f"|format((summary.total_paid / summary.total_declared) * 100) }}%
+                            {% else %}
+                            -
+                            {% endif %}
+                        </td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <i class="fas fa-chart-pie"></i> Biểu đồ chi trả cổ tức năm {{ fiscal_year }}
+    </div>
+    <div class="card-body">
+        <div class="alert alert-info">
+            <i class="fas fa-info-circle"></i>
+            Biểu đồ chi trả cổ tức. Tỷ lệ hoàn thành: 
+            {% if summary.total_declared > 0 %}
+            <strong>{{ "%.1f"|format((summary.total_paid / summary.total_declared) * 100) }}%</strong>
+            {% else %}
+            <strong>N/A</strong>
+            {% endif %}
+        </div>
+        <div class="progress" style="height: 30px;">
+            {% if summary.total_declared > 0 %}
+            <div class="progress-bar bg-success" role="progressbar" style="width: {{ (summary.total_paid / summary.total_declared) * 100 }}%">
+                {{ "%.1f"|format((summary.total_paid / summary.total_declared) * 100) }}%
+            </div>
+            {% else %}
+            <div class="progress-bar bg-secondary" role="progressbar" style="width: 100%">
+                Không có dữ liệu
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

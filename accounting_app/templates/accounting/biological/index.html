@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+
+{% block title %}Tài sản sinh học (TK 215) - VAS Accounting{% endblock %}
+
+{% block content %}
+<h1 class="mt-4"><i class="fas fa-leaf"></i> Tài sản sinh học (TK 215)</h1>
+<ol class="breadcrumb mb-4">
+    <li class="breadcrumb-item"><a href="{{ url_for('index') }}">Trang chủ</a></li>
+    <li class="breadcrumb-item active">TK 215 - Tài sản sinh học</li>
+</ol>
+
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="card border-success">
+            <div class="card-body text-center">
+                <h3 class="text-success">{{ stats.total_assets }}</h3>
+                <p>Tổng số tài sản</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card border-primary">
+            <div class="card-body text-center">
+                <h3 class="text-primary">{{ "{:,.0f}".format(stats.total_cost) }}</h3>
+                <p>Tổng nguyên giá</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card border-info">
+            <div class="card-body text-center">
+                <h3 class="text-info">{{ "{:,.0f}".format(stats.total_fair_value) }}</h3>
+                <p>Giá trị hợp lý</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card border-warning">
+            <div class="card-body text-center">
+                <h3 class="text-warning">{{ stats.pending_updates }}</h3>
+                <p>Chờ cập nhật giá</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card mb-4">
+    <div class="card-header bg-primary text-white">
+        <i class="fas fa-link"></i> Đường dẫn nhanh
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-3">
+                <a href="{{ url_for('biological.assets') }}" class="text-decoration-none">
+                    <i class="fas fa-list"></i> Danh sách tài sản
+                </a>
+            </div>
+            <div class="col-md-3">
+                <a href="{{ url_for('biological.asset_new') }}" class="text-decoration-none">
+                    <i class="fas fa-plus"></i> Thêm tài sản mới
+                </a>
+            </div>
+            <div class="col-md-3">
+                <a href="{{ url_for('biological.update_values') }}" class="text-decoration-none">
+                    <i class="fas fa-sync"></i> Cập nhật giá trị
+                </a>
+            </div>
+            <div class="col-md-3">
+                <a href="{{ url_for('biological.disposal') }}" class="text-decoration-none">
+                    <i class="fas fa-trash-alt"></i> Thanh lý tài sản
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <i class="fas fa-chart-pie"></i> Phân loại theo nhóm tài sản
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Nhóm tài sản</th>
+                        <th class="text-end">Số lượng</th>
+                        <th class="text-end">Nguyên giá</th>
+                        <th class="text-end">Giá trị hợp lý</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for group in stats.by_group %}
+                    <tr>
+                        <td>{{ group.name }}</td>
+                        <td class="text-end">{{ group.count }}</td>
+                        <td class="text-end">{{ "{:,.0f}".format(group.cost) }}</td>
+                        <td class="text-end">{{ "{:,.0f}".format(group.fair_value) }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

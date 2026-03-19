@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+
+{% block title %}Yêu cầu phê duyệt - VAS Accounting{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1><i class="fas fa-list"></i> Yêu cầu phê duyệt</h1>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <form method="get" class="row g-3 mb-4">
+            <div class="col-md-3">
+                <label class="form-label">Trạng thái</label>
+                <select name="status" class="form-select">
+                    <option value="">Tất cả</option>
+                    <option value="pending" {{ 'selected' if request.args.get('status') == 'pending' else '' }}>Chờ duyệt</option>
+                    <option value="approved" {{ 'selected' if request.args.get('status') == 'approved' else '' }}>Đã duyệt</option>
+                    <option value="rejected" {{ 'selected' if request.args.get('status') == 'rejected' else '' }}>Từ chối</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">Tìm kiếm</label>
+                <input type="text" name="search" class="form-control" placeholder="Mã yêu cầu..." value="{{ request.args.get('search', '') }}">
+            </div>
+            <div class="col-md-3 d-flex align-items-end">
+                <button type="submit" class="btn btn-primary"><i class="fas fa-search"></i> Tìm kiếm</button>
+            </div>
+        </form>
+
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Mã yêu cầu</th>
+                        <th>Quy trình</th>
+                        <th>Người tạo</th>
+                        <th>Ngày tạo</th>
+                        <th>Trạng thái</th>
+                        <th>Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for r in requests %}
+                    <tr>
+                        <td><strong>{{ r.request_no }}</strong></td>
+                        <td>{{ r.workflow.name if r.workflow else '-' }}</td>
+                        <td>{{ r.requester.username if r.requester else '-' }}</td>
+                        <td>{{ r.created_at.strftime('%d/%m/%Y') if r.created_at else '-' }}</td>
+                        <td>
+                            <span class="badge bg-{{ 'warning' if r.status == 'pending' else 'success' if r.status == 'approved' else 'danger' }}">
+                                {{ r.status }}
+                            </span>
+                        </td>
+                        <td>
+                            <a href="{{ url_for('approval.request_detail', request_id=r.id) }}" class="btn btn-sm btn-outline-info">
+                                <i class="fas fa-eye"></i>
+                            </a>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="6" class="text-center text-muted">Không có yêu cầu nào</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

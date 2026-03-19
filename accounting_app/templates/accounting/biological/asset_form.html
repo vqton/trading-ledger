@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+
+{% block title %}{{ 'Sửa' if asset else 'Thêm' }} tài sản - VAS Accounting{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1><i class="fas fa-plus-circle"></i> {{ 'Sửa' if asset else 'Thêm' }} tài sản sinh học</h1>
+    <a href="{{ url_for('biological.assets') }}" class="btn btn-secondary">
+        <i class="fas fa-arrow-left"></i> Quay lại
+    </a>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <form method="post">
+            <div class="row mb-3">
+                <div class="col-md-4">
+                    <label class="form-label">Mã tài sản <span class="text-danger">*</span></label>
+                    <input type="text" name="asset_code" class="form-control" value="{{ asset.asset_code if asset else '' }}" required>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Tên tài sản <span class="text-danger">*</span></label>
+                    <input type="text" name="name" class="form-control" value="{{ asset.name if asset else '' }}" required>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Nhóm tài sản <span class="text-danger">*</span></label>
+                    <select name="asset_group_id" class="form-select" required>
+                        <option value="">Chọn nhóm</option>
+                        {% for g in groups %}
+                        <option value="{{ g.id }}" {{ 'selected' if asset and asset.asset_group_id == g.id else '' }}>{{ g.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+
+            <hr>
+            <h5>Thông tin tài sản</h5>
+
+            <div class="row mb-3">
+                <div class="col-md-4">
+                    <label class="form-label">Số lượng</label>
+                    <input type="number" name="quantity" class="form-control" value="{{ asset.quantity if asset else 1 }}" min="1">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Đơn vị tính</label>
+                    <input type="text" name="unit" class="form-control" value="{{ asset.unit if asset else 'cây' }}">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Ngày nhận</label>
+                    <input type="date" name="acquisition_date" class="form-control" value="{{ asset.acquisition_date.strftime('%Y-%m-%d') if asset and asset.acquisition_date else '' }}">
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-4">
+                    <label class="form-label">Nguyên giá <span class="text-danger">*</span></label>
+                    <input type="number" name="cost" class="form-control" step="0.01" value="{{ asset.cost if asset else 0 }}" required>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Giá trị hợp lý</label>
+                    <input type="number" name="fair_value" class="form-control" step="0.01" value="{{ asset.fair_value if asset else 0 }}">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Tài khoản ghi tăng (TK 711)</label>
+                    <input type="text" name="revenue_account" class="form-control" value="{{ asset.revenue_account if asset else '7111' }}">
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Mô tả</label>
+                <textarea name="description" class="form-control" rows="3">{{ asset.description if asset else '' }}</textarea>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-4">
+                    <label class="form-label">Trạng thái</label>
+                    <select name="status" class="form-select">
+                        <option value="active" {{ 'selected' if not asset or asset.status == 'active' else '' }}>Hoạt động</option>
+                        <option value="disposed" {{ 'selected' if asset and asset.status == 'disposed' else '' }}>Đã thanh lý</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="mt-3 d-grid gap-2 d-md-flex justify-content-md-end">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save"></i> Lưu
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

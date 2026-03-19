@@ -1,0 +1,66 @@
+{% extends "accounting/settings/index.html" %}
+
+{% block settings_content %}
+<form method="post">
+    <div class="row mb-3">
+        <div class="col-md-6">
+            <label class="form-label">Bật phê duyệt tự động</label>
+            <select name="enable_auto_approval" class="form-select">
+                <option value="true" {{ 'selected' if settings and settings.enable_auto_approval else '' }}>Có</option>
+                <option value="false" {{ 'selected' if not settings or not settings.enable_auto_approval else '' }}>Không</option>
+            </select>
+        </div>
+        <div class="col-md-6">
+            <label class="form-label">Số ngày hết hạn yêu cầu</label>
+            <input type="number" name="request_expiry_days" class="form-control" value="{{ settings.request_expiry_days if settings else 7 }}">
+        </div>
+    </div>
+
+    <div class="row mb-3">
+        <div class="col-md-6">
+            <label class="form-label">Nhắc nhở trước (ngày)</label>
+            <input type="number" name="reminder_days" class="form-control" value="{{ settings.reminder_days if settings else 2 }}">
+        </div>
+        <div class="col-md-6">
+            <label class="form-label">Gửi email nhắc nhở</label>
+            <select name="send_reminder_email" class="form-select">
+                <option value="true" {{ 'selected' if settings and settings.send_reminder_email else '' }}>Có</option>
+                <option value="false" {{ 'selected' if not settings or not settings.send_reminder_email else '' }}>Không</option>
+            </select>
+        </div>
+    </div>
+
+    <hr>
+    <h5>Quyền phê duyệt</h5>
+
+    <div class="row mb-3">
+        <div class="col-md-6">
+            <label class="form-label">Số người duyệt tối thiểu</label>
+            <input type="number" name="min_approvers" class="form-control" value="{{ settings.min_approvers if settings else 1 }}">
+        </div>
+        <div class="col-md-6">
+            <label class="form-label">Cho phép duyệt bậc thang</label>
+            <select name="allow_cascading_approval" class="form-select">
+                <option value="true" {{ 'selected' if settings and settings.allow_cascading_approval else '' }}>Có</option>
+                <option value="false" {{ 'selected' if not settings or not settings.allow_cascading_approval else '' }}>Không</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="form-check mb-3">
+        <input type="checkbox" name="allow_self_approval" class="form-check-input" id="self_approval" {{ 'checked' if settings and settings.allow_self_approval else '' }}>
+        <label class="form-check-label" for="self_approval">Cho phép tự phê duyệt</label>
+    </div>
+
+    <div class="form-check mb-3">
+        <input type="checkbox" name="require_comments" class="form-check-input" id="require_comments" {{ 'checked' if settings and settings.require_comments else '' }}>
+        <label class="form-check-label" for="require_comments">Yêu cầu ghi chú khi từ chối</label>
+    </div>
+
+    <div class="mt-3 d-grid gap-2 d-md-flex justify-content-md-end">
+        <button type="submit" class="btn btn-primary">
+            <i class="fas fa-save"></i> Lưu thay đổi
+        </button>
+    </div>
+</form>
+{% endblock %}

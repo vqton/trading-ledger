@@ -1,0 +1,77 @@
+{% extends "accounting/settings/index.html" %}
+
+{% block settings_content %}
+<form method="post">
+    <div class="row mb-3">
+        <div class="col-md-6">
+            <label class="form-label">Tên công ty <span class="text-danger">*</span></label>
+            <input type="text" name="company_name" class="form-control" value="{{ settings.company_name if settings else '' }}" required>
+        </div>
+        <div class="col-md-6">
+            <label class="form-label">Mã số thuế</label>
+            <input type="text" name="tax_id" class="form-control" value="{{ settings.tax_id if settings else '' }}">
+        </div>
+    </div>
+
+    <div class="row mb-3">
+        <div class="col-md-6">
+            <label class="form-label">Địa chỉ</label>
+            <input type="text" name="address" class="form-control" value="{{ settings.address if settings else '' }}">
+        </div>
+        <div class="col-md-6">
+            <label class="form-label">Thành phố</label>
+            <input type="text" name="city" class="form-control" value="{{ settings.city if settings else '' }}">
+        </div>
+    </div>
+
+    <div class="row mb-3">
+        <div class="col-md-4">
+            <label class="form-label">Điện thoại</label>
+            <input type="text" name="phone" class="form-control" value="{{ settings.phone if settings else '' }}">
+        </div>
+        <div class="col-md-4">
+            <label class="form-label">Fax</label>
+            <input type="text" name="fax" class="form-control" value="{{ settings.fax if settings else '' }}">
+        </div>
+        <div class="col-md-4">
+            <label class="form-label">Email</label>
+            <input type="email" name="email" class="form-control" value="{{ settings.email if settings else '' }}">
+        </div>
+    </div>
+
+    <div class="row mb-3">
+        <div class="col-md-4">
+            <label class="form-label">Website</label>
+            <input type="url" name="website" class="form-control" value="{{ settings.website if settings else '' }}">
+        </div>
+        <div class="col-md-4">
+            <label class="form-label">Số tài khoản</label>
+            <input type="text" name="bank_account" class="form-control" value="{{ settings.bank_account if settings else '' }}">
+        </div>
+        <div class="col-md-4">
+            <label class="form-label">Ngân hàng</label>
+            <input type="text" name="bank_name" class="form-control" value="{{ settings.bank_name if settings else '' }}">
+        </div>
+    </div>
+
+    <hr>
+    <h5>Đại diện pháp lý</h5>
+
+    <div class="row mb-3">
+        <div class="col-md-6">
+            <label class="form-label">Họ tên</label>
+            <input type="text" name="legal_representative" class="form-control" value="{{ settings.legal_representative if settings else '' }}">
+        </div>
+        <div class="col-md-6">
+            <label class="form-label">Chức vụ</label>
+            <input type="text" name="legal_representative_title" class="form-control" value="{{ settings.legal_representative_title if settings else '' }}">
+        </div>
+    </div>
+
+    <div class="mt-3 d-grid gap-2 d-md-flex justify-content-md-end">
+        <button type="submit" class="btn btn-primary">
+            <i class="fas fa-save"></i> Lưu thay đổi
+        </button>
+    </div>
+</form>
+{% endblock %}

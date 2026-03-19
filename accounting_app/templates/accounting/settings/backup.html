@@ -1,0 +1,70 @@
+{% extends "accounting/settings/index.html" %}
+
+{% block settings_content %}
+<form method="post">
+    <div class="row mb-3">
+        <div class="col-md-6">
+            <label class="form-label">Tự động sao lưu</label>
+            <select name="auto_backup_enabled" class="form-select">
+                <option value="true" {{ 'selected' if settings and settings.auto_backup_enabled else '' }}>Bật</option>
+                <option value="false" {{ 'selected' if not settings or not settings.auto_backup_enabled else '' }}>Tắt</option>
+            </select>
+        </div>
+        <div class="col-md-6">
+            <label class="form-label">Tần suất sao lưu</label>
+            <select name="backup_frequency" class="form-select">
+                <option value="daily" {{ 'selected' if settings and settings.backup_frequency == 'daily' else '' }}>Hàng ngày</option>
+                <option value="weekly" {{ 'selected' if not settings or settings.backup_frequency == 'weekly' else '' }}>Hàng tuần</option>
+                <option value="monthly" {{ 'selected' if settings and settings.backup_frequency == 'monthly' else '' }}>Hàng tháng</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="row mb-3">
+        <div class="col-md-6">
+            <label class="form-label">Thư mục sao lưu</label>
+            <input type="text" name="backup_path" class="form-control" value="{{ settings.backup_path if settings else '/backup' }}">
+        </div>
+        <div class="col-md-6">
+            <label class="form-label">Số bản giữ lại</label>
+            <input type="number" name="backup_retention_count" class="form-control" value="{{ settings.backup_retention_count if settings else 10 }}">
+        </div>
+    </div>
+
+    <div class="row mb-3">
+        <div class="col-md-6">
+            <label class="form-label">Thời gian sao lưu</label>
+            <input type="time" name="backup_time" class="form-control" value="{{ settings.backup_time if settings else '02:00' }}">
+        </div>
+        <div class="col-md-6">
+            <label class="form-label">Nén file</label>
+            <select name="compress_backup" class="form-select">
+                <option value="true" {{ 'selected' if settings and settings.compress_backup else '' }}>Có</option>
+                <option value="false" {{ 'selected' if not settings or not settings.compress_backup else '' }}>Không</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="form-check mb-3">
+        <input type="checkbox" name="backup_to_cloud" class="form-check-input" id="cloud_backup" {{ 'checked' if settings and settings.backup_to_cloud else '' }}>
+        <label class="form-check-label" for="cloud_backup">Sao lưu lên đám mây</label>
+    </div>
+
+    <div class="form-check mb-3">
+        <input type="checkbox" name="encrypt_backup" class="form-check-input" id="encrypt" {{ 'checked' if settings and settings.encrypt_backup else '' }}>
+        <label class="form-check-label" for="encrypt">Mã hóa file sao lưu</label>
+    </div>
+
+    <hr>
+    <h5>Sao lưu thủ công</h5>
+    <a href="{{ url_for('settings.manual_backup') }}" class="btn btn-outline-primary">
+        <i class="fas fa-download"></i> Sao lưu ngay bây giờ
+    </a>
+
+    <div class="mt-4 d-grid gap-2 d-md-flex justify-content-md-end">
+        <button type="submit" class="btn btn-primary">
+            <i class="fas fa-save"></i> Lưu thay đổi
+        </button>
+    </div>
+</form>
+{% endblock %}

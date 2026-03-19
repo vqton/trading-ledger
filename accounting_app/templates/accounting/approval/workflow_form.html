@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+
+{% block title %}{{ 'Sửa' if workflow else 'Tạo' }} quy trình - VAS Accounting{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1><i class="fas fa-plus-circle"></i> {{ 'Sửa' if workflow else 'Tạo' }} quy trình phê duyệt</h1>
+    <a href="{{ url_for('approval.workflows') }}" class="btn btn-secondary">
+        <i class="fas fa-arrow-left"></i> Quay lại
+    </a>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <form method="post">
+            <div class="row mb-3">
+                <div class="col-md-4">
+                    <label class="form-label">Mã quy trình <span class="text-danger">*</span></label>
+                    <input type="text" name="code" class="form-control" value="{{ workflow.code if workflow else '' }}" required>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Tên quy trình <span class="text-danger">*</span></label>
+                    <input type="text" name="name" class="form-control" value="{{ workflow.name if workflow else '' }}" required>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Trạng thái</label>
+                    <select name="is_active" class="form-select">
+                        <option value="true" {{ 'selected' if workflow and workflow.is_active else '' }}>Hoạt động</option>
+                        <option value="false" {{ 'selected' if workflow and not workflow.is_active else '' }}>Không hoạt động</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Mô tả</label>
+                <textarea name="description" class="form-control" rows="3">{{ workflow.description if workflow else '' }}</textarea>
+            </div>
+
+            <hr>
+            <h5>Các bước phê duyệt</h5>
+            <div id="steps-container">
+                {% if workflow and workflow.steps %}
+                {% for step in workflow.steps %}
+                <div class="row mb-2 step-row">
+                    <div class="col-md-3">
+                        <input type="text" name="step_name_{{ loop.index0 }}" class="form-control" placeholder="Tên bước" value="{{ step.name }}">
+                    </div>
+                    <div class="col-md-3">
+                        <select name="step_approver_{{ loop.index0 }}" class="form-select">
+                            <option value="">Chọn người duyệt</option>
+                            {% for u in users %}
+                            <option value="{{ u.id }}" {{ 'selected' if step.approver_id == u.id else '' }}>{{ u.username }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <input type="number" name="step_order_{{ loop.index0 }}" class="form-control" placeholder="Thứ tự" value="{{ step.order }}">
+                    </div>
+                    <div class="col-md-3">
+                        <select name="step_type_{{ loop.index0 }}" class="form-select">
+                            <option value="approve" {{ 'selected' if step.step_type == 'approve' else '' }}>Phê duyệt</option>
+                            <option value="review" {{ 'selected' if step.step_type == 'review' else '' }}>Xem xét</option>
+                        </select>
+                    </div>
+                    <div class="col-md-1">
+                        <button type="button" class="btn btn-danger btn-sm remove-step"><i class="fas fa-trash"></i></button>
+                    </div>
+                </div>
+                {% endfor %}
+                {% endif %}
+            </div>
+            <button type="button" class="btn btn-outline-primary btn-sm mt-2" id="add-step">
+                <i class="fas fa-plus"></i> Thêm bước
+            </button>
+
+            <div class="mt-4 d-grid gap-2 d-md-flex justify-content-md-end">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save"></i> Lưu
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

@@ -51,6 +51,14 @@ class DividendPayable(db.Model):
     def __repr__(self) -> str:
         return f"<DividendPayable {self.voucher_no} - {self.shareholder_name}>"
 
+    @property
+    def status(self) -> str:
+        return self.payment_status
+
+    @status.setter
+    def status(self, value: str) -> None:
+        self.payment_status = value
+
     def calculate_amounts(self) -> None:
         """Calculate gross and net dividend amounts."""
         self.gross_amount = self.shares_owned * self.dividend_per_share
@@ -73,6 +81,22 @@ class DividendPayable(db.Model):
             new_num = 1
 
         return f"DIV-{year}-{new_num:05d}"
+
+    @classmethod
+    def generate_payment_no(cls) -> str:
+        """Generate next dividend payment number."""
+        year = datetime.now().year
+        last_payment = cls.query.filter(
+            cls.voucher_no.like(f"PAY-{year}%")
+        ).order_by(cls.voucher_no.desc()).first()
+
+        if last_payment:
+            last_num = int(last_payment.voucher_no.split("-")[-1])
+            new_num = last_num + 1
+        else:
+            new_num = 1
+
+        return f"PAY-{year}-{new_num:05d}"
 
     @classmethod
     def get_total_declared(cls, fiscal_year: int) -> Decimal:
@@ -116,11 +140,14 @@ class DividendPayable(db.Model):
             "shares_owned": float(self.shares_owned) if self.shares_owned else 0.0,
             "dividend_per_share": float(self.dividend_per_share) if self.dividend_per_share else 0.0,
             "gross_amount": float(self.gross_amount) if self.gross_amount else 0.0,
+            "total_amount": float(self.gross_amount) if self.gross_amount else 0.0,
             "withholding_tax_rate": float(self.withholding_tax_rate) if self.withholding_tax_rate else 0.0,
             "withholding_tax_amount": float(self.withholding_tax_amount) if self.withholding_tax_amount else 0.0,
+            "withholding_tax": float(self.withholding_tax_amount) if self.withholding_tax_amount else 0.0,
             "net_amount": float(self.net_amount) if self.net_amount else 0.0,
             "payment_date": self.payment_date.isoformat() if self.payment_date else None,
             "payment_status": self.payment_status,
+            "status": self.payment_status,
             "payment_method": self.payment_method,
             "bank_account": self.bank_account,
             "tax_id": self.tax_id,

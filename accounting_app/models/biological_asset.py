@@ -33,6 +33,10 @@ class BiologicalAsset(db.Model):
     related_account_id = db.Column(db.Integer, db.ForeignKey("accounts.id"), nullable=True)
     warehouse_id = db.Column(db.Integer, db.ForeignKey("warehouses.id"), nullable=True)
     status = db.Column(db.String(20), default="active", index=True)
+    disposal_type = db.Column(db.String(50), nullable=True)
+    disposal_value = db.Column(db.Numeric(18, 2), nullable=True)
+    disposal_date = db.Column(db.Date, nullable=True)
+    buyer = db.Column(db.String(200), nullable=True)
     notes = db.Column(db.Text, nullable=True)
     created_by = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
     created_at = db.Column(db.DateTime, default=utc_now, nullable=False)
@@ -104,6 +108,10 @@ class BiologicalAsset(db.Model):
             "warehouse_id": self.warehouse_id,
             "warehouse_name": self.warehouse.name if self.warehouse else None,
             "status": self.status,
+            "disposal_type": self.disposal_type,
+            "disposal_value": float(self.disposal_value) if self.disposal_value else None,
+            "disposal_date": self.disposal_date.isoformat() if self.disposal_date else None,
+            "buyer": self.buyer,
             "notes": self.notes,
             "created_by": self.created_by,
             "created_at": self.created_at.isoformat() if self.created_at else None,

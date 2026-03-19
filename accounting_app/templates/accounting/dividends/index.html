@@ -1,0 +1,159 @@
+{% extends "base.html" %}
+
+{% block title %}Cổ tức (TK 332) - VAS Accounting{% endblock %}
+
+{% block content %}
+<h1 class="mt-4"><i class="fas fa-coins"></i> Cổ tức (TK 332)</h1>
+<ol class="breadcrumb mb-4">
+    <li class="breadcrumb-item"><a href="{{ url_for('index') }}">Trang chủ</a></li>
+    <li class="breadcrumb-item active">TK 332 - Phải trả cổ tức</li>
+</ol>
+
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="card border-success">
+            <div class="card-body text-center">
+                <h3 class="text-success">{{ stats.total_dividends }}</h3>
+                <p>Tổng số đợt chia cổ tức</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card border-primary">
+            <div class="card-body text-center">
+                <h3 class="text-primary">{{ "{:,.0f}".format(stats.total_declared) }}</h3>
+                <p>Tổng công bố (VND)</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card border-info">
+            <div class="card-body text-center">
+                <h3 class="text-info">{{ "{:,.0f}".format(stats.total_paid) }}</h3>
+                <p>Đã chi trả (VND)</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card border-warning">
+            <div class="card-body text-center">
+                <h3 class="text-warning">{{ "{:,.0f}".format(stats.total_outstanding) }}</h3>
+                <p>Còn phải trả (VND)</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card mb-4">
+    <div class="card-header bg-primary text-white">
+        <i class="fas fa-link"></i> Đường dẫn nhanh
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-3">
+                <a href="{{ url_for('dividends.index_list') }}" class="text-decoration-none">
+                    <i class="fas fa-list"></i> Danh sách cổ tức
+                </a>
+            </div>
+            <div class="col-md-3">
+                <a href="{{ url_for('dividends.new') }}" class="text-decoration-none">
+                    <i class="fas fa-plus"></i> Tạo đợt chia
+                </a>
+            </div>
+            <div class="col-md-3">
+                <a href="{{ url_for('dividends.payment') }}" class="text-decoration-none">
+                    <i class="fas fa-money-bill"></i> Chi trả cổ tức
+                </a>
+            </div>
+            <div class="col-md-3">
+                <a href="{{ url_for('dividends.summary') }}" class="text-decoration-none">
+                    <i class="fas fa-chart-bar"></i> Tổng hợp năm
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <i class="fas fa-clock"></i> Cổ tức chờ chi trả
+            </div>
+            <div class="card-body">
+                {% if pending_dividends %}
+                <div class="table-responsive">
+                    <table class="table table-sm">
+                        <thead>
+                            <tr>
+                                <th>Đợt</th>
+                                <th class="text-end">Số tiền</th>
+                                <th class="text-end">Đã trả</th>
+                                <th>Trạng thái</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for d in pending_dividends %}
+                            <tr>
+                                <td>{{ d.dividend_no }}</td>
+                                <td class="text-end">{{ "{:,.0f}".format(d.total_amount) }}</td>
+                                <td class="text-end">{{ "{:,.0f}".format(d.paid_amount) }}</td>
+                                <td>
+                                    <span class="badge bg-{{ 'warning' if d.status == 'partial' else 'info' }}">
+                                        {{ 'Một phần' if d.status == 'partial' else 'Mới công bố' }}
+                                    </span>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <p class="text-muted">Không có cổ tức chờ chi trả</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <i class="fas fa-coins"></i> Thông tin cổ tức năm {{ current_year }}
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <strong>Số đợt đã chia:</strong>
+                    </div>
+                    <div class="col-md-6 text-end">
+                        {{ stats.yearly_count }} đợt
+                    </div>
+                </div>
+                <div class="row mt-2">
+                    <div class="col-md-6">
+                        <strong>Tổng công bố năm:</strong>
+                    </div>
+                    <div class="col-md-6 text-end text-primary">
+                        {{ "{:,.0f}".format(stats.yearly_declared) }} VND
+                    </div>
+                </div>
+                <div class="row mt-2">
+                    <div class="col-md-6">
+                        <strong>Đã chi trả năm:</strong>
+                    </div>
+                    <div class="col-md-6 text-end text-success">
+                        {{ "{:,.0f}".format(stats.yearly_paid) }} VND
+                    </div>
+                </div>
+                <div class="row mt-2">
+                    <div class="col-md-6">
+                        <strong>Tỷ lệ chi trả:</strong>
+                    </div>
+                    <div class="col-md-6 text-end">
+                        {{ "%.1f"|format(stats.payment_ratio * 100) if stats.payment_ratio else 0 }}%
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

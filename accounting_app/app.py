@@ -74,6 +74,13 @@ def create_app(config_name: str = None) -> Flask:
     from routes.cost_center_routes import cost_center_bp
     from routes.project_routes import project_bp
     from routes.tax_payment_routes import tax_payment_bp
+    from routes.approval_routes import approval_bp
+    from routes.document_routes import document_bp
+    from routes.notification_routes import notification_bp
+    from routes.settings_routes import settings_bp
+    from routes.backup_routes import backup_bp
+    from routes.biological_routes import biological_bp
+    from routes.dividend_routes import dividend_bp
 
     app.register_blueprint(auth_bp)
     app.register_blueprint(accounting_bp)
@@ -83,6 +90,13 @@ def create_app(config_name: str = None) -> Flask:
     app.register_blueprint(cost_center_bp)
     app.register_blueprint(project_bp)
     app.register_blueprint(tax_payment_bp)
+    app.register_blueprint(approval_bp)
+    app.register_blueprint(document_bp)
+    app.register_blueprint(notification_bp)
+    app.register_blueprint(settings_bp)
+    app.register_blueprint(backup_bp)
+    app.register_blueprint(biological_bp)
+    app.register_blueprint(dividend_bp)
 
     @app.teardown_appcontext
     def shutdown_session(exception=None):

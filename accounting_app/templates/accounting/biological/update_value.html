@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+
+{% block title %}Cập nhật giá trị hợp lý - VAS Accounting{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1><i class="fas fa-sync"></i> Cập nhật giá trị hợp lý</h1>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <i class="fas fa-info-circle"></i> Thông tin cập nhật
+    </div>
+    <div class="card-body">
+        <form method="post">
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label class="form-label">Tài sản <span class="text-danger">*</span></label>
+                    <select name="asset_id" class="form-select" required>
+                        <option value="">Chọn tài sản</option>
+                        {% for a in assets %}
+                        <option value="{{ a.id }}">{{ a.asset_code }} - {{ a.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Ngày cập nhật <span class="text-danger">*</span></label>
+                    <input type="date" name="update_date" class="form-control" value="{{ today }}" required>
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label class="form-label">Giá trị cũ</label>
+                    <input type="number" name="old_value" class="form-control" step="0.01" id="old_value" readonly>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Giá trị mới <span class="text-danger">*</span></label>
+                    <input type="number" name="new_value" class="form-control" step="0.01" required>
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label class="form-label">Chênh lệch</label>
+                    <input type="number" name="difference" class="form-control" step="0.01" id="difference" readonly>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Ghi chú</label>
+                    <textarea name="notes" class="form-control" rows="2"></textarea>
+                </div>
+            </div>
+
+            <div class="alert alert-info">
+                <i class="fas fa-info-circle"></i>
+                <strong>Lưu ý:</strong> Theo VAS 06, tài sản sinh học phải được ghi nhận theo giá trị hợp lý tại thời điểm báo cáo.
+            </div>
+
+            <div class="mt-3 d-grid gap-2 d-md-flex justify-content-md-end">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save"></i> Lưu
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

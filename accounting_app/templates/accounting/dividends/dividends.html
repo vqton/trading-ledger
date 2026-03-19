@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+
+{% block title %}Danh sách cổ tức - VAS Accounting{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1><i class="fas fa-list"></i> Danh sách cổ tức</h1>
+    <a href="{{ url_for('dividends.new') }}" class="btn btn-primary">
+        <i class="fas fa-plus"></i> Tạo đợt chia
+    </a>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <form method="get" class="row g-3 mb-4">
+            <div class="col-md-3">
+                <select name="fiscal_year" class="form-select">
+                    <option value="">Tất cả năm</option>
+                    {% for y in range(current_year-5, current_year+1) %}
+                    <option value="{{ y }}" {{ 'selected' if request.args.get('fiscal_year')|string == y|string else '' }}>{{ y }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-3">
+                <select name="status" class="form-select">
+                    <option value="">Tất cả trạng thái</option>
+                    <option value="draft" {{ 'selected' if request.args.get('status') == 'draft' else '' }}>Nháp</option>
+                    <option value="declared" {{ 'selected' if request.args.get('status') == 'declared' else '' }}>Đã công bố</option>
+                    <option value="partial" {{ 'selected' if request.args.get('status') == 'partial' else '' }}>Chi trả một phần</option>
+                    <option value="paid" {{ 'selected' if request.args.get('status') == 'paid' else '' }}>Đã chi trả</option>
+                </select>
+            </div>
+            <div class="col-md-4">
+                <input type="text" name="search" class="form-control" placeholder="Tìm kiếm..." value="{{ request.args.get('search', '') }}">
+            </div>
+            <div class="col-md-2 d-flex align-items-end">
+                <button type="submit" class="btn btn-primary w-100"><i class="fas fa-search"></i></button>
+            </div>
+        </form>
+
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Số đợt</th>
+                        <th>Năm tài chính</th>
+                        <th>Loại</th>
+                        <th class="text-end">Tổng công bố</th>
+                        <th class="text-end">Đã chi trả</th>
+                        <th class="text-end">Còn lại</th>
+                        <th>Ngày công bố</th>
+                        <th>Trạng thái</th>
+                        <th>Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for d in dividends %}
+                    <tr>
+                        <td><strong>{{ d.dividend_no }}</strong></td>
+                        <td>{{ d.fiscal_year }}</td>
+                        <td>
+                            {% if d.dividend_type == 'cash' %}Tiền mặt{% endif %}
+                            {% if d.dividend_type == 'stock' %}Cổ phiếu{% endif %}
+                        </td>
+                        <td class="text-end">{{ "{:,.0f}".format(d.total_amount) }}</td>
+                        <td class="text-end text-success">{{ "{:,.0f}".format(d.paid_amount) }}</td>
+                        <td class="text-end text-warning">{{ "{:,.0f}".format(d.total_amount - d.paid_amount) }}</td>
+                        <td>{{ d.declaration_date.strftime('%d/%m/%Y') if d.declaration_date else '-' }}</td>
+                        <td>
+                            <span class="badge bg-{{ 'secondary' if d.status == 'draft' else 'info' if d.status == 'declared' else 'warning' if d.status == 'partial' else 'success' }}">
+                                {{ d.status }}
+                            </span>
+                        </td>
+                        <td>
+                            <a href="{{ url_for('dividends.detail', dividend_id=d.id) }}" class="btn btn-sm btn-outline-info">
+                                <i class="fas fa-eye"></i>
+                            </a>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="9" class="text-center text-muted">Không có cổ tức nào</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
