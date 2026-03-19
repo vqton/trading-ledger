@@ -1,7 +1,50 @@
 :root {
-  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: ui-monospace, "Cascadia Code", "Source Code Pro", Menlo, Consolas, monospace;
+
   --bg: #ffffff;
+  --bg-body: #f4f5f7;
   --fg: #1f2937;
   --surface: #f8f9fa;
+  --surface-hover: #e9ecef;
+  --border: #dee2e6;
+
   --primary: #0d6efd;
+  --primary-hover: #0b5ed7;
+  --primary-light: #cfe2ff;
+
+  --success: #198754;
+  --success-light: #d1e7dd;
+  --warning: #ffc107;
+  --warning-light: #fff3cd;
+  --danger: #dc3545;
+  --danger-light: #f8d7da;
+  --info: #0dcaf0;
+
+  --sidebar-bg: #1e2a3a;
+  --sidebar-text: #a8b2c1;
+  --sidebar-hover: #2a3a4d;
+  --sidebar-active: #0d6efd;
+  --sidebar-active-bg: rgba(13, 110, 253, 0.15);
+
+  --header-bg: linear-gradient(135deg, #1e2a3a 0%, #2a3a4d 100%);
+  --header-height: 60px;
+
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 4px 16px rgba(0, 0, 0, 0.15);
+
+  --radius-sm: 4px;
+  --radius: 6px;
+  --radius-lg: 8px;
+
+  --transition: 150ms ease-in-out;
+
+  --kpi-debit: #0d6efd;
+  --kpi-credit: #dc3545;
+  --kpi-balance: #198754;
+  --kpi-warning: #ffc107;
+
+  --text-muted: #6c757d;
+  --text-small: 0.8125rem;
 }

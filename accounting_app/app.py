@@ -81,8 +81,10 @@ def create_app(config_name: str = None) -> Flask:
     from routes.backup_routes import backup_bp
     from routes.biological_routes import biological_bp
     from routes.dividend_routes import dividend_bp
+    from routes.api_routes import api_bp
 
     app.register_blueprint(auth_bp)
+    app.register_blueprint(api_bp)
     app.register_blueprint(accounting_bp)
     app.register_blueprint(tax_bp)
     app.register_blueprint(partner_bp)

@@ -5,74 +5,450 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}VAS Accounting System{% endblock %}</title>
     <meta name="csrf-token" content="{{ csrf_token if csrf_token else '' }}">
+    <link href="{{ url_for('static', filename='css/app.css') }}" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='fontawesome/css/all.min.css') }}">
-    <script>
-        // CSRF token for AJAX requests
-        const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
-    </script>
-    <style>
-        body { min-height: 100vh; }
-        .sidebar { min-height: 100vh; background: #2c3e50; }
-        .sidebar a { color: #ecf0f1; text-decoration: none; padding: 10px 15px; display: block; }
-        .sidebar a:hover { background: #34495e; }
-    </style>
     {% block extra_css %}{% endblock %}
 </head>
 <body>
-    <div class="container-fluid">
-        <div class="row">
-            {% if current_user.is_authenticated %}
-            <nav class="col-md-2 d-none d-md-block sidebar">
-                <div class="p-3 text-white">
-                    <h5><i class="fas fa-calculator"></i> VAS Accounting</h5>
-                    <small class="text-muted">{{ current_user.username }}</small>
+    {% if current_user.is_authenticated %}
+    <div class="accounting-app">
+        <header class="accounting-header">
+            <a href="{{ url_for('index') }}" class="header-brand">
+                <span class="brand-icon"><i class="fas fa-calculator"></i></span>
+                <div>
+                    <div class="brand-text">VAS Accounting</div>
                 </div>
-                <a href="{{ url_for('index') }}"><i class="fas fa-house"></i> Trang chủ</a>
-                <a href="{{ url_for('accounting.accounts') }}"><i class="fas fa-book"></i> Danh mục tài khoản</a>
-                <a href="{{ url_for('partner.index') }}"><i class="fas fa-address-book"></i> Đối tác</a>
-                <a href="{{ url_for('accounting.journal') }}"><i class="fas fa-file-invoice"></i> Sổ kế toán</a>
-                <a href="{{ url_for('accounting.ledger') }}"><i class="fas fa-book-open"></i> Sổ cái</a>
-                <a href="{{ url_for('financial.reports') }}"><i class="fas fa-chart-bar"></i> Báo cáo tài chính</a>
-                <a href="{{ url_for('cost_center.index') }}"><i class="fas fa-layer-group"></i> Trung tâm chi phí</a>
-                <a href="{{ url_for('project.index') }}"><i class="fas fa-project-diagram"></i> Dự án</a>
-                <a href="{{ url_for('tax_payment.index') }}"><i class="fas fa-file-invoice-dollar"></i> Nộp thuế</a>
-                <a href="{{ url_for('tax.index') }}"><i class="fas fa-receipt"></i> Báo cáo thuế</a>
-                <a href="{{ url_for('approval.index') }}"><i class="fas fa-check-circle"></i> Phê duyệt</a>
-                <a href="{{ url_for('document.index') }}"><i class="fas fa-file-alt"></i> Tài liệu</a>
-                <a href="{{ url_for('notification.index') }}"><i class="fas fa-bell"></i> Thông báo</a>
-                <a href="{{ url_for('biological.index') }}"><i class="fas fa-leaf"></i> Tài sản sinh học</a>
-                <a href="{{ url_for('dividend.index') }}"><i class="fas fa-coins"></i> Cổ tức</a>
+            </a>
+
+            <div class="header-kpis">
+                <div class="kpi-card kpi-debit">
+                    <i class="fas fa-arrow-down kpi-icon"></i>
+                    <div class="kpi-content">
+                        <span class="kpi-label">Tổng Nợ</span>
+                        <span class="kpi-value" id="kpi-debit">-</span>
+                    </div>
+                </div>
+                <div class="kpi-card kpi-credit">
+                    <i class="fas fa-arrow-up kpi-icon"></i>
+                    <div class="kpi-content">
+                        <span class="kpi-label">Tổng Có</span>
+                        <span class="kpi-value" id="kpi-credit">-</span>
+                    </div>
+                </div>
+                <div class="kpi-card kpi-balance">
+                    <i class="fas fa-balance-scale kpi-icon"></i>
+                    <div class="kpi-content">
+                        <span class="kpi-label">Chênh lệch</span>
+                        <span class="kpi-value" id="kpi-balance">-</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="header-period">
+                <i class="fas fa-calendar"></i>
+                Kỳ: <strong id="current-period">--/----</strong>
+            </div>
+
+            <div class="header-search">
+                <input type="search" 
+                       id="globalSearch"
+                       placeholder="Tìm chứng từ, tài khoản..."
+                       autocomplete="off"
+                       aria-label="Tìm kiếm toàn cục">
+                <i class="fas fa-search search-icon"></i>
+                <span class="search-hint">Ctrl+K</span>
+            </div>
+
+            <div class="header-actions">
+                <button class="header-btn" id="btnNotifications" aria-label="Thông báo">
+                    <i class="fas fa-bell"></i>
+                    <span class="badge" id="notifBadge" style="display:none;">0</span>
+                </button>
+                <button class="header-btn" id="btnSidebar" aria-label="Menu">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+
+            <div class="header-user" id="userMenu">
+                <div class="user-avatar">{{ current_user.username[:2]|upper }}</div>
+                <div class="user-info">
+                    <span class="user-name">{{ current_user.username }}</span>
+                    <span class="user-role">{{ current_user.role.name }}</span>
+                </div>
+            </div>
+        </header>
+
+        <nav class="accounting-nav">
+            <a href="{{ url_for('index') }}" class="nav-item {% if request.endpoint == 'index' %}active{% endif %}">
+                <i class="fas fa-home"></i> Dashboard
+            </a>
+            <a href="{{ url_for('accounting.voucher_form') }}" class="nav-item {% if 'voucher' in request.endpoint %}active{% endif %}">
+                <i class="fas fa-file-invoice"></i> Chứng từ
+            </a>
+            <a href="{{ url_for('financial.reports') }}" class="nav-item {% if 'report' in request.endpoint or 'financial' in request.endpoint %}active{% endif %}">
+                <i class="fas fa-chart-bar"></i> Báo cáo
+            </a>
+            <a href="{{ url_for('settings.index') }}" class="nav-item {% if 'settings' in request.endpoint %}active{% endif %}">
+                <i class="fas fa-cog"></i> Cài đặt
+            </a>
+        </nav>
+
+        <div class="accounting-body">
+            <aside class="accounting-sidebar" id="sidebar">
+                <div class="sidebar-section">
+                    <h6 class="sidebar-heading">THƯỜNG DÙNG</h6>
+                    <a href="{{ url_for('accounting.voucher_form') }}" class="sidebar-link">
+                        <i class="fas fa-plus-circle"></i> Tạo chứng từ
+                        <kbd>1</kbd>
+                    </a>
+                    <a href="{{ url_for('accounting.trial_balance') }}" class="sidebar-link">
+                        <i class="fas fa-balance-scale"></i> Bảng cân đối
+                        <kbd>2</kbd>
+                    </a>
+                    <a href="{{ url_for('accounting.journal') }}" class="sidebar-link">
+                        <i class="fas fa-book"></i> Sổ NKCT
+                        <kbd>3</kbd>
+                    </a>
+                </div>
+
+                <div class="sidebar-section">
+                    <h6 class="sidebar-heading">DANH MỤC</h6>
+                    <a href="{{ url_for('accounting.accounts') }}" class="sidebar-link {% if request.endpoint == 'accounting.accounts' %}active{% endif %}">
+                        <i class="fas fa-sitemap"></i> Danh mục TK
+                    </a>
+                    <a href="{{ url_for('partner.index') }}" class="sidebar-link {% if 'partner' in request.endpoint %}active{% endif %}">
+                        <i class="fas fa-address-book"></i> Đối tác
+                    </a>
+                </div>
+
+                <div class="sidebar-section">
+                    <h6 class="sidebar-heading">SỔ SÁCH</h6>
+                    <a href="{{ url_for('accounting.ledger') }}" class="sidebar-link {% if request.endpoint in ['accounting.ledger', 'accounting.ledger_detail', 'accounting.general_ledger'] %}active{% endif %}">
+                        <i class="fas fa-book-open"></i> Sổ cái
+                    </a>
+                    <a href="{{ url_for('accounting.journal') }}" class="sidebar-link {% if request.endpoint == 'accounting.journal' %}active{% endif %}">
+                        <i class="fas fa-list-alt"></i> Sổ NKCT
+                    </a>
+                    <a href="{{ url_for('accounting.tax_report') }}" class="sidebar-link {% if request.endpoint == 'accounting.tax_report' %}active{% endif %}">
+                        <i class="fas fa-file-invoice-dollar"></i> Sổ thuế
+                    </a>
+                </div>
+
+                <div class="sidebar-section">
+                    <h6 class="sidebar-heading">BÁO CÁO</h6>
+                    <a href="{{ url_for('financial.reports') }}" class="sidebar-link {% if request.endpoint == 'financial.reports' %}active{% endif %}">
+                        <i class="fas fa-chart-pie"></i> Báo cáo tài chính
+                    </a>
+                    <a href="{{ url_for('tax.index') }}" class="sidebar-link {% if 'tax' in request.endpoint and 'tax_payment' not in request.endpoint %}active{% endif %}">
+                        <i class="fas fa-receipt"></i> Báo cáo thuế
+                    </a>
+                    <a href="{{ url_for('cost_center.index') }}" class="sidebar-link {% if 'cost_center' in request.endpoint %}active{% endif %}">
+                        <i class="fas fa-layer-group"></i> Trung tâm chi phí
+                    </a>
+                </div>
+
+                <div class="sidebar-section">
+                    <h6 class="sidebar-heading">KHÁC</h6>
+                    <a href="{{ url_for('project.index') }}" class="sidebar-link {% if 'project' in request.endpoint %}active{% endif %}">
+                        <i class="fas fa-project-diagram"></i> Dự án
+                    </a>
+                    <a href="{{ url_for('approval.index') }}" class="sidebar-link {% if 'approval' in request.endpoint %}active{% endif %}">
+                        <i class="fas fa-check-circle"></i> Phê duyệt
+                        <span class="badge" id="pendingBadge" style="display:none;">0</span>
+                    </a>
+                    <a href="{{ url_for('notification.index') }}" class="sidebar-link {% if 'notification' in request.endpoint %}active{% endif %}">
+                        <i class="fas fa-bell"></i> Thông báo
+                    </a>
+                </div>
+
                 {% if current_user.role.name == 'admin' %}
-                <hr>
-                <a href="{{ url_for('auth.users') }}"><i class="fas fa-users"></i> Quản lý người dùng</a>
-                <a href="{{ url_for('settings.index') }}"><i class="fas fa-cog"></i> Cài đặt</a>
-                <a href="{{ url_for('backup.index') }}"><i class="fas fa-database"></i> Sao lưu</a>
+                <div class="sidebar-section">
+                    <h6 class="sidebar-heading">QUẢN TRỊ</h6>
+                    <a href="{{ url_for('auth.users') }}" class="sidebar-link {% if 'users' in request.endpoint %}active{% endif %}">
+                        <i class="fas fa-users"></i> Người dùng
+                    </a>
+                    <a href="{{ url_for('backup.index') }}" class="sidebar-link {% if 'backup' in request.endpoint %}active{% endif %}">
+                        <i class="fas fa-database"></i> Sao lưu
+                    </a>
+                </div>
                 {% endif %}
-                <hr>
-                <a href="{{ url_for('auth.change_password') }}"><i class="fas fa-key"></i> Đổi mật khẩu</a>
-                <a href="{{ url_for('auth.logout') }}"><i class="fas fa-right-from-bracket"></i> Đăng xuất</a>
-            </nav>
-            {% endif %}
-            
-            <main class="{% if current_user.is_authenticated %}col-md-10{% else %}col{% endif %} ms-sm-auto px-4">
+
+                <div class="sidebar-section">
+                    <h6 class="sidebar-heading">TÀI KHOẢN</h6>
+                    <a href="{{ url_for('auth.change_password') }}" class="sidebar-link">
+                        <i class="fas fa-key"></i> Đổi mật khẩu
+                    </a>
+                    <a href="{{ url_for('auth.logout') }}" class="sidebar-link">
+                        <i class="fas fa-sign-out-alt"></i> Đăng xuất
+                    </a>
+                </div>
+            </aside>
+
+            <main class="accounting-main" id="mainContent">
+                <nav class="accounting-breadcrumb" aria-label="Breadcrumb">
+                    {% block breadcrumb %}
+                    <a href="{{ url_for('index') }}"><i class="fas fa-home"></i></a>
+                    <span class="separator">/</span>
+                    <span class="current">{% block breadcrumb_title %}Trang chủ{% endblock %}</span>
+                    {% endblock %}
+                </nav>
+
                 {% with messages = get_flashed_messages(with_categories=true) %}
                     {% if messages %}
+                    <div class="toast-container" id="toastContainer">
                         {% for category, message in messages %}
-                        <div class="alert alert-{{ category }} alert-dismissible fade show mt-3" role="alert">
-                            {{ message }}
-                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        <div class="accounting-toast toast-{{ category }}" role="alert">
+                            <i class="fas {% if category == 'success' %}fa-check-circle toast-icon{% elif category == 'danger' %}fa-exclamation-circle toast-icon{% elif category == 'warning' %}fa-exclamation-triangle toast-icon{% else %}fa-info-circle toast-icon{% endif %}"></i>
+                            <div class="toast-content">
+                                <div class="toast-message">{{ message }}</div>
+                            </div>
+                            <button type="button" class="toast-close" aria-label="Đóng">
+                                <i class="fas fa-times"></i>
+                            </button>
                         </div>
                         {% endfor %}
+                    </div>
                     {% endif %}
                 {% endwith %}
-                
+
                 {% block content %}{% endblock %}
+
+                {% block audit_trail %}
+                <div class="audit-trail">
+                    <span class="audit-item">
+                        <i class="fas fa-user"></i>
+                        <span id="lastEditedBy">{{ current_user.username }}</span>
+                    </span>
+                    <span class="audit-item">
+                        <i class="fas fa-clock"></i>
+                        <span id="lastEditedAt">{{ "now"|date("d/m/Y H:i") }}</span>
+                    </span>
+                </div>
+                {% endblock %}
             </main>
         </div>
     </div>
+
+    <div class="search-modal" id="searchModal" role="dialog" aria-modal="true" aria-label="Tìm kiếm">
+        <div class="search-box">
+            <div class="search-input-wrap">
+                <i class="fas fa-search"></i>
+                <input type="text" id="searchInput" placeholder="Tìm chứng từ, tài khoản, đối tác..." autocomplete="off">
+            </div>
+            <div class="search-results" id="searchResults">
+                <div class="search-section">
+                    <div class="section-title">Kết quả</div>
+                    <div id="searchResultsList"></div>
+                </div>
+            </div>
+            <div class="search-footer">
+                <div class="hint"><kbd>↑</kbd><kbd>↓</kbd> Di chuyển</div>
+                <div class="hint"><kbd>Enter</kbd> Chọn</div>
+                <div class="hint"><kbd>Esc</kbd> Đóng</div>
+            </div>
+        </div>
+    </div>
+
+    {% else %}
+    {% block login_content %}{% endblock %}
+    {% endif %}
     
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
+
+    document.addEventListener('DOMContentLoaded', function() {
+        initHeader();
+        initSidebar();
+        initSearch();
+        initToasts();
+        initKeyboardShortcuts();
+        loadKPIData();
+        loadNotificationCount();
+    });
+
+    function initHeader() {
+        const period = document.getElementById('current-period');
+        if (period) {
+            const now = new Date();
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const year = now.getFullYear();
+            period.textContent = month + '/' + year;
+        }
+    }
+
+    function initSidebar() {
+        const sidebar = document.getElementById('sidebar');
+        const btnSidebar = document.getElementById('btnSidebar');
+
+        if (btnSidebar && sidebar) {
+            btnSidebar.addEventListener('click', function() {
+                sidebar.classList.toggle('open');
+            });
+        }
+
+        document.querySelectorAll('.sidebar-link').forEach(function(link) {
+            link.addEventListener('mouseenter', function() {
+                this.setAttribute('title', this.textContent.trim());
+            });
+        });
+    }
+
+    function initSearch() {
+        const searchModal = document.getElementById('searchModal');
+        const searchInput = document.getElementById('searchInput');
+        const globalSearch = document.getElementById('globalSearch');
+
+        function openSearch() {
+            searchModal.classList.add('open');
+            searchInput.focus();
+        }
+
+        function closeSearch() {
+            searchModal.classList.remove('open');
+            searchInput.value = '';
+        }
+
+        if (globalSearch) {
+            globalSearch.addEventListener('focus', openSearch);
+        }
+
+        searchModal.addEventListener('click', function(e) {
+            if (e.target === searchModal) closeSearch();
+        });
+
+        searchInput.addEventListener('input', debounce(function() {
+            performSearch(this.value);
+        }, 300));
+    }
+
+    function performSearch(query) {
+        const resultsList = document.getElementById('searchResultsList');
+        if (!query.trim()) {
+            resultsList.innerHTML = '<div class="search-item"><span class="item-meta">Nhập từ khóa để tìm kiếm...</span></div>';
+            return;
+        }
+        resultsList.innerHTML = '<div class="search-item"><i class="fas fa-spinner fa-spin"></i> Đang tìm...</div>';
+
+        fetch('/api/v1/search?q=' + encodeURIComponent(query), {
+            headers: { 'X-CSRFToken': csrfToken }
+        })
+        .then(r => r.json())
+        .then(data => {
+            if (data.results && data.results.length) {
+                resultsList.innerHTML = data.results.map(r => `
+                    <a href="${r.url}" class="search-item">
+                        <i class="fas ${r.icon || 'fa-file'}"></i>
+                        <div class="item-content">
+                            <div class="item-title">${r.title}</div>
+                            <div class="item-meta">${r.meta || ''}</div>
+                        </div>
+                        <span class="item-shortcut">${r.type || ''}</span>
+                    </a>
+                `).join('');
+            } else {
+                resultsList.innerHTML = '<div class="search-item"><span class="item-meta">Không tìm thấy kết quả</span></div>';
+            }
+        })
+        .catch(() => {
+            resultsList.innerHTML = '<div class="search-item"><span class="item-meta">Lỗi tìm kiếm</span></div>';
+        });
+    }
+
+    function initToasts() {
+        const toasts = document.querySelectorAll('.accounting-toast');
+        toasts.forEach(function(toast) {
+            setTimeout(function() {
+                toast.classList.add('hiding');
+                setTimeout(function() { toast.remove(); }, 200);
+            }, 5000);
+        });
+
+        document.querySelectorAll('.toast-close').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                const toast = this.closest('.accounting-toast');
+                toast.classList.add('hiding');
+                setTimeout(function() { toast.remove(); }, 200);
+            });
+        });
+    }
+
+    function initKeyboardShortcuts() {
+        document.addEventListener('keydown', function(e) {
+            if (e.ctrlKey && e.key === 'k') {
+                e.preventDefault();
+                document.getElementById('searchModal')?.classList.add('open');
+                document.getElementById('searchInput')?.focus();
+            }
+            if (e.key === 'Escape') {
+                document.getElementById('searchModal')?.classList.remove('open');
+            }
+            if (e.key === '1' && !e.ctrlKey && !e.altKey && document.activeElement.tagName !== 'INPUT' && document.activeElement.tagName !== 'TEXTAREA') {
+                window.location.href = '{{ url_for("accounting.voucher_form") }}';
+            }
+            if (e.key === '2' && !e.ctrlKey && !e.altKey && document.activeElement.tagName !== 'INPUT' && document.activeElement.tagName !== 'TEXTAREA') {
+                window.location.href = '{{ url_for("accounting.trial_balance") }}';
+            }
+            if (e.key === '3' && !e.ctrlKey && !e.altKey && document.activeElement.tagName !== 'INPUT' && document.activeElement.tagName !== 'TEXTAREA') {
+                window.location.href = '{{ url_for("accounting.journal") }}';
+            }
+        });
+    }
+
+    function loadKPIData() {
+        fetch('/api/v1/kpi/summary', {
+            headers: { 'X-CSRFToken': csrfToken }
+        })
+        .then(r => r.json())
+        .then(data => {
+            if (data.total_debit) {
+                document.getElementById('kpi-debit').textContent = formatCurrency(data.total_debit);
+            }
+            if (data.total_credit) {
+                document.getElementById('kpi-credit').textContent = formatCurrency(data.total_credit);
+            }
+            if (data.difference !== undefined) {
+                const el = document.getElementById('kpi-balance');
+                el.textContent = formatCurrency(Math.abs(data.difference));
+                if (data.difference !== 0) el.classList.add('amount-negative');
+            }
+        })
+        .catch(() => {});
+    }
+
+    function loadNotificationCount() {
+        fetch('/api/v1/notifications/count', {
+            headers: { 'X-CSRFToken': csrfToken }
+        })
+        .then(r => r.json())
+        .then(data => {
+            const badge = document.getElementById('notifBadge');
+            if (data.count > 0) {
+                badge.textContent = data.count > 99 ? '99+' : data.count;
+                badge.style.display = 'flex';
+            }
+        })
+        .catch(() => {});
+    }
+
+    function formatCurrency(amount) {
+        if (amount === null || amount === undefined) return '-';
+        return new Intl.NumberFormat('vi-VN').format(amount);
+    }
+
+    function debounce(func, wait) {
+        let timeout;
+        return function executedFunction(...args) {
+            const later = () => {
+                clearTimeout(timeout);
+                func(...args);
+            };
+            clearTimeout(timeout);
+            timeout = setTimeout(later, wait);
+        };
+    }
+    </script>
     {% block extra_js %}{% endblock %}
 </body>
 </html>
