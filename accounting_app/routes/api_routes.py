@@ -1,12 +1,12 @@
 from flask import Blueprint, jsonify, request
 from flask_login import login_required, current_user
-from datetime import date, datetime
+from datetime import date
 from sqlalchemy import or_, func
 
 from core.database import db
 from models.journal import JournalVoucher, JournalEntry, VoucherStatus
 from models.account import Account
-from models.partner import Partner
+from models.partner import Customer, Vendor
 from models.notification import Notification
 
 api_bp = Blueprint('api', __name__, url_prefix='/api/v1')
@@ -30,8 +30,8 @@ def kpi_summary():
         func.extract('year', JournalVoucher.voucher_date) == current_year
     ).first()
 
-    total_debit = float(entries.total_debit or 0)
-    total_credit = float(entries.total_credit or 0)
+    total_debit = float(entries.total_debit if entries and entries.total_debit else 0)
+    total_credit = float(entries.total_credit if entries and entries.total_credit else 0)
 
     return jsonify({
         'total_debit': total_debit,
@@ -59,18 +59,18 @@ def global_search():
         return jsonify({'results': []})
 
     results = []
-    query_lower = query.lower()
+    query_pattern = f'%{query}%'
 
     vouchers = JournalVoucher.query.filter(
         or_(
-            JournalVoucher.voucher_no.ilike(f'%{query}%'),
-            JournalVoucher.description.ilike(f'%{query}%')
+            JournalVoucher.voucher_no.ilike(query_pattern),
+            JournalVoucher.description.ilike(query_pattern)
         )
     ).limit(5).all()
     for v in vouchers:
         results.append({
             'type': 'CT',
-            'title': f'{v.voucher_no} - {v.description[:50]}',
+            'title': f'{v.voucher_no} - {v.description[:50] if v.description else ""}',
             'meta': v.voucher_date.strftime('%d/%m/%Y'),
             'url': f'/accounting/voucher/{v.id}',
             'icon': 'fa-file-invoice'
@@ -78,8 +78,8 @@ def global_search():
 
     accounts = Account.query.filter(
         or_(
-            Account.account_code.ilike(f'%{query}%'),
-            Account.account_name.ilike(f'%{query}%')
+            Account.account_code.ilike(query_pattern),
+            Account.account_name.ilike(query_pattern)
         )
     ).limit(5).all()
     for a in accounts:
@@ -91,20 +91,34 @@ def global_search():
             'icon': 'fa-sitemap'
         })
 
-    partners = Partner.query.filter(
+    customers = Customer.query.filter(
         or_(
-            Partner.code.ilike(f'%{query}%'),
-            Partner.name.ilike(f'%{query}%')
+            Customer.code.ilike(query_pattern),
+            Customer.name.ilike(query_pattern)
         )
-    ).limit(5).all()
-    for p in partners:
-        partner_type = 'Khách hàng' if p.partner_type.value == 'customer' else 'Nhà cung cấp'
+    ).limit(3).all()
+    for c in customers:
         results.append({
-            'type': partner_type[:2],
-            'title': f'{p.code} - {p.name}',
-            'meta': partner_type,
-            'url': f'/partner/{p.id}',
-            'icon': 'fa-address-book'
+            'type': 'KH',
+            'title': f'{c.code} - {c.name}',
+            'meta': 'Khách hàng',
+            'url': f'/partner/customers/{c.id}',
+            'icon': 'fa-user'
+        })
+
+    vendors = Vendor.query.filter(
+        or_(
+            Vendor.code.ilike(query_pattern),
+            Vendor.name.ilike(query_pattern)
+        )
+    ).limit(3).all()
+    for v in vendors:
+        results.append({
+            'type': 'NCC',
+            'title': f'{v.code} - {v.name}',
+            'meta': 'Nhà cung cấp',
+            'url': f'/partner/vendors/{v.id}',
+            'icon': 'fa-truck'
         })
 
     return jsonify({'results': results})
