@@ -38,9 +38,16 @@
                 <a href="{{ url_for('project.index') }}"><i class="fas fa-project-diagram"></i> Dự án</a>
                 <a href="{{ url_for('tax_payment.index') }}"><i class="fas fa-file-invoice-dollar"></i> Nộp thuế</a>
                 <a href="{{ url_for('tax.index') }}"><i class="fas fa-receipt"></i> Báo cáo thuế</a>
+                <a href="{{ url_for('approval.index') }}"><i class="fas fa-check-circle"></i> Phê duyệt</a>
+                <a href="{{ url_for('document.index') }}"><i class="fas fa-file-alt"></i> Tài liệu</a>
+                <a href="{{ url_for('notification.index') }}"><i class="fas fa-bell"></i> Thông báo</a>
+                <a href="{{ url_for('biological.index') }}"><i class="fas fa-leaf"></i> Tài sản sinh học</a>
+                <a href="{{ url_for('dividend.index') }}"><i class="fas fa-coins"></i> Cổ tức</a>
                 {% if current_user.role.name == 'admin' %}
                 <hr>
                 <a href="{{ url_for('auth.users') }}"><i class="fas fa-users"></i> Quản lý người dùng</a>
+                <a href="{{ url_for('settings.index') }}"><i class="fas fa-cog"></i> Cài đặt</a>
+                <a href="{{ url_for('backup.index') }}"><i class="fas fa-database"></i> Sao lưu</a>
                 {% endif %}
                 <hr>
                 <a href="{{ url_for('auth.change_password') }}"><i class="fas fa-key"></i> Đổi mật khẩu</a>
