@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+
+{% block title %}Tạo dự án{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1><i class="fas fa-plus-circle"></i> Tạo dự án</h1>
+    <a href="{{ url_for('project.index') }}" class="btn btn-secondary">
+        <i class="fas fa-arrow-left"></i> Quay lại
+    </a>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <form method="post">
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label class="form-label">Mã dự án</label>
+                    <input type="text" name="code" class="form-control" placeholder="Tự động tạo nếu để trống">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Tên dự án <span class="text-danger">*</span></label>
+                    <input type="text" name="name" class="form-control" required>
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-4">
+                    <label class="form-label">Loại dự án</label>
+                    <select name="project_type" class="form-select">
+                        {% for value, label in type_choices %}
+                        <option value="{{ value }}">{{ label }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Trạng thái</label>
+                    <select name="status" class="form-select">
+                        {% for value, label in status_choices %}
+                        <option value="{{ value }}">{{ label }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Giá trị hợp đồng</label>
+                    <input type="number" name="total_contract_value" class="form-control" step="0.01" value="0.00">
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-4">
+                    <label class="form-label">Ngày bắt đầu</label>
+                    <input type="date" name="start_date" class="form-control">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Ngày kết thúc</label>
+                    <input type="date" name="end_date" class="form-control">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Ngày dự kiến hoàn thành</label>
+                    <input type="date" name="expected_completion_date" class="form-control">
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label class="form-label">Trung tâm chi phí</label>
+                    <select name="cost_center_id" class="form-select">
+                        <option value="">Không có</option>
+                        {% for cc in cost_centers %}
+                        <option value="{{ cc.id }}">{{ cc.code }} - {{ cc.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Khách hàng</label>
+                    <input type="number" name="customer_id" class="form-control" placeholder="ID khách hàng">
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Mô tả</label>
+                <textarea name="description" class="form-control" rows="3"></textarea>
+            </div>
+
+            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save"></i> Lưu
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

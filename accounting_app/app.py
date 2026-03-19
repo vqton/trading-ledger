@@ -71,12 +71,18 @@ def create_app(config_name: str = None) -> Flask:
     from routes.tax_routes import tax_bp
     from routes.partner_routes import partner_bp
     from routes.financial_routes import financial_bp
+    from routes.cost_center_routes import cost_center_bp
+    from routes.project_routes import project_bp
+    from routes.tax_payment_routes import tax_payment_bp
 
     app.register_blueprint(auth_bp)
     app.register_blueprint(accounting_bp)
     app.register_blueprint(tax_bp)
     app.register_blueprint(partner_bp)
     app.register_blueprint(financial_bp)
+    app.register_blueprint(cost_center_bp)
+    app.register_blueprint(project_bp)
+    app.register_blueprint(tax_payment_bp)
 
     @app.teardown_appcontext
     def shutdown_session(exception=None):

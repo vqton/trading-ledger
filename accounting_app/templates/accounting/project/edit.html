@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+
+{% block title %}Sửa dự án{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1><i class="fas fa-edit"></i> Sửa dự án</h1>
+    <a href="{{ url_for('project.index') }}" class="btn btn-secondary">
+        <i class="fas fa-arrow-left"></i> Quay lại
+    </a>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <form method="post">
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label class="form-label">Mã dự án</label>
+                    <input type="text" class="form-control" value="{{ project.code }}" disabled>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Tên dự án <span class="text-danger">*</span></label>
+                    <input type="text" name="name" class="form-control" value="{{ project.name }}" required>
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-4">
+                    <label class="form-label">Loại dự án</label>
+                    <select name="project_type" class="form-select">
+                        {% for value, label in type_choices %}
+                        <option value="{{ value }}" {% if value == project.project_type %}selected{% endif %}>{{ label }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Trạng thái</label>
+                    <select name="status" class="form-select">
+                        {% for value, label in status_choices %}
+                        <option value="{{ value }}" {% if value == project.status %}selected{% endif %}>{{ label }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Giá trị hợp đồng</label>
+                    <input type="number" name="total_contract_value" class="form-control" step="0.01" value="{{ project.total_contract_value or 0 }}">
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-4">
+                    <label class="form-label">Ngày bắt đầu</label>
+                    <input type="date" name="start_date" class="form-control" value="{{ project.start_date.strftime('%Y-%m-%d') if project.start_date else '' }}">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Ngày kết thúc</label>
+                    <input type="date" name="end_date" class="form-control" value="{{ project.end_date.strftime('%Y-%m-%d') if project.end_date else '' }}">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Ngày dự kiến hoàn thành</label>
+                    <input type="date" name="expected_completion_date" class="form-control" value="{{ project.expected_completion_date.strftime('%Y-%m-%d') if project.expected_completion_date else '' }}">
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-4">
+                    <label class="form-label">Trung tâm chi phí</label>
+                    <select name="cost_center_id" class="form-select">
+                        <option value="">Không có</option>
+                        {% for cc in cost_centers %}
+                        <option value="{{ cc.id }}" {% if cc.id == project.cost_center_id %}selected{% endif %}>{{ cc.code }} - {{ cc.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Tiến độ (%)</label>
+                    <input type="number" name="completion_percentage" class="form-control" min="0" max="100" value="{{ project.completion_percentage or 0 }}">
+                </div>
+                <div class="col-md-4 d-flex align-items-center">
+                    <div class="form-check">
+                        <input type="checkbox" name="is_active" class="form-check-input" id="is_active" {% if project.is_active %}checked{% endif %}>
+                        <label class="form-check-label" for="is_active">Hoạt động</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Mô tả</label>
+                <textarea name="description" class="form-control" rows="3">{{ project.description or '' }}</textarea>
+            </div>
+
+            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save"></i> Lưu
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

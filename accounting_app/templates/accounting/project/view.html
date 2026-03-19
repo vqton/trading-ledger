@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+
+{% block title %}{{ project.code }} - Chi tiết{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1><i class="fas fa-project-diagram"></i> {{ project.code }}</h1>
+    <div>
+        <a href="{{ url_for('project.index') }}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Quay lại
+        </a>
+        <a href="{{ url_for('project.edit', project_id=project.id) }}" class="btn btn-warning">
+            <i class="fas fa-edit"></i> Sửa
+        </a>
+        {% if project.status != 'completed' %}
+        <form method="post" action="{{ url_for('project.complete', project_id=project.id) }}" class="d-inline">
+            <button type="submit" class="btn btn-success" onclick="return confirm('Đánh dấu dự án hoàn thành?')">
+                <i class="fas fa-check"></i> Hoàn thành
+            </button>
+        </form>
+        {% endif %}
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5>Thông tin dự án</h5>
+            </div>
+            <div class="card-body">
+                <table class="table table-borderless">
+                    <tr>
+                        <th width="30%">Mã:</th>
+                        <td><strong>{{ project.code }}</strong></td>
+                    </tr>
+                    <tr>
+                        <th>Tên:</th>
+                        <td>{{ project.name }}</td>
+                    </tr>
+                    <tr>
+                        <th>Loại:</th>
+                        <td>{{ project.project_type }}</td>
+                    </tr>
+                    <tr>
+                        <th>Trạng thái:</th>
+                        <td>
+                            <span class="badge bg-{{ 'success' if project.status == 'completed' else 'warning' if project.status == 'active' else 'secondary' }}">
+                                {{ project.status }}
+                            </span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Ngày bắt đầu:</th>
+                        <td>{{ project.start_date.strftime('%d/%m/%Y') if project.start_date else '-' }}</td>
+                    </tr>
+                    <tr>
+                        <th>Ngày kết thúc:</th>
+                        <td>{{ project.end_date.strftime('%d/%m/%Y') if project.end_date else '-' }}</td>
+                    </tr>
+                    <tr>
+                        <th>Mô tả:</th>
+                        <td>{{ project.description or '-' }}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5>Tài chính</h5>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <label class="text-muted">Giá trị HĐ</label>
+                    <h4>{{ "{:,.0f}".format(project.total_contract_value or 0) }}</h4>
+                </div>
+                <div class="mb-3">
+                    <label class="text-muted">Doanh thu</label>
+                    <h4 class="text-success">{{ "{:,.0f}".format(project.total_revenue or 0) }}</h4>
+                </div>
+                <div class="mb-3">
+                    <label class="text-muted">Chi phí</label>
+                    <h4 class="text-danger">{{ "{:,.0f}".format(project.total_expense or 0) }}</h4>
+                </div>
+                <hr>
+                <div class="mb-3">
+                    <label class="text-muted">Lợi nhuận</label>
+                    <h3 class="text-{{ 'success' if project.profit >= 0 else 'danger' }}">{{ "{:,.0f}".format(project.profit) }}</h3>
+                </div>
+                <div class="mb-3">
+                    <label class="text-muted">Biên lợi nhuận</label>
+                    <h5>{{ "{:.1f}".format(project.profit_margin) }}%</h5>
+                </div>
+                <hr>
+                <div class="mb-3">
+                    <label class="text-muted">Tiến độ</label>
+                    <div class="progress" style="height: 25px;">
+                        {% set pct = project.completion_percentage|int if project.completion_percentage else 0 %}
+                        <div class="progress-bar bg-info" role="progressbar" style="width: {{ pct }}%">{{ pct }}%</div>
+                    </div>
+                </div>
+                <form method="post" action="{{ url_for('project.refresh', project_id=project.id) }}">
+                    <button type="submit" class="btn btn-outline-primary w-100">
+                        <i class="fas fa-sync"></i> Cập nhật số liệu
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

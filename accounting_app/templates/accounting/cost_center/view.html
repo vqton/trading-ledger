@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+
+{% block title %}{{ cost_center.code }} - Chi tiết{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1><i class="fas fa-layer-group"></i> {{ cost_center.code }}</h1>
+    <div>
+        <a href="{{ url_for('cost_center.index') }}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Quay lại
+        </a>
+        <a href="{{ url_for('cost_center.edit', cost_center_id=cost_center.id) }}" class="btn btn-warning">
+            <i class="fas fa-edit"></i> Sửa
+        </a>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5>Thông tin trung tâm chi phí</h5>
+            </div>
+            <div class="card-body">
+                <table class="table table-borderless">
+                    <tr>
+                        <th width="30%">Mã:</th>
+                        <td><strong>{{ cost_center.code }}</strong></td>
+                    </tr>
+                    <tr>
+                        <th>Tên:</th>
+                        <td>{{ cost_center.name }}</td>
+                    </tr>
+                    <tr>
+                        <th>Phòng ban:</th>
+                        <td>{{ cost_center.department or '-' }}</td>
+                    </tr>
+                    <tr>
+                        <th>Trung tâm cha:</th>
+                        <td>{{ cost_center.parent.name if cost_center.parent else '-' }}</td>
+                    </tr>
+                    <tr>
+                        <th>Mô tả:</th>
+                        <td>{{ cost_center.description or '-' }}</td>
+                    </tr>
+                    <tr>
+                        <th>Trạng thái:</th>
+                        <td>
+                            {% if cost_center.is_active %}
+                            <span class="badge bg-success">Hoạt động</span>
+                            {% else %}
+                            <span class="badge bg-secondary">Không hoạt động</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5>Ngân sách</h5>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <label class="text-muted">Phân bổ</label>
+                    <h3 class="text-primary">{{ "{:,.0f}".format(cost_center.budget_allocated or 0) }}</h3>
+                </div>
+                <div class="mb-3">
+                    <label class="text-muted">Đã sử dụng</label>
+                    <h4 class="text-warning">{{ "{:,.0f}".format(budget_used or 0) }}</h4>
+                </div>
+                <div class="mb-3">
+                    <label class="text-muted">Còn lại</label>
+                    <h4 class="text-success">{{ "{:,.0f}".format(budget_remaining or 0) }}</h4>
+                </div>
+                <hr>
+                <div class="progress" style="height: 25px;">
+                    {% set used_pct = ((budget_used or 0) / (cost_center.budget_allocated or 1) * 100)|round|int if cost_center.budget_allocated > 0 else 0 %}
+                    <div class="progress-bar bg-warning" role="progressbar" style="width: {{ used_pct }}%">
+                        {{ used_pct }}%
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {% if cost_center.children %}
+        <div class="card">
+            <div class="card-header">
+                <h5>Trung tâm con</h5>
+            </div>
+            <div class="card-body">
+                <ul class="list-unstyled">
+                    {% for child in cost_center.children %}
+                    <li class="mb-2">
+                        <a href="{{ url_for('cost_center.view', cost_center_id=child.id) }}">
+                            <i class="fas fa-level-down-alt"></i> {{ child.code }} - {{ child.name }}
+                        </a>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

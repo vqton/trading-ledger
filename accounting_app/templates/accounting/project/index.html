@@ -1,0 +1,132 @@
+{% extends "base.html" %}
+
+{% block title %}Dự án{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1><i class="fas fa-project-diagram"></i> Dự án</h1>
+    <div>
+        <a href="{{ url_for('project.summary') }}" class="btn btn-outline-info">
+            <i class="fas fa-chart-bar"></i> Tổng quan
+        </a>
+        <a href="{{ url_for('project.create') }}" class="btn btn-primary">
+            <i class="fas fa-plus"></i> Tạo mới
+        </a>
+    </div>
+</div>
+
+<div class="card mb-4">
+    <div class="card-body">
+        <form method="get" class="row g-3">
+            <div class="col-md-3">
+                <label class="form-label">Tìm kiếm</label>
+                <input type="text" name="search" class="form-control" placeholder="Mã, tên..." value="{{ request.args.get('search', '') }}">
+            </div>
+            <div class="col-md-2">
+                <label class="form-label">Trạng thái</label>
+                <select name="status" class="form-select">
+                    <option value="">Tất cả</option>
+                    {% for value, label in status_choices %}
+                    <option value="{{ value }}" {% if request.args.get('status') == value %}selected{% endif %}>{{ label }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label class="form-label">Loại dự án</label>
+                <select name="project_type" class="form-select">
+                    <option value="">Tất cả</option>
+                    {% for value, label in type_choices %}
+                    <option value="{{ value }}" {% if request.args.get('project_type') == value %}selected{% endif %}>{{ label }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label class="form-label">Trạng thái hoạt động</label>
+                <select name="is_active" class="form-select">
+                    <option value="">Tất cả</option>
+                    <option value="true" {% if request.args.get('is_active') == 'true' %}selected{% endif %}>Hoạt động</option>
+                    <option value="false" {% if request.args.get('is_active') == 'false' %}selected{% endif %}>Không hoạt động</option>
+                </select>
+            </div>
+            <div class="col-md-3 d-flex align-items-end">
+                <button type="submit" class="btn btn-primary w-100">
+                    <i class="fas fa-search"></i> Tìm kiếm
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <span>Danh sách dự án ({{ total }})</span>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Mã</th>
+                        <th>Tên</th>
+                        <th>Loại</th>
+                        <th>Giá trị HĐ</th>
+                        <th>Doanh thu</th>
+                        <th>Chi phí</th>
+                        <th>Lợi nhuận</th>
+                        <th>Trạng thái</th>
+                        <th>Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for proj in projects %}
+                    <tr>
+                        <td><strong>{{ proj.code }}</strong></td>
+                        <td>{{ proj.name }}</td>
+                        <td>
+                            {% for value, label in type_choices %}
+                            {% if value == proj.project_type %}{{ label }}{% endif %}
+                            {% endfor %}
+                        </td>
+                        <td class="text-end">{{ "{:,.0f}".format(proj.total_contract_value or 0) }}</td>
+                        <td class="text-end text-success">{{ "{:,.0f}".format(proj.total_revenue or 0) }}</td>
+                        <td class="text-end text-danger">{{ "{:,.0f}".format(proj.total_expense or 0) }}</td>
+                        <td class="text-end text-{{ 'success' if proj.profit >= 0 else 'danger' }}">{{ "{:,.0f}".format(proj.profit) }}</td>
+                        <td>
+                            {% for value, label in status_choices %}
+                            {% if value == proj.status %}
+                            <span class="badge bg-{{ 'success' if value == 'completed' else 'warning' if value == 'active' else 'secondary' }}">{{ label }}</span>
+                            {% endif %}
+                            {% endfor %}
+                        </td>
+                        <td>
+                            <a href="{{ url_for('project.view', project_id=proj.id) }}" class="btn btn-sm btn-outline-info">
+                                <i class="fas fa-eye"></i>
+                            </a>
+                            <a href="{{ url_for('project.edit', project_id=proj.id) }}" class="btn btn-sm btn-outline-warning">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="9" class="text-center text-muted">Không có dữ liệu</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        {% if total > per_page %}
+        <nav>
+            <ul class="pagination justify-content-center">
+                {% for p in range(1, (total // per_page) + 2) %}
+                <li class="page-item {% if p == page %}active{% endif %}">
+                    <a class="page-link" href="{{ url_for('project.index', page=p) }}">{{ p }}</a>
+                </li>
+                {% endfor %}
+            </ul>
+        </nav>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

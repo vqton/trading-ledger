@@ -1,0 +1,140 @@
+{% extends "base.html" %}
+
+{% block title %}{{ payment.payment_no }} - Chi tiết{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1><i class="fas fa-file-invoice-dollar"></i> {{ payment.payment_no }}</h1>
+    <div>
+        <a href="{{ url_for('tax_payment.index') }}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Quay lại
+        </a>
+        <a href="{{ url_for('tax_payment.edit', tax_payment_id=payment.id) }}" class="btn btn-warning">
+            <i class="fas fa-edit"></i> Sửa
+        </a>
+        {% if payment.payment_status != 'paid' %}
+        <a href="{{ url_for('tax_payment.mark_paid', tax_payment_id=payment.id) }}" class="btn btn-success">
+            <i class="fas fa-check"></i> Đánh dấu đã nộp
+        </a>
+        {% endif %}
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5>Thông tin nộp thuế</h5>
+            </div>
+            <div class="card-body">
+                <table class="table table-borderless">
+                    <tr>
+                        <th width="30%">Số nộp thuế:</th>
+                        <td><strong>{{ payment.payment_no }}</strong></td>
+                    </tr>
+                    <tr>
+                        <th>Loại thuế:</th>
+                        <td>{{ payment.tax_type }}</td>
+                    </tr>
+                    <tr>
+                        <th>Kỳ:</th>
+                        <td>
+                            {% if payment.period_month %}Tháng {{ payment.period_month }}/{% endif %}{{ payment.period_year }}
+                            {% if payment.period_quarter %} - Q{{ payment.period_quarter }}{% endif %}
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Trạng thái:</th>
+                        <td>
+                            {% if payment.is_overdue %}
+                            <span class="badge bg-danger">Quá hạn {{ payment.days_overdue }} ngày</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Số tờ khai:</th>
+                        <td>{{ payment.declaration_no or '-' }}</td>
+                    </tr>
+                    <tr>
+                        <th>Ngày tờ khai:</th>
+                        <td>{{ payment.declaration_date.strftime('%d/%m/%Y') if payment.declaration_date else '-' }}</td>
+                    </tr>
+                    <tr>
+                        <th>Cơ quan thuế:</th>
+                        <td>{{ payment.tax_authority or '-' }}</td>
+                    </tr>
+                    <tr>
+                        <th>Ngày nộp thuế:</th>
+                        <td>{{ payment.payment_date.strftime('%d/%m/%Y') if payment.payment_date else '-' }}</td>
+                    </tr>
+                    <tr>
+                        <th>Ngày đến hạn:</th>
+                        <td>
+                            {% if payment.due_date %}
+                            {{ payment.due_date.strftime('%d/%m/%Y') }}
+                            {% else %}
+                            -
+                            {% endif %}
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Phương thức:</th>
+                        <td>{{ payment.payment_method or '-' }}</td>
+                    </tr>
+                    <tr>
+                        <th>Số giao dịch:</th>
+                        <td>{{ payment.bank_transaction_no or '-' }}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5>Số tiền</h5>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <label class="text-muted">Số tiền chịu thuế</label>
+                    <h4>{{ "{:,.0f}".format(payment.taxable_amount or 0) }}</h4>
+                </div>
+                <div class="mb-3">
+                    <label class="text-muted">Thuế suất</label>
+                    <h5>{{ "{:.2f}".format((payment.tax_rate or 0) * 100) }}%</h5>
+                </div>
+                <hr>
+                <div class="mb-3">
+                    <label class="text-muted">Số tiền thuế</label>
+                    <h4 class="text-primary">{{ "{:,.0f}".format(payment.tax_amount or 0) }}</h4>
+                </div>
+                <div class="mb-3">
+                    <label class="text-muted">Tiền lãi</label>
+                    <h5 class="text-warning">{{ "{:,.0f}".format(payment.interest_amount or 0) }}</h5>
+                </div>
+                <div class="mb-3">
+                    <label class="text-muted">Tiền phạt</label>
+                    <h5 class="text-danger">{{ "{:,.0f}".format(payment.penalty_amount or 0) }}</h5>
+                </div>
+                <hr>
+                <div class="mb-3">
+                    <label class="text-muted"><strong>Tổng cộng</strong></label>
+                    <h3 class="text-{{ 'success' if payment.payment_status == 'paid' else 'danger' }}">{{ "{:,.0f}".format(payment.total_amount or 0) }}</h3>
+                </div>
+            </div>
+        </div>
+
+        {% if payment.notes %}
+        <div class="card">
+            <div class="card-header">
+                <h5>Ghi chú</h5>
+            </div>
+            <div class="card-body">
+                {{ payment.notes }}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

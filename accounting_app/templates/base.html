@@ -34,7 +34,10 @@
                 <a href="{{ url_for('accounting.journal') }}"><i class="fas fa-file-invoice"></i> Sổ kế toán</a>
                 <a href="{{ url_for('accounting.ledger') }}"><i class="fas fa-book-open"></i> Sổ cái</a>
                 <a href="{{ url_for('financial.reports') }}"><i class="fas fa-chart-bar"></i> Báo cáo tài chính</a>
-                <a href="{{ url_for('tax.index') }}"><i class="fas fa-file-invoice-dollar"></i> Báo cáo thuế</a>
+                <a href="{{ url_for('cost_center.index') }}"><i class="fas fa-layer-group"></i> Trung tâm chi phí</a>
+                <a href="{{ url_for('project.index') }}"><i class="fas fa-project-diagram"></i> Dự án</a>
+                <a href="{{ url_for('tax_payment.index') }}"><i class="fas fa-file-invoice-dollar"></i> Nộp thuế</a>
+                <a href="{{ url_for('tax.index') }}"><i class="fas fa-receipt"></i> Báo cáo thuế</a>
                 {% if current_user.role.name == 'admin' %}
                 <hr>
                 <a href="{{ url_for('auth.users') }}"><i class="fas fa-users"></i> Quản lý người dùng</a>

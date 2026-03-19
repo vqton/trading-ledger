@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+
+{% block title %}Tổng quan thuế{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1><i class="fas fa-chart-bar"></i> Tổng quan thuế {{ year }}</h1>
+    <a href="{{ url_for('tax_payment.index', period_year=year) }}" class="btn btn-secondary">
+        <i class="fas fa-arrow-left"></i> Quay lại
+    </a>
+</div>
+
+<form method="get" class="card mb-4">
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-4">
+                <label class="form-label">Năm</label>
+                <select name="year" class="form-select">
+                    {% for y in range(2020, 2031) %}
+                    <option value="{{ y }}" {% if y == year %}selected{% endif %}>{{ y }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-4 d-flex align-items-end">
+                <button type="submit" class="btn btn-primary w-100">
+                    <i class="fas fa-filter"></i> Lọc
+                </button>
+            </div>
+        </div>
+    </div>
+</form>
+
+{% if overdue_count > 0 %}
+<div class="alert alert-danger">
+    <i class="fas fa-exclamation-triangle"></i> Có <strong>{{ overdue_count }}</strong> khoản thuế quá hạn chưa nộp!
+</div>
+{% endif %}
+
+<div class="row mb-4">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h5>Tổng hợp theo loại thuế</h5>
+            </div>
+            <div class="card-body">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Loại thuế</th>
+                            <th class="text-end">Đã nộp</th>
+                            <th class="text-end">Còn nợ</th>
+                            <th class="text-end">Tổng cộng</th>
+                            <th>Tỷ lệ</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for tax_type, data in summary.items() %}
+                        <tr>
+                            <td>
+                                {% for value, label in tax_type_choices %}
+                                {% if value == tax_type %}<strong>{{ label }}</strong>{% endif %}
+                                {% endfor %}
+                            </td>
+                            <td class="text-end text-success">{{ "{:,.0f}".format(data.paid) }}</td>
+                            <td class="text-end text-danger">{{ "{:,.0f}".format(data.outstanding) }}</td>
+                            <td class="text-end">{{ "{:,.0f}".format(data.total) }}</td>
+                            <td>
+                                {% set pct = (data.paid / data.total * 100)|round|int if data.total > 0 else 0 %}
+                                <div class="progress" style="height: 20px; width: 100px;">
+                                    <div class="progress-bar bg-{{ 'success' if pct >= 80 else 'warning' if pct >= 50 else 'danger' }}" 
+                                         role="progressbar" style="width: {{ pct }}%">{{ pct }}%</div>
+                                </div>
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="5" class="text-center text-muted">Không có dữ liệu</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-4">
+        <div class="card bg-success text-white">
+            <div class="card-body">
+                <h5>Tổng đã nộp</h5>
+                <h3>{{ "{:,.0f}".format(summary.values()|sum(attribute='paid')) }}</h3>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card bg-danger text-white">
+            <div class="card-body">
+                <h5>Tổng còn nợ</h5>
+                <h3>{{ "{:,.0f}".format(summary.values()|sum(attribute='outstanding')) }}</h3>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card bg-primary text-white">
+            <div class="card-body">
+                <h5>Tổng cộng</h5>
+                <h3>{{ "{:,.0f}".format(summary.values()|sum(attribute='total')) }}</h3>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
