@@ -70,11 +70,13 @@ def create_app(config_name: str = None) -> Flask:
     from routes.accounting_routes import accounting_bp
     from routes.tax_routes import tax_bp
     from routes.partner_routes import partner_bp
+    from routes.financial_routes import financial_bp
 
     app.register_blueprint(auth_bp)
     app.register_blueprint(accounting_bp)
     app.register_blueprint(tax_bp)
     app.register_blueprint(partner_bp)
+    app.register_blueprint(financial_bp)
 
     @app.teardown_appcontext
     def shutdown_session(exception=None):

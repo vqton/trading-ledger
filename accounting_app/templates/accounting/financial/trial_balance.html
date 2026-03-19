@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+
+{% block title %}Sổ cái tổng hợp (Trial Balance) - VAS Accounting{% endblock %}
+
+{% block content %}
+<h1 class="mt-4">Sổ cái tổng hợp (Trial Balance)</h1>
+<ol class="breadcrumb mb-4">
+    <li class="breadcrumb-item"><a href="{{ url_for('index') }}">Trang chủ</a></li>
+    <li class="breadcrumb-item"><a href="{{ url_for('financial.reports') }}">Báo cáo tài chính</a></li>
+    <li class="breadcrumb-item active">Trial Balance</li>
+</ol>
+
+<div class="card mb-4">
+    <div class="card-header">
+        <form method="get" class="row g-3">
+            <div class="col-md-4">
+                <label for="end_date" class="form-label">Ngày báo cáo</label>
+                <input type="date" class="form-control" id="end_date" name="end_date" value="{{ end_date.strftime('%Y-%m-%d') }}">
+            </div>
+            <div class="col-md-4 align-self-end">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-search"></i> Xem báo cáo
+                </button>
+            </div>
+            <div class="col-md-4 align-self-end">
+                <div class="btn-group">
+                    <a href="{{ url_for('financial.export_trial_balance', end_date=end_date.strftime('%Y-%m-%d'), format='excel') }}" class="btn btn-success">
+                        <i class="fas fa-file-excel"></i> Excel
+                    </a>
+                    <a href="{{ url_for('financial.export_trial_balance', end_date=end_date.strftime('%Y-%m-%d'), format='pdf') }}" class="btn btn-danger">
+                        <i class="fas fa-file-pdf"></i> PDF
+                    </a>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header bg-warning">
+        <h4 class="mb-0"><i class="fas fa-list"></i> SỔ CÁI TỔNG HỢP</h4>
+        <small>Đến ngày {{ end_date.strftime('%d/%m/%Y') }}</small>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-bordered table-sm">
+                <thead class="table-light">
+                    <tr>
+                        <th>Số tài khoản</th>
+                        <th>Tên tài khoản</th>
+                        <th class="text-end">Dư Nợ đầu kỳ</th>
+                        <th class="text-end">Dư Có đầu kỳ</th>
+                        <th class="text-end">Phát sinh Nợ</th>
+                        <th class="text-end">Phát sinh Có</th>
+                        <th class="text-end">Dư Nợ cuối kỳ</th>
+                        <th class="text-end">Dư Có cuối kỳ</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in trial_balance %}
+                    <tr>
+                        <td>{{ item.code }}</td>
+                        <td>{{ item.name }}</td>
+                        <td class="text-end">{{ "{:,.0f}".format(item.opening_debit) }}</td>
+                        <td class="text-end">{{ "{:,.0f}".format(item.opening_credit) }}</td>
+                        <td class="text-end">{{ "{:,.0f}".format(item.period_debit) }}</td>
+                        <td class="text-end">{{ "{:,.0f}".format(item.period_credit) }}</td>
+                        <td class="text-end">{{ "{:,.0f}".format(item.closing_debit) }}</td>
+                        <td class="text-end">{{ "{:,.0f}".format(item.closing_credit) }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+                <tfoot class="table-secondary fw-bold">
+                    <tr>
+                        <td colspan="2" class="text-end">TỔNG CỘNG:</td>
+                        <td class="text-end">{{ "{:,.0f}".format(trial_balance|sum(attribute='opening_debit')) }}</td>
+                        <td class="text-end">{{ "{:,.0f}".format(trial_balance|sum(attribute='opening_credit')) }}</td>
+                        <td class="text-end">{{ "{:,.0f}".format(trial_balance|sum(attribute='period_debit')) }}</td>
+                        <td class="text-end">{{ "{:,.0f}".format(trial_balance|sum(attribute='period_credit')) }}</td>
+                        <td class="text-end">{{ "{:,.0f}".format(trial_balance|sum(attribute='closing_debit')) }}</td>
+                        <td class="text-end">{{ "{:,.0f}".format(trial_balance|sum(attribute='closing_credit')) }}</td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
