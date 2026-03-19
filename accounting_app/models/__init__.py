@@ -70,6 +70,12 @@ from models.dividend_payable import (
     DividendPaymentStatus,
     DividendPaymentMethod,
 )
+from models.tax_payment import (
+    TaxPayment,
+    TaxType,
+    TaxPaymentStatus,
+    TaxPaymentMethod,
+)
 
 __all__ = [
     "Account",
@@ -129,4 +135,8 @@ __all__ = [
     "ShareholderType",
     "DividendPaymentStatus",
     "DividendPaymentMethod",
+    "TaxPayment",
+    "TaxType",
+    "TaxPaymentStatus",
+    "TaxPaymentMethod",
 ]
