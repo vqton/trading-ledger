@@ -537,10 +537,29 @@ e6f3777 first commit
 | 1.0 | 2026-03-17 | Initial implementation status |
 | 2.0 | 2026-03-19 | Added advanced models status |
 | 2.1 | 2026-03-19 | All modules complete, template dict fixes |
+| 2.2 | 2026-03-19 | Replaced deprecated datetime.utcnow() |
 
 ---
 
-## Recent Fixes (v2.1)
+## Recent Fixes (v2.2)
+
+### Deprecation Fixes - datetime.utcnow()
+Fixed deprecated `datetime.utcnow()` (Python 3.12+) with `utc_now()` from `core.utils`:
+
+Files updated:
+- `repositories/backup_repository.py`
+- `repositories/system_setting_repository.py`
+- `repositories/notification_repository.py`
+- `models/notification.py`
+- `models/tax_policy.py`
+- `models/accounting_period.py`
+- `services/period_service.py`
+
+All now use `datetime.now(timezone.utc)` via the `utc_now()` utility function.
+
+---
+
+## Previous Fixes (v2.1)
 
 ### Template Dict Access Fixes
 Fixed Jinja2 templates that were using attribute access on dict objects:
