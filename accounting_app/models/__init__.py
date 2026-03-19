@@ -76,6 +76,11 @@ from models.tax_payment import (
     TaxPaymentStatus,
     TaxPaymentMethod,
 )
+from models.supporting_document import (
+    SupportingDocument,
+    DocumentType,
+    DocumentStatus,
+)
 
 __all__ = [
     "Account",
@@ -139,4 +144,7 @@ __all__ = [
     "TaxType",
     "TaxPaymentStatus",
     "TaxPaymentMethod",
+    "SupportingDocument",
+    "DocumentType",
+    "DocumentStatus",
 ]
