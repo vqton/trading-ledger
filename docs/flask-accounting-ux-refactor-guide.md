@@ -1,6 +1,6 @@
 # Flask Accounting UX Refactor Guide
 
-**Version:** 1.0  
+**Version:** 2.0  
 **Based on:** prompt-foundation-ui-ux-accounting.md  
 **Last Updated:** 2026-03-19
 
@@ -231,16 +231,21 @@ Nháp → Chờ duyệt → Đã duyệt → Hạch toán
 ## 11. Implementation Checklist
 
 - [x] Global Layout (header, sidebar, search)
-- [ ] _variables.scss: Update color system
-- [ ] _components.scss: Data table styles
-- [ ] _components.scss: Form styles
-- [ ] _components.scss: Button styles
-- [ ] _components.scss: Status badges
-- [ ] voucher_form.html: Journal entry table UX
-- [ ] accounts.html: Data table UX
-- [ ] ledger.html: Print-friendly
+- [x] _variables.scss: Update color system
+- [x] _layout.scss: Layout styles
+- [x] _components.scss: Data table styles
+- [x] _components.scss: Form styles
+- [x] _components.scss: Button styles
+- [x] _components.scss: Status badges
+- [x] _components.scss: Print styles (A4)
+- [x] voucher_form.html: Journal entry table UX
+- [x] accounts.html: Data table UX
+- [x] ledger.html: Print-friendly
+- [x] trial_balance.html: Print-friendly
+- [x] Keyboard shortcuts JS (Ctrl+S, N, K, 1-3)
+- [ ] journal.html: Journal list UX
 - [ ] financial reports: VAS print format
-- [ ] Keyboard shortcuts JS
+- [ ] remaining templates: journal entries, partner, etc.
 
 ---
 
