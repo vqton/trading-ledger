@@ -53,6 +53,11 @@ from models.project import (
     ProjectStatus,
     ProjectType,
 )
+from models.opening_balance import (
+    OpeningBalance,
+    PeriodType,
+    OpeningBalanceSource,
+)
 
 __all__ = [
     "Account",
@@ -101,4 +106,7 @@ __all__ = [
     "Project",
     "ProjectStatus",
     "ProjectType",
+    "OpeningBalance",
+    "PeriodType",
+    "OpeningBalanceSource",
 ]
