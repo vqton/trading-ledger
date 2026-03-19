@@ -1,6 +1,6 @@
 # VAS Accounting WebApp - Implementation Status
 
-**Version:** 2.0  
+**Version:** 2.3  
 **Circular:** 99/2025/TT-BTC  
 **Last Updated:** 2026-03-19
 
@@ -538,6 +538,44 @@ e6f3777 first commit
 | 2.0 | 2026-03-19 | Added advanced models status |
 | 2.1 | 2026-03-19 | All modules complete, template dict fixes |
 | 2.2 | 2026-03-19 | Replaced deprecated datetime.utcnow() |
+| 2.3 | 2026-03-19 | UI/UX Refactor - General Layout & Navigation |
+
+---
+
+## Recent Fixes (v2.3)
+
+### UI/UX Refactor - General Layout & Navigation
+
+**New Design System:**
+- Sticky header with real-time KPIs (Tổng Nợ/Tổng Có/Chênh lệch)
+- Collapsible sidebar with grouped navigation
+- Global search modal with keyboard shortcuts
+- Toast notifications with auto-dismiss
+- Breadcrumb and audit trail on all pages
+
+**New Files:**
+- `assets/scss/_layout.scss` - Layout components CSS
+- `assets/scss/_variables.scss` - Design tokens
+- `assets/scss/app.scss` - Main SCSS entry point
+- `routes/api_routes.py` - API endpoints
+
+**Updated Files:**
+- `templates/base.html` - Complete layout refactor
+- `static/css/app.css` - Compiled CSS (18KB)
+- `app.py` - API blueprint registration
+
+**Keyboard Shortcuts:**
+| Key | Action |
+|-----|--------|
+| `1` | Tạo chứng từ mới |
+| `2` | Bảng cân đối |
+| `3` | Sổ NKCT |
+| `Ctrl+K` | Global search |
+
+**New API Endpoints:**
+- `GET /api/v1/kpi/summary` - KPIs summary
+- `GET /api/v1/search?q=` - Global search
+- `GET /api/v1/notifications/count` - Notification count
 
 ---
 

@@ -1,6 +1,6 @@
 # VAS Accounting WebApp - User Guide
 
-**Version:** 2.0  
+**Version:** 2.3  
 **Circular:** 99/2025/TT-BTC  
 **Last Updated:** 2026-03-19
 
@@ -37,48 +37,66 @@ Password: admin123
 
 ### 1.2 Navigation
 
-The main navigation menu is located on the left sidebar:
+The main navigation is located in the header and sidebar:
 
+**Header (Sticky):**
+- KPIs: Tổng Nợ, Tổng Có, Chênh lệch (always visible)
+- Global Search: Click or press `Ctrl+K`
+- Notifications: Bell icon with badge count
+- User Menu: Shows username and role
+
+**Sidebar (Left):**
 ```
-┌─────────────────┐
-│ 🏠 Dashboard    │
-│ 📊 Reports      │
-│ 📑 Accounting   │
-│   ├─ Accounts   │
-│   ├─ Vouchers   │
-│   └─ Ledger     │
-│ 👥 Partners     │
-│   ├─ Customers │
-│   ├─ Vendors   │
-│   └─ Employees │
-│ 💰 Tax         │
-│ 📁 Projects    │
-│ ⚙️ Settings    │
-└─────────────────┘
+┌─────────────────────────┐
+│ THƯỜNG DÙNG             │
+│  + Tạo chứng từ    [1] │
+│  ≡ Bảng cân đối   [2] │
+│  ☰ Sổ NKCT         [3] │
+├─────────────────────────┤
+│ DANH MỤC                │
+│  ⊢ Danh mục TK         │
+│  ⊢ Đối tác             │
+├─────────────────────────┤
+│ SỔ SÁCH                 │
+│  ⊢ Sổ cái              │
+│  ⊢ Sổ NKCT             │
+└─────────────────────────┘
 ```
+
+### 1.3 Keyboard Shortcuts
+
+| Shortcut | Action |
+|----------|--------|
+| `Ctrl+K` | Global search |
+| `1` | Tạo chứng từ mới |
+| `2` | Bảng cân đối |
+| `3` | Sổ NKCT |
+| `Esc` | Close search modal |
 
 ---
 
 ## 2. Dashboard
 
-The dashboard provides an overview of your accounting data.
+The dashboard provides an overview of your accounting data with real-time KPIs.
 
-### 2.1 KPI Cards
+### 2.1 Header KPIs (Always Visible)
 
-- **Total Assets**: Sum of all asset accounts
-- **Total Liabilities**: Sum of all liability accounts
-- **Total Equity**: Sum of equity accounts
-- **Current Period Revenue**: Revenue for current month
+These KPIs are visible on every page in the header:
+
+- **Tổng Nợ**: Sum of all debit entries for current period
+- **Tổng Có**: Sum of all credit entries for current period
+- **Chênh lệch**: Difference (should be 0 for balanced books)
 
 ### 2.2 Recent Vouchers
 
-View the 5 most recent draft vouchers.
+View the 5 most recent draft vouchers pending approval.
 
 ### 2.3 Quick Actions
 
-- Create new voucher
-- View trial balance
-- Access reports
+- Create new voucher (`1`)
+- View trial balance (`2`)
+- Access journal (`3`)
+- Global search (`Ctrl+K`)
 
 ---
 

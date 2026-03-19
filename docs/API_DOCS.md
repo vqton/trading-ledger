@@ -1,6 +1,6 @@
 # VAS Accounting WebApp - API Documentation
 
-**Version:** 2.0  
+**Version:** 2.3  
 **Circular:** 99/2025/TT-BTC  
 **Last Updated:** 2026-03-19
 
@@ -990,7 +990,84 @@ List tax payments.
 
 ---
 
-## 12. API Response Format
+## 12. Dashboard & Utility Endpoints
+
+### 12.1 KPI Summary
+
+**GET** `/api/v1/kpi/summary`
+
+Get real-time KPI summary for header display.
+
+**Response (200):**
+```json
+{
+  "total_debit": 500000000.00,
+  "total_credit": 480000000.00,
+  "difference": 20000000.00,
+  "period": "03/2026"
+}
+```
+
+---
+
+### 12.2 Notification Count
+
+**GET** `/api/v1/notifications/count`
+
+Get unread notification count.
+
+**Response (200):**
+```json
+{
+  "count": 5
+}
+```
+
+---
+
+### 12.3 Global Search
+
+**GET** `/api/v1/search?q={query}`
+
+Search across vouchers, accounts, and partners.
+
+**Query Parameters:**
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| q | string | Search query (required) |
+
+**Response (200):**
+```json
+{
+  "results": [
+    {
+      "type": "CT",
+      "title": "JV-2026-00001 - Thu tiền bán hàng",
+      "meta": "19/03/2026",
+      "url": "/accounting/voucher/1",
+      "icon": "fa-file-invoice"
+    },
+    {
+      "type": "TK",
+      "title": "111 - Tiền mặt",
+      "meta": "asset",
+      "url": "/accounting/ledger/1",
+      "icon": "fa-sitemap"
+    },
+    {
+      "type": "KH",
+      "title": "CUS-001 - Công ty ABC",
+      "meta": "Khách hàng",
+      "url": "/partner/1",
+      "icon": "fa-address-book"
+    }
+  ]
+}
+```
+
+---
+
+## 13. API Response Format
 
 ### 12.1 Success Response
 
@@ -1041,6 +1118,7 @@ List tax payments.
 |---------|------|---------|
 | 1.0 | 2026-03-17 | Initial API documentation |
 | 2.0 | 2026-03-19 | Added financial, partner, tax endpoints |
+| 2.3 | 2026-03-19 | Added dashboard KPI, search, notification endpoints |
 
 ---
 
