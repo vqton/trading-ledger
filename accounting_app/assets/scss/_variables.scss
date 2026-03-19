@@ -1,50 +1,133 @@
 :root {
-  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  --font-mono: ui-monospace, "Cascadia Code", "Source Code Pro", Menlo, Consolas, monospace;
+  --font-sans: 'Inter', ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: 'Roboto Mono', 'Cascadia Code', ui-monospace, 'Consolas', monospace;
 
-  --bg: #ffffff;
-  --bg-body: #f4f5f7;
-  --fg: #1f2937;
-  --surface: #f8f9fa;
-  --surface-hover: #e9ecef;
-  --border: #dee2e6;
+  --font-size-xs: 0.75rem;
+  --font-size-sm: 0.8125rem;
+  --font-size-base: 0.875rem;
+  --font-size-lg: 1rem;
+  --font-size-xl: 1.125rem;
+  --font-size-2xl: 1.25rem;
+  --font-size-3xl: 1.5rem;
 
-  --primary: #0d6efd;
-  --primary-hover: #0b5ed7;
-  --primary-light: #cfe2ff;
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
 
-  --success: #198754;
-  --success-light: #d1e7dd;
-  --warning: #ffc107;
-  --warning-light: #fff3cd;
-  --danger: #dc3545;
-  --danger-light: #f8d7da;
-  --info: #0dcaf0;
+  --bg-page: #f5f7fb;
+  --bg-card: #ffffff;
+  --bg-sidebar: #001529;
+  --bg-header: linear-gradient(135deg, #1e2a3a 0%, #2a3a4d 100%);
+  --bg-modal-overlay: rgba(0, 0, 0, 0.45);
+
+  --bg-table-header: #f5f7fa;
+  --bg-table-row: #ffffff;
+  --bg-table-hover: #f0f5ff;
+  --bg-table-selected: #e6f4ff;
+  --bg-table-striped: #fafafa;
+  --bg-table-total: #fff7ed;
+  --bg-table-grand-total: #ffedd5;
+  --bg-table-section: #f1f5f9;
+
+  --primary-50: #f0f5ff;
+  --primary-100: #d6e4ff;
+  --primary-200: #adc8ff;
+  --primary-300: #85a5ff;
+  --primary-400: #597ef7;
+  --primary-500: #2f54eb;
+  --primary-600: #1d39c4;
+  --primary-700: #10239e;
+  --primary-800: #061178;
+  --primary-900: #030852;
+
+  --primary: var(--primary-500);
+  --primary-hover: var(--primary-600);
+
+  --neutral-50: #fafafa;
+  --neutral-100: #f5f5f5;
+  --neutral-200: #e5e5e5;
+  --neutral-300: #d4d4d4;
+  --neutral-400: #a3a3a3;
+  --neutral-500: #737373;
+  --neutral-600: #525252;
+  --neutral-700: #404040;
+  --neutral-800: #262626;
+  --neutral-900: #171717;
+
+  --success: #22c55e;
+  --success-light: #d1fae5;
+  --success-dark: #16a34a;
+
+  --warning: #f59e0b;
+  --warning-light: #fef3c7;
+  --warning-dark: #d97706;
+
+  --error: #ef4444;
+  --error-light: #fee2e2;
+  --error-dark: #dc2626;
+
+  --positive: #16a34a;
+  --negative: #dc2626;
+  --zero: #9ca3af;
+  --pending: #3b82f6;
+  --locked: #7c3aed;
+
+  --accent: #13c2c2;
+
+  --fg: #171717;
+  --fg-muted: #737373;
+  --fg-light: #a3a3a3;
+
+  --border: #e5e5e5;
+  --border-light: #f5f5f5;
 
   --sidebar-bg: #1e2a3a;
   --sidebar-text: #a8b2c1;
   --sidebar-hover: #2a3a4d;
-  --sidebar-active: #0d6efd;
-  --sidebar-active-bg: rgba(13, 110, 253, 0.15);
+  --sidebar-active: #2f54eb;
+  --sidebar-active-bg: rgba(47, 84, 235, 0.15);
 
-  --header-bg: linear-gradient(135deg, #1e2a3a 0%, #2a3a4d 100%);
-  --header-height: 60px;
+  --header-height: 56px;
+  --sidebar-width: 240px;
+  --sidebar-collapsed-width: 80px;
 
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
   --shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  --shadow-lg: 0 4px 16px rgba(0, 0, 0, 0.15);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.15);
 
   --radius-sm: 4px;
   --radius: 6px;
-  --radius-lg: 8px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
 
-  --transition: 150ms ease-in-out;
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 32px;
 
-  --kpi-debit: #0d6efd;
-  --kpi-credit: #dc3545;
-  --kpi-balance: #198754;
-  --kpi-warning: #ffc107;
+  --transition-fast: 150ms ease-in-out;
+  --transition: 200ms ease-in-out;
+  --transition-slow: 300ms ease-in-out;
 
-  --text-muted: #6c757d;
-  --text-small: 0.8125rem;
+  --z-dropdown: 100;
+  --z-sticky: 200;
+  --z-modal: 300;
+  --z-toast: 400;
+
+  --table-header-height: 44px;
+  --table-cell-padding-x: 16px;
+  --table-cell-padding-y: 12px;
+  --table-col-stt-width: 60px;
+  --table-col-code-width: 140px;
+  --table-col-date-width: 120px;
+  --table-col-account-width: 120px;
+  --table-col-amount-width: 160px;
+
+  --btn-height-sm: 24px;
+  --btn-height: 32px;
+  --btn-height-lg: 40px;
+
+  --input-height: 36px;
 }
