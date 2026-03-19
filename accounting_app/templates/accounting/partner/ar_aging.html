@@ -52,14 +52,14 @@
                 <tbody>
                     {% for item in aging %}
                     <tr>
-                        <td>{{ item.customer_code }}</td>
-                        <td>{{ item.customer_name }}</td>
-                        <td class="text-end">{{ "{:,.0f}".format(item.balance) }}</td>
-                        <td class="text-end">{{ "{:,.0f}".format(item.current) }}</td>
-                        <td class="text-end">{{ "{:,.0f}".format(item.overdue_30) }}</td>
-                        <td class="text-end">{{ "{:,.0f}".format(item.overdue_60) }}</td>
-                        <td class="text-end">{{ "{:,.0f}".format(item.overdue_90) }}</td>
-                        <td class="text-end">{{ "{:,.0f}".format(item.overdue_180) }}</td>
+                        <td>{{ item.get('customer_code', '') }}</td>
+                        <td>{{ item.get('customer_name', '') }}</td>
+                        <td class="text-end">{{ "{:,.0f}".format(item.get('balance', 0)) }}</td>
+                        <td class="text-end">{{ "{:,.0f}".format(item.get('current', 0)) }}</td>
+                        <td class="text-end">{{ "{:,.0f}".format(item.get('overdue_30', 0)) }}</td>
+                        <td class="text-end">{{ "{:,.0f}".format(item.get('overdue_60', 0)) }}</td>
+                        <td class="text-end">{{ "{:,.0f}".format(item.get('overdue_90', 0)) }}</td>
+                        <td class="text-end">{{ "{:,.0f}".format(item.get('overdue_180', 0)) }}</td>
                     </tr>
                     {% else %}
                     <tr>

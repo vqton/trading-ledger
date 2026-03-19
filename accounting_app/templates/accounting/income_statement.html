@@ -58,9 +58,9 @@
                     </tr>
                     {% for item in revenue %}
                     <tr>
-                        <td>{{ item.account_code }}</td>
-                        <td>{{ item.account_name }}</td>
-                        <td class="text-end">{{ "{:,.0f}".format(item.balance) if item.balance != 0 else '' }}</td>
+                        <td>{{ item.get('account_code', '') }}</td>
+                        <td>{{ item.get('account_name', '') }}</td>
+                        <td class="text-end">{{ "{:,.0f}".format(item.get('balance', 0)) if item.get('balance', 0) != 0 else '' }}</td>
                     </tr>
                     {% endfor %}
                     <tr class="table-secondary fw-bold">
@@ -77,9 +77,9 @@
                     </tr>
                     {% for item in expenses %}
                     <tr>
-                        <td>{{ item.account_code }}</td>
-                        <td>{{ item.account_name }}</td>
-                        <td class="text-end">{{ "{:,.0f}".format(item.balance) if item.balance != 0 else '' }}</td>
+                        <td>{{ item.get('account_code', '') }}</td>
+                        <td>{{ item.get('account_name', '') }}</td>
+                        <td class="text-end">{{ "{:,.0f}".format(item.get('balance', 0)) if item.get('balance', 0) != 0 else '' }}</td>
                     </tr>
                     {% endfor %}
                     <tr class="table-secondary fw-bold">

@@ -66,11 +66,11 @@
                         <td colspan="3"><strong>A. TÀI SẢN NGẮN HẠN</strong></td>
                     </tr>
                     {% for item in balance_sheet.assets %}
-                    {% if item.code.startswith('1') %}
+                    {% if item.get('code', '').startswith('1') %}
                     <tr>
-                        <td>{{ item.code }}</td>
-                        <td>{{ item.name }}</td>
-                        <td class="text-end">{{ "{:,.0f}".format(item.balance) }}</td>
+                        <td>{{ item.get('code', '') }}</td>
+                        <td>{{ item.get('name', '') }}</td>
+                        <td class="text-end">{{ "{:,.0f}".format(item.get('balance', 0)) }}</td>
                     </tr>
                     {% endif %}
                     {% endfor %}

@@ -59,14 +59,14 @@
                 <tbody>
                     {% for item in trial_balance %}
                     <tr>
-                        <td>{{ item.code }}</td>
-                        <td>{{ item.name }}</td>
-                        <td class="text-end">{{ "{:,.0f}".format(item.opening_debit) }}</td>
-                        <td class="text-end">{{ "{:,.0f}".format(item.opening_credit) }}</td>
-                        <td class="text-end">{{ "{:,.0f}".format(item.period_debit) }}</td>
-                        <td class="text-end">{{ "{:,.0f}".format(item.period_credit) }}</td>
-                        <td class="text-end">{{ "{:,.0f}".format(item.closing_debit) }}</td>
-                        <td class="text-end">{{ "{:,.0f}".format(item.closing_credit) }}</td>
+                        <td>{{ item.get('code', '') }}</td>
+                        <td>{{ item.get('name', '') }}</td>
+                        <td class="text-end">{{ "{:,.0f}".format(item.get('opening_debit', 0)) }}</td>
+                        <td class="text-end">{{ "{:,.0f}".format(item.get('opening_credit', 0)) }}</td>
+                        <td class="text-end">{{ "{:,.0f}".format(item.get('period_debit', 0)) }}</td>
+                        <td class="text-end">{{ "{:,.0f}".format(item.get('period_credit', 0)) }}</td>
+                        <td class="text-end">{{ "{:,.0f}".format(item.get('closing_debit', 0)) }}</td>
+                        <td class="text-end">{{ "{:,.0f}".format(item.get('closing_credit', 0)) }}</td>
                     </tr>
                     {% endfor %}
                 </tbody>

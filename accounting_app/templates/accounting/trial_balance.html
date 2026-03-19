@@ -62,18 +62,18 @@
                 <tbody>
                     {% for acc in accounts %}
                     <tr>
-                        <td>{{ acc.account_code }}</td>
-                        <td>{{ acc.account_name }}</td>
+                        <td>{{ acc.get('account_code', '') }}</td>
+                        <td>{{ acc.get('account_name', '') }}</td>
                         <td>
-                            {% if acc.account_type == 'asset' %}Tài sản
-                            {% elif acc.account_type == 'liability' %}Nợ phải trả
-                            {% elif acc.account_type == 'equity' %}Vốn chủ sở hữu
-                            {% elif acc.account_type == 'revenue' %}Doanh thu
-                            {% elif acc.account_type == 'expense' %}Chi phí
+                            {% if acc.get('account_type') == 'asset' %}Tài sản
+                            {% elif acc.get('account_type') == 'liability' %}Nợ phải trả
+                            {% elif acc.get('account_type') == 'equity' %}Vốn chủ sở hữu
+                            {% elif acc.get('account_type') == 'revenue' %}Doanh thu
+                            {% elif acc.get('account_type') == 'expense' %}Chi phí
                             {% endif %}
                         </td>
-                        <td class="text-end">{{ "{:,.0f}".format(acc.debit_balance) if acc.debit_balance > 0 else '' }}</td>
-                        <td class="text-end">{{ "{:,.0f}".format(acc.credit_balance) if acc.credit_balance > 0 else '' }}</td>
+                        <td class="text-end">{{ "{:,.0f}".format(acc.get('debit_balance', 0)) if acc.get('debit_balance', 0) > 0 else '' }}</td>
+                        <td class="text-end">{{ "{:,.0f}".format(acc.get('credit_balance', 0)) if acc.get('credit_balance', 0) > 0 else '' }}</td>
                     </tr>
                     {% endfor %}
                 </tbody>

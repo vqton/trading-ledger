@@ -62,17 +62,17 @@
                     </tr>
                     {% for item in report.revenue %}
                     <tr>
-                        <td style="padding-left: {{ (item.level - 1) * 20 + 15 }}px;">{{ item.name }}</td>
-                        <td class="text-center">{{ item.code }}</td>
-                        <td class="text-end">{{ "{:,.0f}".format(item.period_balance) }}</td>
-                        <td class="text-end">{{ "{:,.0f}".format(item.period_balance) }}</td>
+                        <td style="padding-left: {{ (item.get('level', 1) - 1) * 20 + 15 }}px;">{{ item.get('name', '') }}</td>
+                        <td class="text-center">{{ item.get('code', '') }}</td>
+                        <td class="text-end">{{ "{:,.0f}".format(item.get('period_balance', 0)) }}</td>
+                        <td class="text-end">{{ "{:,.0f}".format(item.get('period_balance', 0)) }}</td>
                     </tr>
                     {% endfor %}
                     <tr class="table-secondary fw-bold">
                         <td>Tổng doanh thu</td>
                         <td class="text-center">01</td>
-                        <td class="text-end">{{ "{:,.0f}".format(report.total_revenue) }}</td>
-                        <td class="text-end">{{ "{:,.0f}".format(report.total_revenue) }}</td>
+                        <td class="text-end">{{ "{:,.0f}".format(report.get('total_revenue', 0)) }}</td>
+                        <td class="text-end">{{ "{:,.0f}".format(report.get('total_revenue', 0)) }}</td>
                     </tr>
 
                     <tr class="table-primary fw-bold">
@@ -80,17 +80,17 @@
                     </tr>
                     {% for item in report.expenses %}
                     <tr>
-                        <td style="padding-left: {{ (item.level - 1) * 20 + 15 }}px;">{{ item.name }}</td>
-                        <td class="text-center">{{ item.code }}</td>
-                        <td class="text-end">{{ "{:,.0f}".format(item.period_balance) }}</td>
-                        <td class="text-end">{{ "{:,.0f}".format(item.period_balance) }}</td>
+                        <td style="padding-left: {{ (item.get('level', 1) - 1) * 20 + 15 }}px;">{{ item.get('name', '') }}</td>
+                        <td class="text-center">{{ item.get('code', '') }}</td>
+                        <td class="text-end">{{ "{:,.0f}".format(item.get('period_balance', 0)) }}</td>
+                        <td class="text-end">{{ "{:,.0f}".format(item.get('period_balance', 0)) }}</td>
                     </tr>
                     {% endfor %}
                     <tr class="table-secondary fw-bold">
                         <td>Tổng chi phí</td>
                         <td class="text-center">02</td>
-                        <td class="text-end">{{ "{:,.0f}".format(report.total_expenses) }}</td>
-                        <td class="text-end">{{ "{:,.0f}".format(report.total_expenses) }}</td>
+                        <td class="text-end">{{ "{:,.0f}".format(report.get('total_expenses', 0)) }}</td>
+                        <td class="text-end">{{ "{:,.0f}".format(report.get('total_expenses', 0)) }}</td>
                     </tr>
 
                     <tr class="table-success fw-bold">

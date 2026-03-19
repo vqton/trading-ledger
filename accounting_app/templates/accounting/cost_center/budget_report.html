@@ -76,17 +76,17 @@
                     </tr>
                 </thead>
                 <tbody>
-                    {% for item in report.items %}
+                    {% for item in report.get('items', []) %}
                     <tr>
-                        <td><strong>{{ item.code }}</strong></td>
-                        <td>{{ item.name }}</td>
-                        <td>{{ item.department or '-' }}</td>
-                        <td class="text-end">{{ "{:,.0f}".format(item.budget_allocated) }}</td>
-                        <td class="text-end">{{ "{:,.0f}".format(item.budget_used) }}</td>
-                        <td class="text-end">{{ "{:,.0f}".format(item.budget_remaining) }}</td>
+                        <td><strong>{{ item.get('code', '') }}</strong></td>
+                        <td>{{ item.get('name', '') }}</td>
+                        <td>{{ item.get('department', '-') or '-' }}</td>
+                        <td class="text-end">{{ "{:,.0f}".format(item.get('budget_allocated', 0)) }}</td>
+                        <td class="text-end">{{ "{:,.0f}".format(item.get('budget_used', 0)) }}</td>
+                        <td class="text-end">{{ "{:,.0f}".format(item.get('budget_remaining', 0)) }}</td>
                         <td>
                             <div class="progress" style="height: 20px; width: 100px;">
-                                {% set pct = item.utilization_rate|round|int %}
+                                {% set pct = item.get('utilization_rate', 0)|round|int %}
                                 <div class="progress-bar bg-{{ 'success' if pct < 70 else 'warning' if pct < 90 else 'danger' }}" 
                                      role="progressbar" style="width: {{ pct }}%">{{ pct }}%</div>
                             </div>
