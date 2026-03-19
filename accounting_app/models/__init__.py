@@ -48,6 +48,11 @@ from models.cost_center import (
     CostCenter,
     CostCenterType,
 )
+from models.project import (
+    Project,
+    ProjectStatus,
+    ProjectType,
+)
 
 __all__ = [
     "Account",
@@ -93,4 +98,7 @@ __all__ = [
     "EmployeeType",
     "CostCenter",
     "CostCenterType",
+    "Project",
+    "ProjectStatus",
+    "ProjectType",
 ]
