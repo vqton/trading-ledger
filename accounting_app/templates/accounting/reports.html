@@ -1,82 +1,46 @@
 {% extends "base.html" %}
 
-{% block title %}Báo cáo tài chính{% endblock %}
+{% block title %}Báo cáo tài chính - VAS Accounting{% endblock %}
 
-{% block content %}
+{% block app_content %}
 <div class="py-4">
     <h1 class="h3 mb-4">Báo cáo tài chính</h1>
     
     <div class="row">
         <div class="col-md-4 mb-3">
             <div class="card h-100">
-                <div class="card-body">
-                    <h5><i class="fas fa-scale-balanced"></i> Bảng cân đối kế toán</h5>
-                    <p class="text-muted">Báo cáo tài sản, nợ phải trả và vốn chủ sở hữu tại thời điểm cuối kỳ</p>
-                    <form method="GET" action="{{ url_for('accounting.balance_sheet') }}">
-                        <div class="mb-2">
-                            <label class="form-label">Đến ngày</label>
-                            <input type="date" class="form-control" name="end_date" value="{{ current_date }}">
-                        </div>
-                        <button type="submit" class="btn btn-primary w-100">Xem báo cáo</button>
-                    </form>
+                <div class="card-body text-center">
+                    <i class="fas fa-file-invoice-dollar fa-3x text-primary mb-3"></i>
+                    <h5>Bảng cân đối kế toán</h5>
+                    <p class="text-muted">Tài sản, Nợ phải trả, Vốn chủ sở hữu</p>
+                    <a href="{{ url_for('accounting.balance_sheet') }}" class="btn btn-primary">
+                        <i class="fas fa-eye"></i> Xem báo cáo
+                    </a>
                 </div>
             </div>
         </div>
+        
         <div class="col-md-4 mb-3">
             <div class="card h-100">
-                <div class="card-body">
-                    <h5><i class="fas fa-arrow-trend-up"></i> Báo cáo kết quả kinh doanh</h5>
-                    <p class="text-muted">Báo cáo doanh thu, chi phí và lợi nhuận trong kỳ</p>
-                    <form method="GET" action="{{ url_for('accounting.income_statement') }}">
-                        <div class="mb-2">
-                            <label class="form-label">Từ ngày</label>
-                            <input type="date" class="form-control" name="start_date" value="{{ first_day_of_month }}">
-                        </div>
-                        <div class="mb-2">
-                            <label class="form-label">Đến ngày</label>
-                            <input type="date" class="form-control" name="end_date" value="{{ current_date }}">
-                        </div>
-                        <button type="submit" class="btn btn-primary w-100">Xem báo cáo</button>
-                    </form>
+                <div class="card-body text-center">
+                    <i class="fas fa-chart-line fa-3x text-success mb-3"></i>
+                    <h5>Báo cáo kết quả kinh doanh</h5>
+                    <p class="text-muted">Doanh thu, Chi phí, Lợi nhuận</p>
+                    <a href="{{ url_for('accounting.income_statement') }}" class="btn btn-success">
+                        <i class="fas fa-eye"></i> Xem báo cáo
+                    </a>
                 </div>
             </div>
         </div>
+        
         <div class="col-md-4 mb-3">
             <div class="card h-100">
-                <div class="card-body">
-                    <h5><i class="fas fa-money-bill"></i> Lưu chuyển tiền tệ</h5>
-                    <p class="text-muted">Báo cáo lưu chuyển tiền tệ (phương pháp gián tiếp)</p>
-                    <form method="GET" action="{{ url_for('accounting.cash_flow') }}">
-                        <div class="mb-2">
-                            <label class="form-label">Từ ngày</label>
-                            <input type="date" class="form-control" name="start_date" value="{{ first_day_of_month }}">
-                        </div>
-                        <div class="mb-2">
-                            <label class="form-label">Đến ngày</label>
-                            <input type="date" class="form-control" name="end_date" value="{{ current_date }}">
-                        </div>
-                        <button type="submit" class="btn btn-primary w-100">Xem báo cáo</button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="row mt-4">
-        <div class="col-md-6">
-            <div class="card">
-                <div class="card-header">
-                    <h5 class="mb-0">Báo cáo khác</h5>
-                </div>
-                <div class="card-body">
-                    <a href="{{ url_for('accounting.trial_balance') }}" class="btn btn-outline-secondary w-100 mb-2">
-                        <i class="fas fa-table"></i> Bảng cân đối tài khoản
-                    </a>
-                    <a href="{{ url_for('accounting.general_ledger') }}" class="btn btn-outline-secondary w-100 mb-2">
-                        <i class="fas fa-book"></i> Sổ cái tổng hợp
-                    </a>
-                    <a href="{{ url_for('accounting.tax_report') }}" class="btn btn-outline-danger w-100">
-                        <i class="fas fa-file-invoice-dollar"></i> Báo cáo thuế
+                <div class="card-body text-center">
+                    <i class="fas fa-balance-scale fa-3x text-info mb-3"></i>
+                    <h5>Bảng cân đối thử</h5>
+                    <p class="text-muted">Số dư tài khoản</p>
+                    <a href="{{ url_for('accounting.trial_balance') }}" class="btn btn-info">
+                        <i class="fas fa-eye"></i> Xem báo cáo
                     </a>
                 </div>
             </div>

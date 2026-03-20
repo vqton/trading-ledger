@@ -2,250 +2,75 @@
 
 {% block title %}Báo cáo thuế - VAS Accounting{% endblock %}
 
-{% block content %}
+{% block app_content %}
 <div class="py-4">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1 class="h3 mb-0">Báo cáo thuế</h1>
-        <div class="text-end">
-            <span class="badge bg-success fs-6 me-2">
-                <i class="fas fa-file-invoice-dollar"></i> Thuế GTGT
-            </span>
-            <span class="badge bg-primary fs-6">
-                <i class="fas fa-building"></i> Thuế TNDN: {{ (cit_rate * 100) | int }}%
-            </span>
-        </div>
+<h1 class="h3 mb-4">Báo cáo thuế</h1>
+
+<div class="row mb-3">
+    <div class="col-md-6">
+        <form method="GET" class="row g-3">
+            <div class="col-auto">
+                <select name="year" class="form-select">
+                    {% for y in range(2020, 2031) %}
+                    <option value="{{ y }}" {% if y == year %}selected{% endif %}>{{ y }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-auto">
+                <button type="submit" class="btn btn-primary">Xem</button>
+            </div>
+        </form>
     </div>
-    
-    <div class="row mb-4">
-        <div class="col-md-12">
-            <div class="alert alert-info mb-0">
-                <i class="fas fa-info-circle"></i> 
-                <strong>Circular 99/2025/TT-BTC:</strong> 
-                Theo quy định hiện hành, thuế suất TNDN là {{ (cit_rate * 100) | int }}%. 
-                Hệ thống sử dụng chính sách thuế từ bảng tax_policies.
+</div>
+
+<div class="row">
+    <div class="col-md-6 mb-3">
+        <div class="card">
+            <div class="card-header">
+                <h5>Tờ khai thuế GTGT</h5>
+            </div>
+            <div class="card-body">
+                <table class="table table-sm">
+                    <tr>
+                        <td>Tổng thuế đầu ra</td>
+                        <td class="text-end">{{ "{:,.0f}".format(vat_declaration.vat_output) if vat_declaration else 0 }}</td>
+                    </tr>
+                    <tr>
+                        <td>Tổng thuế đầu vào</td>
+                        <td class="text-end">{{ "{:,.0f}".format(vat_declaration.vat_input) if vat_declaration else 0 }}</td>
+                    </tr>
+                    <tr class="fw-bold">
+                        <td>Thuế phải nộp</td>
+                        <td class="text-end">{{ "{:,.0f}".format(vat_declaration.vat_payable) if vat_declaration else 0 }}</td>
+                    </tr>
+                </table>
             </div>
         </div>
     </div>
     
-    <div class="row mb-4">
-        <div class="col-md-12">
-            <div class="card">
-                <div class="card-header">
-                    <ul class="nav nav-tabs card-header-tabs" role="tablist">
-                        <li class="nav-item">
-                            <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#vat-declaration" type="button">
-                                <i class="fas fa-file-invoice"></i> Khai thuế GTGT
-                            </button>
-                        </li>
-                        <li class="nav-item">
-                            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#tndn" type="button">
-                                <i class="fas fa-calculator"></i> TNDN ước tính
-                            </button>
-                        </li>
-                        <li class="nav-item">
-                            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#tax-summary" type="button">
-                                <i class="fas fa-chart-bar"></i> Tổng hợp thuế
-                            </button>
-                        </li>
-                        <li class="nav-item">
-                            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#policies" type="button">
-                                <i class="fas fa-gavel"></i> Chính sách thuế
-                            </button>
-                        </li>
-                    </ul>
-                </div>
-                <div class="card-body">
-                    <div class="tab-content">
-                        <div class="tab-pane fade show active" id="vat-declaration">
-                            <form method="GET" class="row g-3 mb-4">
-                                <div class="col-md-3">
-                                    <label class="form-label">Năm</label>
-                                    <select class="form-select" name="year">
-                                        {% for y in range(2024, 2030) %}
-                                        <option value="{{ y }}" {% if y == current_year %}selected{% endif %}>{{ y }}</option>
-                                        {% endfor %}
-                                    </select>
-                                </div>
-                                <div class="col-md-3">
-                                    <label class="form-label">Tháng</label>
-                                    <select class="form-select" name="month">
-                                        {% for m in range(1, 13) %}
-                                        <option value="{{ m }}" {% if m == current_month %}selected{% endif %}>Tháng {{ m }}</option>
-                                        {% endfor %}
-                                    </select>
-                                </div>
-                                <div class="col-md-3">
-                                    <label class="form-label">&nbsp;</label>
-                                    <button type="submit" class="btn btn-primary w-100">
-                                        <i class="fas fa-search"></i> Xem
-                                    </button>
-                                </div>
-                            </form>
-                            
-                            {% if vat_declaration %}
-                            <div class="card bg-light mb-4">
-                                <div class="card-body">
-                                    <h5>Kết quả khai thuế GTGT - {{ vat_declaration.period }}</h5>
-                                    <hr>
-                                    <div class="row">
-                                        <div class="col-md-4">
-                                            <p class="mb-1">Thuế GTGT vào:</p>
-                                            <h4 class="text-info">{{ "{:,.0f}".format(vat_declaration.vat_input) }}</h4>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <p class="mb-1">Thuế GTGT ra:</p>
-                                            <h4 class="text-warning">{{ "{:,.0f}".format(vat_declaration.vat_output) }}</h4>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <p class="mb-1">Thuế phải nộp:</p>
-                                            <h4 class="text-danger">{{ "{:,.0f}".format(vat_declaration.vat_payable) }}</h4>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            {% endif %}
-                        </div>
-                        
-                        <div class="tab-pane fade" id="tndn">
-                            <form method="GET" class="row g-3 mb-4">
-                                <input type="hidden" name="tab" value="tndn">
-                                <div class="col-md-4">
-                                    <label class="form-label">Năm</label>
-                                    <select class="form-select" name="year">
-                                        {% for y in range(2024, 2030) %}
-                                        <option value="{{ y }}" {% if y == current_year %}selected{% endif %}>{{ y }}</option>
-                                        {% endfor %}
-                                    </select>
-                                </div>
-                                <div class="col-md-4">
-                                    <label class="form-label">&nbsp;</label>
-                                    <button type="submit" class="btn btn-primary w-100">
-                                        <i class="fas fa-calculator"></i> Tính toán
-                                    </button>
-                                </div>
-                            </form>
-                            
-                            {% if tndn_estimate %}
-                            <div class="card bg-light">
-                                <div class="card-body">
-                                    <div class="d-flex justify-content-between align-items-start mb-3">
-                                        <div>
-                                            <h5>Ước tính thuế TNDN - Năm {{ tndn_estimate.year }}</h5>
-                                            {% if tndn_estimate.policy_name %}
-                                            <p class="text-muted mb-0 small">{{ tndn_estimate.policy_name }}: {{ tndn_estimate.tax_rate }}</p>
-                                            {% endif %}
-                                        </div>
-                                        <div class="text-end">
-                                            <span class="badge bg-primary fs-6">
-                                                <i class="fas fa-percent"></i> Thuế suất: {{ tndn_estimate.tax_rate }}
-                                            </span>
-                                        </div>
-                                    </div>
-                                    <hr>
-                                    <table class="table table-borderless">
-                                        <tr>
-                                            <td>Tổng doanh thu:</td>
-                                            <td class="text-end"><strong>{{ "{:,.0f}".format(tndn_estimate.total_revenue) }}</strong></td>
-                                        </tr>
-                                        <tr>
-                                            <td>Tổng chi phí:</td>
-                                            <td class="text-end"><strong>{{ "{:,.0f}".format(tndn_estimate.total_expense) }}</strong></td>
-                                        </tr>
-                                        <tr class="border-top">
-                                            <td>Lợi nhuận gộp:</td>
-                                            <td class="text-end"><strong>{{ "{:,.0f}".format(tndn_estimate.gross_profit) }}</strong></td>
-                                        </tr>
-                                        <tr>
-                                            <td>Thuế suất áp dụng:</td>
-                                            <td class="text-end"><strong>{{ tndn_estimate.tax_rate }}</strong></td>
-                                        </tr>
-                                        <tr class="border-top border-dark bg-warning">
-                                            <td><strong>Thuế TNDN ước tính:</strong></td>
-                                            <td class="text-end"><strong>{{ "{:,.0f}".format(tndn_estimate.estimated_tax) }}</strong></td>
-                                        </tr>
-                                    </table>
-                                    {% if tndn_estimate.policy_description %}
-                                    <p class="text-muted small mt-2"><i class="fas fa-info-circle"></i> {{ tndn_estimate.policy_description }}</p>
-                                    {% endif %}
-                                </div>
-                            </div>
-                            {% endif %}
-                        </div>
-                        
-                        <div class="tab-pane fade" id="tax-summary">
-                            <div class="table-responsive">
-                                <table class="table table-bordered table-hover">
-                                    <thead class="table-light">
-                                        <tr>
-                                            <th>Tháng</th>
-                                            <th class="text-end">VAT vào</th>
-                                            <th class="text-end">VAT ra</th>
-                                            <th class="text-end">Phải nộp</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {% for summary in tax_summaries %}
-                                        <tr>
-                                            <td>Tháng {{ summary.month }}</td>
-                                            <td class="text-end">{{ "{:,.0f}".format(summary.vat_input) }}</td>
-                                            <td class="text-end">{{ "{:,.0f}".format(summary.vat_output) }}</td>
-                                            <td class="text-end">{{ "{:,.0f}".format(summary.vat_payable) }}</td>
-                                        </tr>
-                                        {% else %}
-                                        <tr>
-                                            <td colspan="4" class="text-center text-muted">Chưa có dữ liệu</td>
-                                        </tr>
-                                        {% endfor %}
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                        
-                        <div class="tab-pane fade" id="policies">
-                            <h5 class="mb-3">Chính sách thuế TNDN</h5>
-                            <div class="table-responsive">
-                                <table class="table table-bordered table-hover">
-                                    <thead class="table-light">
-                                        <tr>
-                                            <th>Năm</th>
-                                            <th>Tỷ lệ</th>
-                                            <th>Tên chính sách</th>
-                                            <th>Trạng thái</th>
-                                            <th>Mô tả</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {% for policy in cit_policies %}
-                                        <tr>
-                                            <td>{{ policy.year }}</td>
-                                            <td><strong>{{ (policy.rate * 100) | int }}%</strong></td>
-                                            <td>{{ policy.rate_name or '-' }}</td>
-                                            <td>
-                                                {% if policy.active %}
-                                                <span class="badge bg-success">Hoạt động</span>
-                                                {% else %}
-                                                <span class="badge bg-secondary">Không hoạt động</span>
-                                                {% endif %}
-                                            </td>
-                                            <td>{{ policy.description or '-' }}</td>
-                                        </tr>
-                                        {% else %}
-                                        <tr>
-                                            <td colspan="5" class="text-center text-muted">Chưa có chính sách thuế. Sử dụng mặc định 20%.</td>
-                                        </tr>
-                                        {% endfor %}
-                                    </tbody>
-                                </table>
-                            </div>
-                            <p class="text-muted small mt-2">
-                                <i class="fas fa-info-circle"></i> 
-                                Lưu ý: Nếu không có chính sách thuế cho năm, hệ thống sử dụng thuế suất mặc định {{ (cit_rate * 100) | int }}%.
-                            </p>
-                        </div>
-                    </div>
-                </div>
+    <div class="col-md-6 mb-3">
+        <div class="card">
+            <div class="card-header">
+                <h5>Thuế TNDN tạm tính</h5>
+            </div>
+            <div class="card-body">
+                <table class="table table-sm">
+                    <tr>
+                        <td>Thu nhập chịu thuế</td>
+                        <td class="text-end">{{ "{:,.0f}".format(tndn_estimate.taxable_income) if tndn_estimate else 0 }}</td>
+                    </tr>
+                    <tr>
+                        <td>Thuế suất</td>
+                        <td class="text-end">{{ (cit_rate * 100)|round(0) if cit_rate else 20 }}%</td>
+                    </tr>
+                    <tr class="fw-bold">
+                        <td>Thuế TNDN phải nộp</td>
+                        <td class="text-end">{{ "{:,.0f}".format(tndn_estimate.tax_amount) if tndn_estimate else 0 }}</td>
+                    </tr>
+                </table>
             </div>
         </div>
     </div>
+</div>
 </div>
 {% endblock %}

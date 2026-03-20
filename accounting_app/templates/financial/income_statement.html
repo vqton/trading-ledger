@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block title %}Báo cáo KQKD - VAS Accounting{% endblock %}
+
+{% block app_content %}
+<div class="py-4">
+<h1 class="h3 mb-4">Báo cáo kết quả hoạt động kinh doanh</h1>
+
+<div class="card">
+    <div class="card-header">
+        <h4>BÁO CÁO KẾT QUẢ HOẠT ĐỘNG KINH DOANH</h4>
+        <h6>Kỳ từ {{ from_date.strftime('%d/%m/%Y') if from_date else '' }} đến {{ to_date.strftime('%d/%m/%Y') if to_date else '' }}</h6>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-6">
+                <h5 class="text-primary">1. DOANH THU</h5>
+                {% for item in revenue %}
+                <div class="row">
+                    <div class="col-8">{{ item.name }}</div>
+                    <div class="col-4 text-end">{{ "{:,.0f}".format(item.balance) }}</div>
+                </div>
+                {% endfor %}
+                <div class="row fw-bold border-top">
+                    <div class="col-8">Tổng doanh thu (1)</div>
+                    <div class="col-4 text-end">{{ "{:,.0f}".format(total_revenue) }}</div>
+                </div>
+            </div>
+            
+            <div class="col-md-6">
+                <h5 class="text-danger">2. CHI PHÍ</h5>
+                {% for item in expenses %}
+                <div class="row">
+                    <div class="col-8">{{ item.name }}</div>
+                    <div class="col-4 text-end">{{ "{:,.0f}".format(item.balance) }}</div>
+                </div>
+                {% endfor %}
+                <div class="row fw-bold border-top">
+                    <div class="col-8">Tổng chi phí (2)</div>
+                    <div class="col-4 text-end">{{ "{:,.0f}".format(total_expenses) }}</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="card bg-{{ 'success' if profit >= 0 else 'danger' }} text-white">
+                    <div class="card-body">
+                        <h4>Lợi nhuận trước thuế: {{ "{:,.0f}".format(profit) }}</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+{% endblock %}

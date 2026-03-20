@@ -1,158 +1,53 @@
 {% extends "base.html" %}
 
-{% block title %}Danh mục tài khoản{% endblock %}
+{% block title %}Danh mục tài khoản - VAS Accounting{% endblock %}
 
-{% block breadcrumb_title %}Danh mục tài khoản{% endblock %}
+{% block app_content %}
+<div class="py-4">
+<h1 class="h3 mb-4">Danh mục tài khoản</h1>
 
-{% block content %}
-<div class="page-header">
-    <div class="d-flex justify-content-between align-items-center">
-        <h1 class="page-title">Danh mục tài khoản</h1>
-        {% if current_user.can_create('account') %}
-        <div class="page-actions">
-            <a href="{{ url_for('accounting.create_account') }}" class="btn btn-primary" accesskey="n">
-                <i class="fas fa-plus-circle"></i> Thêm tài khoản <kbd class="bg-white text-dark px-1 rounded" style="font-size: 0.65rem;">N</kbd>
-            </a>
-        </div>
-        {% endif %}
-    </div>
+<div class="mb-3">
+    <a href="{{ url_for('accounting.create_account') }}" class="btn btn-primary">
+        <i class="fas fa-plus"></i> Thêm tài khoản
+    </a>
+    <a href="{{ url_for('accounting.accounts_tree') }}" class="btn btn-outline-secondary">
+        <i class="fas fa-sitemap"></i> Sơ đồ tài khoản
+    </a>
 </div>
 
-<div class="ac-card">
-    <div class="ac-toolbar">
-        <div class="toolbar-search">
-            <i class="fas fa-search"></i>
-            <input type="search" id="searchInput" placeholder="Tìm mã, tên tài khoản..." accesskey="f">
-        </div>
-        <div class="toolbar-actions">
-            <button type="button" class="btn btn-secondary btn-sm" onclick="window.print()">
-                <i class="fas fa-print"></i> In
-            </button>
-        </div>
-    </div>
-    <div class="ac-table-container" style="border-radius: 0;">
-        <table class="ac-table" id="accountsTable">
-            <thead>
+<div class="card">
+    <div class="card-body">
+        <table class="table table-hover">
+            <thead class="table-light">
                 <tr>
-                    <th class="col-code">Mã TK</th>
-                    <th>Tên tài khoản</th>
-                    <th style="width: 120px;">Loại</th>
-                    <th style="width: 80px;">Số dư BT</th>
-                    <th style="width: 100px;">Trạng thái</th>
-                    <th class="text-end" style="width: 120px;">Thao tác</th>
+                    <th>Mã TK</th>
+                    <th>Tên tiếng Việt</th>
+                    <th>Tên tiếng Anh</th>
+                    <th>Loại</th>
+                    <th>Số dư bình thường</th>
+                    <th>Trạng thái</th>
                 </tr>
             </thead>
             <tbody>
-                {% for account in accounts %}
-                <tr>
-                    <td class="col-code">
-                        <a href="{{ url_for('accounting.ledger', account_id=account.id) }}" class="ac-table-clickable">
-                            {{ account.account_code }}
-                        </a>
-                    </td>
-                    <td>
-                        <span style="padding-left: {{ (account.level - 1) * 20 }}px;">
-                            {% if account.level > 1 %}<i class="fas fa-subtract text-muted me-1"></i>{% endif %}
-                            {{ account.account_name }}
-                        </span>
-                    </td>
-                    <td>
-                        {% if account.account_type == 'asset' %}
-                        <span class="ac-status ac-status-pending">Tài sản</span>
-                        {% elif account.account_type == 'liability' %}
-                        <span class="ac-status" style="background: #fee2e2; color: #dc2626;">Nợ phải trả</span>
-                        {% elif account.account_type == 'equity' %}
-                        <span class="ac-status ac-status-approved">Vốn chủ sở hữu</span>
-                        {% elif account.account_type == 'revenue' %}
-                        <span class="ac-status" style="background: #dbeafe; color: #2563eb;">Doanh thu</span>
-                        {% elif account.account_type == 'expense' %}
-                        <span class="ac-status ac-status-overdue">Chi phí</span>
-                        {% endif %}
-                    </td>
-                    <td class="text-center">
-                        {% if account.normal_balance == 'debit' %}
-                        <span class="amount-negative">Nợ</span>
-                        {% else %}
-                        <span class="amount-positive">Có</span>
-                        {% endif %}
-                    </td>
-                    <td>
-                        {% if account.is_active %}
-                        <span class="ac-status ac-status-approved">
-                            <i class="fas fa-check"></i> Hoạt động
-                        </span>
-                        {% else %}
-                        <span class="ac-status ac-status-locked">
-                            <i class="fas fa-lock"></i> Khóa
-                        </span>
-                        {% endif %}
-                    </td>
-                    <td class="text-end">
-                        {% if current_user.can_update('account') %}
-                        <a href="{{ url_for('accounting.edit_account', account_id=account.id) }}" 
-                           class="btn btn-ghost btn-sm btn-icon" title="Sửa">
-                            <i class="fas fa-pencil-alt text-muted"></i>
-                        </a>
-                        {% endif %}
-                        {% if current_user.can_delete('account') and not account.children %}
-                        <form method="POST" action="{{ url_for('accounting.delete_account', account_id=account.id) }}" 
-                              style="display: inline;" class="delete-form">
-                            <button type="submit" class="btn btn-ghost btn-sm btn-icon" title="Xóa"
-                                    onclick="return confirm('Bạn có chắc muốn xóa tài khoản {{ account.account_code }}?')">
-                                <i class="fas fa-trash-alt text-muted"></i>
-                            </button>
-                        </form>
-                        {% endif %}
-                    </td>
-                </tr>
-                {% endfor %}
+            {% for account in accounts %}
+            <tr>
+                <td><a href="{{ url_for('accounting.edit_account', account_id=account.id) }}">{{ account.code }}</a></td>
+                <td>{{ account.name_vi }}</td>
+                <td>{{ account.name_en or '' }}</td>
+                <td>{{ account.account_type }}</td>
+                <td>{{ 'Nợ' if account.normal_balance == 'debit' else 'Có' }}</td>
+                <td>
+                    {% if account.is_active %}
+                    <span class="badge bg-success">Hoạt động</span>
+                    {% else %}
+                    <span class="badge bg-secondary">Không hoạt động</span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
             </tbody>
         </table>
     </div>
-    <div class="ac-pagination">
-        <div class="pagination-info">
-            Hiển thị <strong>{{ accounts|length }}</strong> tài khoản
-        </div>
-        <div class="pagination-controls">
-            <select class="page-size-select">
-                <option value="25">25 / trang</option>
-                <option value="50">50 / trang</option>
-                <option value="100">100 / trang</option>
-            </select>
-        </div>
-    </div>
 </div>
-{% endblock %}
-
-{% block extra_js %}
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    const table = document.getElementById('accountsTable');
-    const searchInput = document.getElementById('searchInput');
-    
-    searchInput.addEventListener('keyup', function(e) {
-        const filter = e.target.value.toLowerCase();
-        const rows = table.querySelectorAll('tbody tr');
-        
-        rows.forEach(function(row) {
-            const code = row.querySelector('td:first-child').textContent.toLowerCase();
-            const name = row.querySelector('td:nth-child(2)').textContent.toLowerCase();
-            
-            if (code.includes(filter) || name.includes(filter)) {
-                row.style.display = '';
-            } else {
-                row.style.display = 'none';
-            }
-        });
-    });
-    
-    document.querySelectorAll('.delete-form').forEach(function(form) {
-        form.addEventListener('submit', function(e) {
-            if (!confirm('Bạn có chắc muốn xóa tài khoản này?')) {
-                e.preventDefault();
-            }
-        });
-    });
-});
-</script>
+</div>
 {% endblock %}

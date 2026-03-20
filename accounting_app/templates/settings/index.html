@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% block title %}Cài đặt - VAS Accounting{% endblock %}
+
+{% block page_title %}Cài đặt hệ thống{% endblock %}
+
+{% block main_content %}
+<div class="card">
+    <div class="card-header">
+        <h5>Cài đặt công ty</h5>
+    </div>
+    <div class="card-body">
+        <form method="POST">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label class="form-label">Tên công ty</label>
+                    <input type="text" class="form-control" name="company_name" value="{{ settings.company_name }}">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Mã số thuế</label>
+                    <input type="text" class="form-control" name="tax_code" value="{{ settings.tax_code }}">
+                </div>
+            </div>
+            
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label class="form-label">Địa chỉ</label>
+                    <input type="text" class="form-control" name="address" value="{{ settings.address }}">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Điện thoại</label>
+                    <input type="text" class="form-control" name="phone" value="{{ settings.phone }}">
+                </div>
+            </div>
+            
+            <div class="row mb-3">
+                <div class="col-md-4">
+                    <label class="form-label">Năm tài chính bắt đầu</label>
+                    <select class="form-select" name="fiscal_year_start">
+                        <option value="1" {% if settings.fiscal_year_start == 1 %}selected{% endif %}>Tháng 1</option>
+                        <option value="4" {% if settings.fiscal_year_start == 4 %}selected{% endif %}>Tháng 4</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Đồng tiền</label>
+                    <input type="text" class="form-control" name="currency" value="{{ settings.currency or 'VND' }}">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Định dạng số</label>
+                    <input type="text" class="form-control" name="number_format" value="{{ settings.number_format or '#,##0' }}">
+                </div>
+            </div>
+            
+            <button type="submit" class="btn btn-primary">
+                <i class="fas fa-save"></i> Lưu cài đặt
+            </button>
+        </form>
+    </div>
+</div>
+{% endblock %}

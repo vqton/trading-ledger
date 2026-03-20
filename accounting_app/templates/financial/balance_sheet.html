@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{% block title %}Bảng cân đối kế toán - VAS Accounting{% endblock %}
+
+{% block app_content %}
+<div class="py-4">
+<h1 class="h3 mb-4">Bảng cân đối kế toán</h1>
+
+<div class="card">
+    <div class="card-header">
+        <h4>BẢNG CÂN ĐỐI KẾ TOÁN</h4>
+        <h6>Ngày {{ report_date.strftime('%d/%m/%Y') if report_date else '' }}</h6>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-6">
+                <h5 class="text-primary">A. TÀI SẢN</h5>
+                {% for section in assets %}
+                <div class="mb-3">
+                    <strong>{{ section.name }}</strong>
+                    {% for item in section.items %}
+                    <div class="row">
+                        <div class="col-8">{{ item.name }}</div>
+                        <div class="col-4 text-end">{{ "{:,.0f}".format(item.balance) }}</div>
+                    </div>
+                    {% endfor %}
+                    <div class="row fw-bold">
+                        <div class="col-8">Cộng {{ section.name }}</div>
+                        <div class="col-4 text-end">{{ "{:,.0f}".format(section.total) }}</div>
+                    </div>
+                </div>
+                {% endfor %}
+                <div class="row fw-bold border-top">
+                    <div class="col-8">Tổng cộng Tài sản</div>
+                    <div class="col-4 text-end">{{ "{:,.0f}".format(total_assets) }}</div>
+                </div>
+            </div>
+            
+            <div class="col-md-6">
+                <h5 class="text-primary">B. NGUỒN VỐN</h5>
+                {% for section in liabilities %}
+                <div class="mb-3">
+                    <strong>{{ section.name }}</strong>
+                    {% for item in section.items %}
+                    <div class="row">
+                        <div class="col-8">{{ item.name }}</div>
+                        <div class="col-4 text-end">{{ "{:,.0f}".format(item.balance) }}</div>
+                    </div>
+                    {% endfor %}
+                    <div class="row fw-bold">
+                        <div class="col-8">Cộng {{ section.name }}</div>
+                        <div class="col-4 text-end">{{ "{:,.0f}".format(section.total) }}</div>
+                    </div>
+                </div>
+                {% endfor %}
+                <div class="row fw-bold border-top">
+                    <div class="col-8">Tổng cộng Nguồn vốn</div>
+                    <div class="col-4 text-end">{{ "{:,.0f}".format(total_liabilities) }}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+{% endblock %}

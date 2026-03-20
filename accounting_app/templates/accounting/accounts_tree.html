@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block title %}Sơ đồ tài khoản - VAS Accounting{% endblock %}
+
+{% block app_content %}
+<div class="py-4">
+<h1 class="h3 mb-4">Sơ đồ tài khoản</h1>
+
+<div class="card">
+    <div class="card-body">
+        <ul class="account-tree">
+        {% for account in accounts %}
+            <li>
+                <span class="account-code">{{ account.code }}</span>
+                <span class="account-name">{{ account.name_vi }}</span>
+                <span class="account-type badge bg-{{ 'primary' if account.account_type == 'asset' else 'success' if account.account_type == 'revenue' else 'danger' if account.account_type == 'expense' else 'secondary' }}">
+                    {{ account.account_type }}
+                </span>
+                {% if account.is_active %}
+                <span class="badge bg-success">Hoạt động</span>
+                {% else %}
+                <span class="badge bg-secondary">Không hoạt động</span>
+                {% endif %}
+            </li>
+        {% endfor %}
+        </ul>
+    </div>
+</div>
+
+<style>
+.account-tree {
+    list-style: none;
+    padding-left: 20px;
+}
+.account-tree li {
+    padding: 5px 0;
+    border-left: 1px solid #ddd;
+}
+.account-tree li:before {
+    content: '';
+    display: inline-block;
+    width: 15px;
+    height: 1px;
+    background: #ddd;
+    margin-right: 10px;
+}
+.account-code {
+    font-weight: bold;
+    margin-right: 10px;
+}
+.account-name {
+    margin-right: 10px;
+}
+</style>
+</div>
+</div>
+{% endblock %}

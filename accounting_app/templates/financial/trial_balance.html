@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% block title %}Số dư tài khoản - VAS Accounting{% endblock %}
+
+{% block app_content %}
+<div class="py-4">
+<h1 class="h3 mb-4">Số dư tài khoản</h1>
+
+<div class="card">
+    <div class="card-header">
+        <h4>BẢNG CÂN ĐỐI TÀI KHOẢN</h4>
+        <h6>Ngày {{ report_date.strftime('%d/%m/%Y') if report_date else '' }}</h6>
+    </div>
+    <div class="card-body">
+        <table class="table table-sm">
+            <thead>
+                <tr>
+                    <th>Mã TK</th>
+                    <th>Tên tài khoản</th>
+                    <th class="text-end">Dư Nợ đầu kỳ</th>
+                    <th class="text-end">Dư Có đầu kỳ</th>
+                    <th class="text-end">Phát sinh Nợ</th>
+                    <th class="text-end">Phát sinh Có</th>
+                    <th class="text-end">Dư Nợ cuối kỳ</th>
+                    <th class="text-end">Dư Có cuối kỳ</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for account in accounts %}
+            <tr>
+                <td>{{ account.code }}</td>
+                <td>{{ account.name_vi }}</td>
+                <td class="text-end">{{ "{:,.0f}".format(account.opening_debit or 0) }}</td>
+                <td class="text-end">{{ "{:,.0f}".format(account.opening_credit or 0) }}</td>
+                <td class="text-end">{{ "{:,.0f}".format(account.period_debit or 0) }}</td>
+                <td class="text-end">{{ "{:,.0f}".format(account.period_credit or 0) }}</td>
+                <td class="text-end">{{ "{:,.0f}".format(account.closing_debit or 0) }}</td>
+                <td class="text-end">{{ "{:,.0f}".format(account.closing_credit or 0) }}</td>
+            </tr>
+            {% endfor %}
+            <tr class="fw-bold table-secondary">
+                <td colspan="2">Tổng cộng</td>
+                <td class="text-end">{{ "{:,.0f}".format(total_opening_debit) }}</td>
+                <td class="text-end">{{ "{:,.0f}".format(total_opening_credit) }}</td>
+                <td class="text-end">{{ "{:,.0f}".format(total_period_debit) }}</td>
+                <td class="text-end">{{ "{:,.0f}".format(total_period_credit) }}</td>
+                <td class="text-end">{{ "{:,.0f}".format(total_closing_debit) }}</td>
+                <td class="text-end">{{ "{:,.0f}".format(total_closing_credit) }}</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

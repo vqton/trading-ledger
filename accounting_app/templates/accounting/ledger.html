@@ -1,75 +1,61 @@
 {% extends "base.html" %}
 
-{% block title %}Sổ cái{% endblock %}
+{% block title %}Sổ cái - VAS Accounting{% endblock %}
 
-{% block breadcrumb_title %}Sổ cái{% endblock %}
+{% block page_title %}Sổ cái{% endblock %}
 
-{% block content %}
-<div class="page-header">
-    <div class="d-flex justify-content-between align-items-center">
-        <h1 class="page-title">Sổ cái</h1>
+{% block main_content %}
+<div class="card">
+    <div class="card-header">
+        <h4>SỔ CÁI TÀI KHOẢN</h4>
+        <h5>{{ account.code }} - {{ account.name_vi }}</h5>
+        <h6>Ngày {{ from_date.strftime('%d/%m/%Y') if from_date else '' }} đến {{ to_date.strftime('%d/%m/%Y') if to_date else '' }}</h6>
     </div>
-</div>
-
-<div class="print-header">
-    <div class="company-name">CÔNG TY MẪU</div>
-    <div class="report-title">SỔ CÁI TÀI KHOẢN</div>
-    <div class="report-date">Ngày in: {{ current_time|datetime }}</div>
-</div>
-
-<div class="ac-card mb-3">
     <div class="card-body">
-        <form method="GET" class="form-row">
-            <div class="form-group" style="flex: 0 0 300px;">
-                <label class="form-label">Chọn tài khoản<span class="required">*</span></label>
-                <select class="form-select" name="account_id" id="accountSelect" required>
-                    <option value="">-- Chọn tài khoản --</option>
-                    {% for account in accounts %}
-                    <option value="{{ account.id }}" {% if request.args.get('account_id')|int == account.id %}selected{% endif %}>
-                        {{ account.account_code }} - {{ account.account_name }}
-                    </option>
-                    {% endfor %}
-                </select>
-            </div>
-            <div class="form-group" style="flex: 0 0 160px;">
-                <label class="form-label">Từ ngày</label>
-                <input type="date" class="form-control" name="start_date" value="{{ request.args.get('start_date', '') }}">
-            </div>
-            <div class="form-group" style="flex: 0 0 160px;">
-                <label class="form-label">Đến ngày</label>
-                <input type="date" class="form-control" name="end_date" value="{{ request.args.get('end_date', '') }}">
-            </div>
-            <div class="form-group" style="flex: 0 0 auto; align-self: flex-end;">
-                <button type="submit" class="btn btn-primary">
-                    <i class="fas fa-search"></i> Xem
-                </button>
-            </div>
-        </form>
-    </div>
-</div>
-
-<div class="ac-alert alert-info mb-3">
-    <i class="fas fa-info-circle"></i>
-    <div class="alert-content">
-        <strong>Chọn tài khoản</strong> để xem sổ cái chi tiết. Sử dụng <kbd>Ctrl+P</kbd> để in báo cáo.
-    </div>
-</div>
-
-<div class="row">
-    <div class="col-md-6">
-        <div class="ac-card">
-            <div class="card-header">
-                <h5 class="card-title"><i class="fas fa-chart-bar me-2"></i>Báo cáo nhanh</h5>
-            </div>
-            <div class="card-body">
-                <a href="{{ url_for('accounting.trial_balance') }}" class="btn btn-secondary w-100 mb-2 no-print">
-                    <i class="fas fa-balance-scale"></i> Bảng cân đối tài khoản
-                </a>
-                <a href="{{ url_for('accounting.general_ledger') }}" class="btn btn-secondary w-100 no-print">
-                    <i class="fas fa-book-open"></i> Sổ cái tổng hợp
-                </a>
-            </div>
-        </div>
+        <table class="table table-sm">
+            <thead>
+                <tr>
+                    <th>Ngày</th>
+                    <th>Số CT</th>
+                    <th>Diễn giải</th>
+                    <th class="text-end">Nợ</th>
+                    <th class="text-end">Có</th>
+                    <th class="text-end">Dư Nợ</th>
+                    <th class="text-end">Dư Có</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% if opening_balance != 0 %}
+            <tr class="fw-bold">
+                <td colspan="3">Dư đầu kỳ</td>
+                <td></td>
+                <td></td>
+                <td class="text-end">{{ "{:,.0f}".format(opening_balance) if opening_balance > 0 else '' }}</td>
+                <td class="text-end">{{ "{:,.0f}".format(-opening_balance) if opening_balance < 0 else '' }}</td>
+            </tr>
+            {% endif %}
+            
+            {% for entry in entries %}
+            <tr>
+                <td>{{ entry.voucher_date.strftime('%d/%m/%Y') }}</td>
+                <td>{{ entry.voucher_no }}</td>
+                <td>{{ entry.description }}</td>
+                <td class="text-end">{{ "{:,.0f}".format(entry.debit) if entry.debit > 0 else '' }}</td>
+                <td class="text-end">{{ "{:,.0f}".format(entry.credit) if entry.credit > 0 else '' }}</td>
+                <td class="text-end">{{ "{:,.0f}".format(entry.running_debit) if entry.running_debit > 0 else '' }}</td>
+                <td class="text-end">{{ "{:,.0f}".format(entry.running_credit) if entry.running_credit > 0 else '' }}</td>
+            </tr>
+            {% endfor %}
+            
+            <tr class="fw-bold table-secondary">
+                <td colspan="3">Dư cuối kỳ</td>
+                <td class="text-end">{{ "{:,.0f}".format(total_debit) }}</td>
+                <td class="text-end">{{ "{:,.0f}".format(total_credit) }}</td>
+                <td class="text-end">{{ "{:,.0f}".format(closing_debit) if closing_debit > 0 else '' }}</td>
+                <td class="text-end">{{ "{:,.0f}".format(closing_credit) if closing_credit > 0 else '' }}</td>
+            </tr>
+            </tbody>
+        </table>
     </div>
 </div>
 {% endblock %}

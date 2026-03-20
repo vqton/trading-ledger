@@ -1,148 +1,95 @@
 {% extends "base.html" %}
 
-{% block title %}Báo cáo kết quả kinh doanh{% endblock %}
+{% block title %}Báo cáo kết quả kinh doanh - VAS Accounting{% endblock %}
 
-{% block content %}
+{% block app_content %}
 <div class="py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1 class="h3">Báo cáo kết quả kinh doanh</h1>
+        <h1 class="h3 mb-0">Báo cáo kết quả kinh doanh</h1>
         <div>
-            <a href="{{ url_for('accounting.export_income_statement_excel', start_date=start_date.strftime('%Y-%m-%d'), end_date=end_date.strftime('%Y-%m-%d')) }}" class="btn btn-success">
-                <i class="fas fa-file-excel"></i> Excel
-            </a>
-            <a href="{{ url_for('accounting.export_income_statement_pdf', start_date=start_date.strftime('%Y-%m-%d'), end_date=end_date.strftime('%Y-%m-%d')) }}" class="btn btn-danger">
+            <a href="{{ url_for('accounting.income_statement_export', format='pdf') }}" class="btn btn-outline-primary">
                 <i class="fas fa-file-pdf"></i> PDF
             </a>
-            <a href="{{ url_for('accounting.reports') }}" class="btn btn-secondary">
-                <i class="fas fa-arrow-left"></i> Quay lại
+            <a href="{{ url_for('accounting.income_statement_export', format='excel') }}" class="btn btn-outline-success">
+                <i class="fas fa-file-excel"></i> Excel
             </a>
         </div>
     </div>
-
-    <div class="card mb-3">
-        <div class="card-body">
-            <form method="GET" class="row g-3">
-                <div class="col-md-3">
-                    <label class="form-label">Từ ngày</label>
-                    <input type="date" class="form-control" name="start_date" value="{{ start_date.strftime('%Y-%m-%d') }}">
+    
+    <div class="card">
+        <div class="card-header">
+            <form method="get" class="row g-3">
+                <div class="col-auto">
+                    <label class="form-label">Từ ngày:</label>
+                    <input type="date" name="start_date" value="{{ start_date }}" class="form-control">
                 </div>
-                <div class="col-md-3">
-                    <label class="form-label">Đến ngày</label>
-                    <input type="date" class="form-control" name="end_date" value="{{ end_date.strftime('%Y-%m-%d') }}">
+                <div class="col-auto">
+                    <label class="form-label">Đến ngày:</label>
+                    <input type="date" name="end_date" value="{{ end_date }}" class="form-control">
                 </div>
-                <div class="col-md-2">
+                <div class="col-auto">
                     <label class="form-label">&nbsp;</label>
-                    <button type="submit" class="btn btn-primary w-100">Xem</button>
+                    <button type="submit" class="btn btn-primary">Xem</button>
                 </div>
             </form>
         </div>
-    </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Số TK</th>
+                            <th>Tên tài khoản</th>
+                            <th class="text-end">Số dư</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="table-primary fw-bold">
+                            <td colspan="3"><strong>1. DOANH THU</strong></td>
+                        </tr>
+                        {% for item in revenue %}
+                        <tr>
+                            <td>{{ item.get('account_code', '') }}</td>
+                            <td>{{ item.get('account_name', '') }}</td>
+                            <td class="text-end">{{ "{:,.0f}".format(item.get('balance', 0)) if item.get('balance', 0) != 0 else '' }}</td>
+                        </tr>
+                        {% endfor %}
+                        <tr class="table-secondary fw-bold">
+                            <td colspan="2">Tổng doanh thu (1)</td>
+                            <td class="text-end">{{ "{:,.0f}".format(total_revenue) }}</td>
+                        </tr>
 
-    <div class="card mb-3">
-        <div class="card-header text-center">
-            <h4>BÁO CÁO KẾT QUẢ KINH DOANH</h4>
-            <p class="mb-0">Từ ngày {{ start_date.strftime('%d/%m/%Y') }} đến ngày {{ end_date.strftime('%d/%m/%Y') }}</p>
-        </div>
-        <div class="card-body p-0">
-            <table class="table table-bordered mb-0">
-                <thead class="table-light">
-                    <tr>
-                        <th style="width: 10%">Mã số</th>
-                        <th>Chỉ tiêu</th>
-                        <th style="width: 20%" class="text-end">Số kỳ này</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr class="table-primary">
-                        <td colspan="3"><strong>1. DOANH THU</strong></td>
-                    </tr>
-                    {% for item in revenue %}
-                    <tr>
-                        <td>{{ item.get('account_code', '') }}</td>
-                        <td>{{ item.get('account_name', '') }}</td>
-                        <td class="text-end">{{ "{:,.0f}".format(item.get('balance', 0)) if item.get('balance', 0) != 0 else '' }}</td>
-                    </tr>
-                    {% endfor %}
-                    <tr class="table-secondary fw-bold">
-                        <td colspan="2">Tổng doanh thu (1)</td>
-                        <td class="text-end">{{ "{:,.0f}".format(total_revenue) }}</td>
-                    </tr>
+                        <tr>
+                            <td colspan="3">&nbsp;</td>
+                        </tr>
 
-                    <tr>
-                        <td colspan="3">&nbsp;</td>
-                    </tr>
+                        <tr class="table-primary fw-bold">
+                            <td colspan="3"><strong>2. CHI PHÍ</strong></td>
+                        </tr>
+                        {% for item in expenses %}
+                        <tr>
+                            <td>{{ item.get('account_code', '') }}</td>
+                            <td>{{ item.get('account_name', '') }}</td>
+                            <td class="text-end">{{ "{:,.0f}".format(item.get('balance', 0)) if item.get('balance', 0) != 0 else '' }}</td>
+                        </tr>
+                        {% endfor %}
+                        <tr class="table-secondary fw-bold">
+                            <td colspan="2">Tổng chi phí (2)</td>
+                            <td class="text-end">{{ "{:,.0f}".format(total_expenses) }}</td>
+                        </tr>
 
-                    <tr class="table-primary">
-                        <td colspan="3"><strong>2. GIÁ VỐN HÀNG BÁN</strong></td>
-                    </tr>
-                    {% for item in expenses %}
-                    <tr>
-                        <td>{{ item.get('account_code', '') }}</td>
-                        <td>{{ item.get('account_name', '') }}</td>
-                        <td class="text-end">{{ "{:,.0f}".format(item.get('balance', 0)) if item.get('balance', 0) != 0 else '' }}</td>
-                    </tr>
-                    {% endfor %}
-                    <tr class="table-secondary fw-bold">
-                        <td colspan="2">Tổng giá vốn (2)</td>
-                        <td class="text-end">{{ "{:,.0f}".format(total_expenses) }}</td>
-                    </tr>
+                        <tr>
+                            <td colspan="3">&nbsp;</td>
+                        </tr>
 
-                    <tr>
-                        <td colspan="3">&nbsp;</td>
-                    </tr>
-
-                    <tr class="table-info fw-bold">
-                        <td colspan="2">Lợi nhuận gộp (1 - 2)</td>
-                        <td class="text-end">{{ "{:,.0f}".format(gross_profit) }}</td>
-                    </tr>
-
-                    <tr>
-                        <td colspan="3">&nbsp;</td>
-                    </tr>
-
-                    <tr class="table-primary">
-                        <td colspan="3"><strong>3. CHI PHÍ KINH DOANH</strong></td>
-                    </tr>
-                    <tr class="table-secondary fw-bold">
-                        <td colspan="2">Tổng chi phí kinh doanh</td>
-                        <td class="text-end">{{ "{:,.0f}".format(total_expenses) }}</td>
-                    </tr>
-
-                    <tr>
-                        <td colspan="3">&nbsp;</td>
-                    </tr>
-
-                    <tr class="table-warning fw-bold">
-                        <td colspan="2">Lợi nhuận trước thuế</td>
-                        <td class="text-end">{{ "{:,.0f}".format(net_profit_before_tax) }}</td>
-                    </tr>
-
-                    <tr class="table-warning fw-bold">
-                        <td colspan="2">Chi phí thuế TNDN</td>
-                        <td class="text-end">0</td>
-                    </tr>
-
-                    <tr class="table-dark fw-bold">
-                        <td colspan="2">Lợi nhuận sau thuế</td>
-                        <td class="text-end">{{ "{:,.0f}".format(net_profit_after_tax) }}</td>
-                    </tr>
-                </tbody>
-            </table>
+                        <tr class="table-success fw-bold">
+                            <td colspan="2"><strong>LỢI NHUẬN THUẦN = (1) - (2)</strong></td>
+                            <td class="text-end">{{ "{:,.0f}".format(profit) }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
-
-    {% if net_profit_after_tax > 0 %}
-    <div class="alert alert-success">
-        <h5><i class="fas fa-check-circle"></i> Kỳ này có lợi nhuận: {{ "{:,.0f}".format(net_profit_after_tax) }}</h5>
-    </div>
-    {% elif net_profit_after_tax < 0 %}
-    <div class="alert alert-warning">
-        <h5><i class="fas fa-circle-exclamation"></i> Kỳ này lỗ: {{ "{:,.0f}".format(-net_profit_after_tax) }}</h5>
-    </div>
-    {% else %}
-    <div class="alert alert-info">
-        <h5><i class="fas fa-circle-info"></i> Kỳ này hòa vốn (chưa có dữ liệu doanh thu/chi phí)</h5>
-    </div>
-    {% endif %}
 </div>
 {% endblock %}

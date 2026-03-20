@@ -545,10 +545,10 @@ def tax_report():
     from services.tax_service import TaxService
     
     vat_declaration = TaxService.get_vat_declaration(year, month)
-    tndn_estimate = TaxService.estimate_tndn(year)
+    tndn_estimate = TaxService.get_cit_estimate(year)
     tax_summaries = TaxService.get_tax_summary(year)
     cit_rate = TaxService.get_cit_rate(year)
-    cit_policies = TaxService.get_all_cit_policies()
+    cit_policies = TaxService.get_tax_policies("cit")
     
     return render_template(
         "accounting/tax_report.html",

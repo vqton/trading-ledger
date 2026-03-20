@@ -1,129 +1,85 @@
 {% extends "base.html" %}
 
-{% block title %}Bảng cân đối kế toán{% endblock %}
+{% block title %}Bảng cân đối kế toán - VAS Accounting{% endblock %}
 
-{% block content %}
+{% block app_content %}
 <div class="py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1 class="h3">Bảng cân đối kế toán</h1>
+        <h1 class="h3 mb-0">Bảng cân đối kế toán</h1>
         <div>
-            <a href="{{ url_for('accounting.export_balance_sheet_excel', end_date=end_date.strftime('%Y-%m-%d')) }}" class="btn btn-success">
-                <i class="fas fa-file-excel"></i> Excel
-            </a>
-            <a href="{{ url_for('accounting.export_balance_sheet_pdf', end_date=end_date.strftime('%Y-%m-%d')) }}" class="btn btn-danger">
+            <a href="{{ url_for('accounting.balance_sheet_export', format='pdf') }}" class="btn btn-outline-primary">
                 <i class="fas fa-file-pdf"></i> PDF
             </a>
-            <a href="{{ url_for('accounting.reports') }}" class="btn btn-secondary">
-                <i class="fas fa-arrow-left"></i> Quay lại
+            <a href="{{ url_for('accounting.balance_sheet_export', format='excel') }}" class="btn btn-outline-success">
+                <i class="fas fa-file-excel"></i> Excel
             </a>
         </div>
     </div>
-
-    <div class="card mb-3">
-        <div class="card-body">
-            <form method="GET" class="row g-3">
-                <div class="col-md-4">
-                    <label class="form-label">Đến ngày</label>
-                    <input type="date" class="form-control" name="end_date" value="{{ end_date.strftime('%Y-%m-%d') }}">
+    
+    <div class="card">
+        <div class="card-header">
+            <form method="get" class="row g-3">
+                <div class="col-auto">
+                    <label class="form-label">Ngày:</label>
+                    <input type="date" name="end_date" value="{{ end_date }}" class="form-control">
                 </div>
-                <div class="col-md-2">
+                <div class="col-auto">
                     <label class="form-label">&nbsp;</label>
-                    <button type="submit" class="btn btn-primary w-100">Xem</button>
+                    <button type="submit" class="btn btn-primary">Xem</button>
                 </div>
             </form>
         </div>
-    </div>
-
-    <div class="card mb-3">
-        <div class="card-header text-center">
-            <h4>BẢNG CÂN ĐỐI KẾ TOÁN</h4>
-            <p class="mb-0">Tại ngày {{ end_date.strftime('%d/%m/%Y') }}</p>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Số TK</th>
+                            <th>Tên tài khoản</th>
+                            <th class="text-end">Số dư</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="table-primary fw-bold">
+                            <td colspan="3">A. TÀI SẢN</td>
+                        </tr>
+                        {% for item in assets %}
+                        <tr>
+                            <td>{{ item.get('account_code', '') }}</td>
+                            <td>{{ item.get('account_name', '') }}</td>
+                            <td class="text-end">{{ "{:,.0f}".format(item.get('balance', 0)) }}</td>
+                        </tr>
+                        {% endfor %}
+                        <tr class="table-secondary fw-bold">
+                            <td colspan="2">Tổng cộng Tài sản (A)</td>
+                            <td class="text-end">{{ "{:,.0f}".format(total_assets) }}</td>
+                        </tr>
+                        
+                        <tr class="table-primary fw-bold">
+                            <td colspan="3">B. NGUỒN VỐN</td>
+                        </tr>
+                        {% for item in liabilities %}
+                        <tr>
+                            <td>{{ item.get('account_code', '') }}</td>
+                            <td>{{ item.get('account_name', '') }}</td>
+                            <td class="text-end">{{ "{:,.0f}".format(item.get('balance', 0)) }}</td>
+                        </tr>
+                        {% endfor %}
+                        {% for item in equity %}
+                        <tr>
+                            <td>{{ item.get('account_code', '') }}</td>
+                            <td>{{ item.get('account_name', '') }}</td>
+                            <td class="text-end">{{ "{:,.0f}".format(item.get('balance', 0)) }}</td>
+                        </tr>
+                        {% endfor %}
+                        <tr class="table-secondary fw-bold">
+                            <td colspan="2">Tổng cộng Nguồn vốn (B)</td>
+                            <td class="text-end">{{ "{:,.0f}".format(total_liabilities + total_equity) }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
-        <div class="card-body p-0">
-            <table class="table table-bordered mb-0">
-                <thead class="table-light">
-                    <tr>
-                        <th style="width: 10%">Mã số</th>
-                        <th>Tài khoản</th>
-                        <th style="width: 20%" class="text-end">Số cuối kỳ</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr class="table-primary">
-                        <td colspan="3"><strong>A. TÀI SẢN</strong></td>
-                    </tr>
-                    {% for item in assets %}
-                    <tr>
-                        <td>{{ item.get('account_code', '') }}</td>
-                        <td>{{ item.get('account_name', '') }}</td>
-                        <td class="text-end">{{ "{:,.0f}".format(item.get('balance', 0)) if item.get('balance', 0) != 0 else '' }}</td>
-                    </tr>
-                    {% endfor %}
-                    <tr class="table-secondary fw-bold">
-                        <td colspan="2">Tổng cộng Tài sản (A)</td>
-                        <td class="text-end">{{ "{:,.0f}".format(total_assets) }}</td>
-                    </tr>
-
-                    <tr>
-                        <td colspan="3">&nbsp;</td>
-                    </tr>
-
-                    <tr class="table-primary">
-                        <td colspan="3"><strong>B. NỢ PHẢI TRẢ</strong></td>
-                    </tr>
-                    {% for item in liabilities %}
-                    <tr>
-                        <td>{{ item.get('account_code', '') }}</td>
-                        <td>{{ item.get('account_name', '') }}</td>
-                        <td class="text-end">{{ "{:,.0f}".format(item.get('balance', 0)) if item.get('balance', 0) != 0 else '' }}</td>
-                    </tr>
-                    {% endfor %}
-                    <tr class="table-secondary fw-bold">
-                        <td colspan="2">Tổng cộng Nợ phải trả (B)</td>
-                        <td class="text-end">{{ "{:,.0f}".format(total_liabilities) }}</td>
-                    </tr>
-
-                    <tr>
-                        <td colspan="3">&nbsp;</td>
-                    </tr>
-
-                    <tr class="table-primary">
-                        <td colspan="3"><strong>C. VỐN CHỦ SỞ HỮU</strong></td>
-                    </tr>
-                    {% for item in equity %}
-                    <tr>
-                        <td>{{ item.get('account_code', '') }}</td>
-                        <td>{{ item.get('account_name', '') }}</td>
-                        <td class="text-end">{{ "{:,.0f}".format(item.get('balance', 0)) if item.get('balance', 0) != 0 else '' }}</td>
-                    </tr>
-                    {% endfor %}
-                    <tr>
-                        <td></td>
-                        <td>Lợi nhuận sau thuế</td>
-                        <td class="text-end">{{ "{:,.0f}".format(retained_earnings) }}</td>
-                    </tr>
-                    <tr class="table-secondary fw-bold">
-                        <td colspan="2">Tổng cộng Vốn chủ sở hữu (C)</td>
-                        <td class="text-end">{{ "{:,.0f}".format(total_equity + retained_earnings) }}</td>
-                    </tr>
-
-                    <tr class="table-dark fw-bold">
-                        <td colspan="2">Tổng cộng Nợ phải trả và Vốn chủ sở hữu (B+C)</td>
-                        <td class="text-end">{{ "{:,.0f}".format(total_liab_equity + retained_earnings) }}</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
-
-    <div class="alert alert-{{ 'success' if is_balanced else 'danger' }}">
-        <h5>
-            {% if is_balanced %}
-            <i class="fas fa-check-circle"></i> Bảng cân đối CÂN BẰNG
-            {% else %}
-            <i class="fas fa-circle-exclamation"></i> Bảng cân đối KHÔNG CÂN BẰNG
-            {% endif %}
-        </h5>
     </div>
 </div>
 {% endblock %}
