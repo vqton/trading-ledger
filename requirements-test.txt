@@ -1,0 +1,6 @@
+# Test dependencies
+pytest>=7.4
+pytest-playwright>=0.4
+pytest-cov>=4.1
+pytest-html>=4.1
+playwright>=1.40

@@ -41,7 +41,7 @@ def test_failed_login(page: Page, flask_server: str):
     assert page.locator(".alert-danger, .alert-warning").is_visible() or page.url == f"{flask_server}/auth/login"
 
 
-def test_logout(page: Page, logged_in_page: Page, flask_server: str):
+def test_logout(page: Page, authenticated_page: Page, flask_server: str):
     """Test logout functionality."""
     page.click("a:has-text('Đăng xuất'), a:has-text('Logout'), a[href*='logout']")
     page.wait_for_load_state("networkidle")

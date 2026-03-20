@@ -6,9 +6,9 @@ import pytest
 from playwright.sync_api import Page
 
 
-def test_navigate_to_accounts_from_sidebar(logged_in_page: Page, flask_server: str):
+def test_navigate_to_accounts_from_sidebar(authenticated_page: Page, flask_server: str):
     """Test navigation to accounts from sidebar."""
-    page = logged_in_page
+    page = authenticated_page
     page.goto(f"{flask_server}/")
     page.wait_for_load_state("networkidle")
     
@@ -17,9 +17,9 @@ def test_navigate_to_accounts_from_sidebar(logged_in_page: Page, flask_server: s
     assert "/accounting/accounts" in page.url
 
 
-def test_navigate_to_journal_from_sidebar(logged_in_page: Page, flask_server: str):
+def test_navigate_to_journal_from_sidebar(authenticated_page: Page, flask_server: str):
     """Test navigation to journal from sidebar."""
-    page = logged_in_page
+    page = authenticated_page
     page.goto(f"{flask_server}/")
     page.wait_for_load_state("networkidle")
     
@@ -28,9 +28,9 @@ def test_navigate_to_journal_from_sidebar(logged_in_page: Page, flask_server: st
     assert "/accounting/journal" in page.url
 
 
-def test_navigate_to_account_tree_from_sidebar(logged_in_page: Page, flask_server: str):
+def test_navigate_to_account_tree_from_sidebar(authenticated_page: Page, flask_server: str):
     """Test navigation to account tree from sidebar."""
-    page = logged_in_page
+    page = authenticated_page
     page.goto(f"{flask_server}/")
     page.wait_for_load_state("networkidle")
     
@@ -39,9 +39,9 @@ def test_navigate_to_account_tree_from_sidebar(logged_in_page: Page, flask_serve
     assert "/accounting/accounts/tree" in page.url
 
 
-def test_navigate_to_balance_sheet_from_sidebar(logged_in_page: Page, flask_server: str):
+def test_navigate_to_balance_sheet_from_sidebar(authenticated_page: Page, flask_server: str):
     """Test navigation to balance sheet from sidebar."""
-    page = logged_in_page
+    page = authenticated_page
     page.goto(f"{flask_server}/")
     page.wait_for_load_state("networkidle")
     
@@ -50,9 +50,9 @@ def test_navigate_to_balance_sheet_from_sidebar(logged_in_page: Page, flask_serv
     assert "/financial/balance-sheet" in page.url
 
 
-def test_navigate_to_income_statement_from_sidebar(logged_in_page: Page, flask_server: str):
+def test_navigate_to_income_statement_from_sidebar(authenticated_page: Page, flask_server: str):
     """Test navigation to income statement from sidebar."""
-    page = logged_in_page
+    page = authenticated_page
     page.goto(f"{flask_server}/")
     page.wait_for_load_state("networkidle")
     
@@ -61,9 +61,9 @@ def test_navigate_to_income_statement_from_sidebar(logged_in_page: Page, flask_s
     assert "/financial/income-statement" in page.url
 
 
-def test_navigate_to_trial_balance_from_sidebar(logged_in_page: Page, flask_server: str):
+def test_navigate_to_trial_balance_from_sidebar(authenticated_page: Page, flask_server: str):
     """Test navigation to trial balance from sidebar."""
-    page = logged_in_page
+    page = authenticated_page
     page.goto(f"{flask_server}/")
     page.wait_for_load_state("networkidle")
     
@@ -72,9 +72,9 @@ def test_navigate_to_trial_balance_from_sidebar(logged_in_page: Page, flask_serv
     assert "/financial/trial-balance" in page.url
 
 
-def test_navigate_to_ledger_from_sidebar(logged_in_page: Page, flask_server: str):
+def test_navigate_to_ledger_from_sidebar(authenticated_page: Page, flask_server: str):
     """Test navigation to ledger from sidebar."""
-    page = logged_in_page
+    page = authenticated_page
     page.goto(f"{flask_server}/")
     page.wait_for_load_state("networkidle")
     
@@ -83,9 +83,9 @@ def test_navigate_to_ledger_from_sidebar(logged_in_page: Page, flask_server: str
     assert "/accounting/ledger" in page.url
 
 
-def test_navigate_to_tax_report_from_sidebar(logged_in_page: Page, flask_server: str):
+def test_navigate_to_tax_report_from_sidebar(authenticated_page: Page, flask_server: str):
     """Test navigation to tax report from sidebar."""
-    page = logged_in_page
+    page = authenticated_page
     page.goto(f"{flask_server}/")
     page.wait_for_load_state("networkidle")
     
@@ -94,9 +94,9 @@ def test_navigate_to_tax_report_from_sidebar(logged_in_page: Page, flask_server:
     assert "/accounting/reports/tax" in page.url
 
 
-def test_navigate_to_users_from_sidebar(logged_in_page: Page, flask_server: str):
+def test_navigate_to_users_from_sidebar(authenticated_page: Page, flask_server: str):
     """Test navigation to users page from sidebar (admin only)."""
-    page = logged_in_page
+    page = authenticated_page
     page.goto(f"{flask_server}/")
     page.wait_for_load_state("networkidle")
     
@@ -106,9 +106,9 @@ def test_navigate_to_users_from_sidebar(logged_in_page: Page, flask_server: str)
         assert "/auth/users" in page.url
 
 
-def test_navigate_to_settings_from_sidebar(logged_in_page: Page, flask_server: str):
+def test_navigate_to_settings_from_sidebar(authenticated_page: Page, flask_server: str):
     """Test navigation to settings page from sidebar (admin only)."""
-    page = logged_in_page
+    page = authenticated_page
     page.goto(f"{flask_server}/")
     page.wait_for_load_state("networkidle")
     
