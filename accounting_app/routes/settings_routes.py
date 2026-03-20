@@ -21,8 +21,8 @@ def index():
         ("company", "Company Information"),
         ("accounting", "Accounting Settings"),
         ("approval", "Approval Settings"),
-        ("security", "Security Settings"),
         ("backup", "Backup Settings"),
+        ("all", "All Settings"),
     ]
     return render_template(
         "accounting/settings/index.html",

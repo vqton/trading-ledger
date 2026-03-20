@@ -151,7 +151,32 @@ def flask_app():
     """Flask app with TESTING=True (session-scoped for Playwright)."""
     app = create_app("testing")
     app.config["WTF_CSRF_ENABLED"] = False
+    # Import all models so create_all() sees them
+    _import_all_models()
+    # Create all tables for the session-scoped server
+    with app.app_context():
+        db.create_all()
+        create_default_roles()
+        # Create admin user if not exists
+        admin_role = Role.query.filter_by(name="admin").first()
+        if not User.query.filter_by(username="admin").first():
+            admin = User(username="admin", email="admin@test.com", role_id=admin_role.id, is_active=True)
+            admin.set_password("admin123")
+            db.session.add(admin)
+            db.session.commit()
     return app
+
+
+def _import_all_models():
+    """Import all model modules so SQLAlchemy knows about all tables."""
+    import importlib
+    models_dir = os.path.join(APP_DIR, "models")
+    for fname in os.listdir(models_dir):
+        if fname.endswith(".py") and fname != "__init__.py":
+            try:
+                importlib.import_module(f"models.{fname[:-3]}")
+            except Exception:
+                pass
 
 
 # ========================================================================

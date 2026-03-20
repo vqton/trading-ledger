@@ -6,13 +6,14 @@
 
 {% block main_content %}
 <div class="row">
+    {% set route_map = {'company':'company','accounting':'accounting','approval':'approval','backup':'backup_settings','all':'all_settings'} %}
     {% for key, label in categories %}
     <div class="col-md-4 mb-4">
         <div class="card h-100">
             <div class="card-body d-flex flex-column">
                 <h5 class="card-title">{{ label }}</h5>
                 <p class="card-text text-muted">Quản lý cài đặt {{ label|lower }}</p>
-                <a href="{{ url_for('settings.' + key) }}" class="btn btn-primary mt-auto">
+                <a href="{{ url_for('settings.' ~ route_map.get(key, key)) }}" class="btn btn-primary mt-auto">
                     <i class="fas fa-cog"></i> Cấu hình
                 </a>
             </div>
