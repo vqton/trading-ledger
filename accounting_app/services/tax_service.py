@@ -88,6 +88,8 @@ class QuarterlyVATSummary:
     quarter: int
     year: int
     period: str
+    start_date: date
+    end_date: date
     vat_input: Decimal
     vat_output: Decimal
     vat_payable: Decimal

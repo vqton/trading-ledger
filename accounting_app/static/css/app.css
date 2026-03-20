@@ -1,20 +1,20 @@
 /* ==========================================================================
    VAS Accounting Design System - Custom CSS
-   Typography: Inter + JetBrains Mono | 14px base | Compact mode
+   Typography: Inter + JetBrains Mono | 16px base | Readable for all ages
    ========================================================================== */
 
 /* --- CSS Variables (Design Tokens) --- */
 :root {
-  /* Typography */
+  /* Typography - increased for readability */
   --font-sans: 'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
   --font-mono: 'JetBrains Mono', 'Roboto Mono', ui-monospace, 'Consolas', monospace;
-  --font-size-xs: 0.6875rem;
-  --font-size-sm: 0.8125rem;
-  --font-size-base: 0.875rem;
-  --font-size-lg: 1rem;
-  --font-size-xl: 1.125rem;
-  --font-size-2xl: 1.25rem;
-  --font-size-3xl: 1.5rem;
+  --font-size-xs: 0.8125rem;    /* 13px */
+  --font-size-sm: 0.875rem;     /* 14px */
+  --font-size-base: 1rem;       /* 16px */
+  --font-size-lg: 1.125rem;     /* 18px */
+  --font-size-xl: 1.25rem;      /* 20px */
+  --font-size-2xl: 1.5rem;      /* 24px */
+  --font-size-3xl: 1.75rem;     /* 28px */
 
   /* Colors - Primary */
   --primary-50: #eff6ff;
@@ -73,12 +73,12 @@
   --sidebar-text: #94a3b8;
   --sidebar-hover: #1e293b;
   --sidebar-active: #2563eb;
-  --header-height: 52px;
+  --header-height: 56px;
   --sidebar-width: 250px;
   --sidebar-collapsed-width: 56px;
-  --form-input-height: 38px;
-  --btn-height: 34px;
-  --btn-height-sm: 28px;
+  --form-input-height: 42px;
+  --btn-height: 38px;
+  --btn-height-sm: 32px;
 
   /* Shadows */
   --shadow-sm: 0 1px 2px rgba(0,0,0,.05);
@@ -208,7 +208,7 @@ h1, h2, h3, h4, h5, h6 { font-weight: 600; }
 /* Nav link */
 .nav-link {
   display: flex; align-items: center; gap: 10px;
-  padding: 7px 16px 7px 20px;
+  padding: 9px 16px 9px 20px;
   color: var(--sidebar-text);
   text-decoration: none;
   font-size: var(--font-size-sm);
@@ -436,7 +436,7 @@ h1, h2, h3, h4, h5, h6 { font-weight: 600; }
 /* ==========================================================================
    COMPACT TABLES
    ========================================================================== */
-.table-compact th, .table-compact td { padding: 6px 12px; font-size: var(--font-size-sm); vertical-align: middle; }
+.table-compact th, .table-compact td { padding: 8px 14px; font-size: var(--font-size-sm); vertical-align: middle; }
 .table-compact thead th {
   background: var(--table-header-bg);
   font-weight: 600; font-size: var(--font-size-xs);
@@ -488,7 +488,7 @@ h1, h2, h3, h4, h5, h6 { font-weight: 600; }
 .kpi-row { display: flex; gap: var(--sp-md); margin-bottom: var(--sp-lg); flex-wrap: wrap; }
 .kpi-card { flex: 1; min-width: 180px; background: #fff; border: 1px solid var(--neutral-200); border-radius: var(--radius-md); padding: 16px; box-shadow: var(--shadow-sm); }
 .kpi-card .kpi-label { font-size: var(--font-size-xs); color: var(--neutral-500); text-transform: uppercase; letter-spacing: .04em; margin-bottom: 4px; }
-.kpi-card .kpi-value { font-size: var(--font-size-2xl); font-weight: 700; font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+.kpi-card .kpi-value { font-size: var(--font-size-3xl); font-weight: 700; font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
 .kpi-card .kpi-icon { width: 36px; height: 36px; border-radius: var(--radius); display: flex; align-items: center; justify-content: center; font-size: 1rem; margin-bottom: 8px; }
 .kpi-icon-primary { background: var(--primary-50); color: var(--primary-600); }
 .kpi-icon-success { background: var(--success-50); color: var(--success-600); }
@@ -544,7 +544,7 @@ input[type="number"], input.form-control.text-number { font-family: var(--font-m
 }
 .data-table tbody td {
   font-size: var(--font-size-sm);
-  padding: 8px 12px;
+  padding: 10px 14px;
   vertical-align: middle;
   border-bottom: 1px solid var(--neutral-100);
 }
@@ -768,13 +768,13 @@ input[data-datepicker] { cursor: pointer; }
   letter-spacing: .04em;
   color: var(--neutral-500);
   font-weight: 600;
-  padding: 8px 12px;
+  padding: 10px 14px;
   background: var(--neutral-50);
   border-bottom: 2px solid var(--neutral-200);
 }
 .entry-table td { padding: 6px 12px; vertical-align: middle; }
 .entry-table .form-control, .entry-table .form-select {
-  height: 34px;
+  height: 38px;
   font-size: var(--font-size-sm);
   border-color: var(--neutral-200);
 }

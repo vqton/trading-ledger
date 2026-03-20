@@ -9,7 +9,7 @@
                 <i class="fas fa-user-tie fa-3x text-primary mb-3"></i>
                 <h5 class="card-title">Khách hàng</h5>
                 <p class="display-6">{{ summary.customers }}</p>
-                <a href="{{ url_for('accounting.customers') }}" class="btn btn-outline-primary">Quản lý</a>
+                <a href="{{ url_for('partner.customers') }}" class="btn btn-outline-primary">Quản lý</a>
             </div>
         </div>
     </div>
@@ -19,7 +19,7 @@
                 <i class="fas fa-truck fa-3x text-success mb-3"></i>
                 <h5 class="card-title">Nhà cung cấp</h5>
                 <p class="display-6">{{ summary.vendors }}</p>
-                <a href="{{ url_for('accounting.vendors') }}" class="btn btn-outline-success">Quản lý</a>
+                <a href="{{ url_for('partner.vendors') }}" class="btn btn-outline-success">Quản lý</a>
             </div>
         </div>
     </div>
@@ -29,7 +29,7 @@
                 <i class="fas fa-users fa-3x text-info mb-3"></i>
                 <h5 class="card-title">Nhân viên</h5>
                 <p class="display-6">{{ summary.employees }}</p>
-                <a href="{{ url_for('accounting.employees') }}" class="btn btn-outline-info">Quản lý</a>
+                <a href="{{ url_for('partner.employees') }}" class="btn btn-outline-info">Quản lý</a>
             </div>
         </div>
     </div>
@@ -39,7 +39,7 @@
         <div class="card">
             <div class="card-header">Công nợ phải thu</div>
             <div class="card-body">
-                <a href="{{ url_for('accounting.ar_aging') }}" class="btn btn-outline-primary w-100">Xem báo cáo AR Aging</a>
+                <a href="{{ url_for('partner.ar_aging') }}" class="btn btn-outline-primary w-100">Xem báo cáo AR Aging</a>
             </div>
         </div>
     </div>
@@ -47,7 +47,7 @@
         <div class="card">
             <div class="card-header">Công nợ phải trả</div>
             <div class="card-body">
-                <a href="{{ url_for('accounting.ap_aging') }}" class="btn btn-outline-danger w-100">Xem báo cáo AP Aging</a>
+                <a href="{{ url_for('partner.ap_aging') }}" class="btn btn-outline-danger w-100">Xem báo cáo AP Aging</a>
             </div>
         </div>
     </div>

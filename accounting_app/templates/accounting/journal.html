@@ -48,23 +48,20 @@
                 edit_url=url_for('accounting.edit_voucher', voucher_id=voucher.id) if voucher.status.value == 'draft' else '',
                 delete_modal_id='delVoucher' ~ voucher.id if voucher.status.value == 'draft' else ''
             ) }}
-            {% if voucher.status.value == 'draft' %}
-            {{ render_delete_modal(
-                modal_id='delVoucher' ~ voucher.id,
-                action=url_for('accounting.delete_voucher', voucher_id=voucher.id),
-                item_name=voucher.voucher_no,
-                item_type='chứng từ'
-            ) }}
-            {% endif %}
-        </td>
-    </tr>
-    {% else %}
-    <tr>
-        <td colspan="6" class="text-center text-muted py-4">
-            <i class="fas fa-inbox fa-2x mb-2 d-block opacity-50"></i>
-            Chưa có chứng từ nào
         </td>
     </tr>
     {% endfor %}
 {% endcall %}
+
+{# Delete modals rendered OUTSIDE the table to avoid DataTables DOM parsing issues #}
+{% for voucher in vouchers %}
+  {% if voucher.status.value == 'draft' %}
+  {{ render_delete_modal(
+      modal_id='delVoucher' ~ voucher.id,
+      action=url_for('accounting.delete_voucher', voucher_id=voucher.id),
+      item_name=voucher.voucher_no,
+      item_type='chứng từ'
+  ) }}
+  {% endif %}
+{% endfor %}
 {% endblock %}

@@ -73,11 +73,8 @@ def create_app(config_name: str = None) -> Flask:
         return value.strftime(format)
 
     with app.app_context():
-        from models.account import Account
-        from models.journal import JournalVoucher, JournalEntry
-        from models.inventory import InventoryItem, Warehouse, StockTransaction
-        from models.audit_log import AuditLog
-        
+        import models  # noqa: F401 - triggers all model registrations
+
         init_db(app)
         from core.security import create_default_roles, create_admin_user
         create_default_roles()

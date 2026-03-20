@@ -64,7 +64,7 @@ class Backup(db.Model):
     created_at = db.Column(db.DateTime, default=utc_now, nullable=False)
 
     creator = db.relationship("User", backref="created_backups", foreign_keys=[created_by])
-    verifier = db.relationship("User", backref="verified_backups", foreign_keys=[Backup.verified_by])
+    verifier = db.relationship("User", backref="verified_backups", foreign_keys=[verified_by])
     restorer = db.relationship("User", backref="restored_backups", foreign_keys=[restored_by])
 
     __table_args__ = (

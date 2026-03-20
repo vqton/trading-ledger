@@ -314,6 +314,7 @@
 
 {# --- DataTable Wrapper (server-side rendered table with DataTables JS) --- #}
 {% macro render_data_table(table_id, columns=[], class='', page_length=25) %}
+{% set col_count = columns|length %}
 <div class="data-table-wrapper card">
     <div class="card-body p-0">
         <div class="table-responsive">
@@ -352,7 +353,7 @@ document.addEventListener('DOMContentLoaded', function() {
             pageLength: {{ page_length }},
             lengthMenu: [10, 25, 50, 100],
             order: [],
-            columnDefs: [{ orderable: false, targets: 'no-sort' }]
+            columnDefs: [{ orderable: false, targets: '.no-sort' }]
         });
     }
 });

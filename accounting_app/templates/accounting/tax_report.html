@@ -57,7 +57,7 @@
                 <table class="table table-sm">
                     <tr>
                         <td>Thu nhập chịu thuế</td>
-                        <td class="text-end">{{ "{:,.0f}".format(tndn_estimate.taxable_income) if tndn_estimate else 0 }}</td>
+                        <td class="text-end">{{ "{:,.0f}".format(tndn_estimate.gross_profit) if tndn_estimate else 0 }}</td>
                     </tr>
                     <tr>
                         <td>Thuế suất</td>
@@ -65,7 +65,7 @@
                     </tr>
                     <tr class="fw-bold">
                         <td>Thuế TNDN phải nộp</td>
-                        <td class="text-end">{{ "{:,.0f}".format(tndn_estimate.tax_amount) if tndn_estimate else 0 }}</td>
+                        <td class="text-end">{{ "{:,.0f}".format(tndn_estimate.estimated_tax) if tndn_estimate else 0 }}</td>
                     </tr>
                 </table>
             </div>
