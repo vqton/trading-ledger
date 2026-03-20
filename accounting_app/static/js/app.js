@@ -1,16 +1,153 @@
 /**
- * VAS Accounting - UI Components (Toast, Loading, Confirm Delete)
+ * VAS Accounting - App JS
+ * Sidebar toggle (localStorage), Toast, Loading, ConfirmDelete, Notifications
  */
 (function () {
   'use strict';
 
   /* ========================================================================
+     SIDEBAR: Toggle + localStorage state
+     ======================================================================== */
+
+  var SIDEBAR_KEY = 'vas_sidebar_state';  // 'expanded' | 'collapsed'
+  var MOBILE_KEY  = 'vas_mobile_sidebar';  // 'open' | 'closed'
+
+  function getSidebar()  { return document.getElementById('sidebar'); }
+  function getBackdrop() { return document.getElementById('sidebarBackdrop'); }
+  function isDesktop()   { return window.innerWidth > 992; }
+
+  // Restore sidebar state from localStorage
+  function restoreSidebar() {
+    var sb = getSidebar();
+    if (!sb) return;
+    var state = localStorage.getItem(SIDEBAR_KEY);
+    if (state === 'collapsed' && isDesktop()) {
+      sb.classList.add('collapsed');
+    } else {
+      sb.classList.remove('collapsed');
+    }
+  }
+
+  // Desktop: collapse/expand toggle
+  var collapseBtn = document.getElementById('sidebarCollapseBtn');
+  if (collapseBtn) {
+    collapseBtn.addEventListener('click', function () {
+      var sb = getSidebar();
+      if (!sb) return;
+      sb.classList.toggle('collapsed');
+      localStorage.setItem(SIDEBAR_KEY, sb.classList.contains('collapsed') ? 'collapsed' : 'expanded');
+    });
+  }
+
+  // Mobile: hamburger open/close
+  var hamburgerBtn = document.getElementById('hamburgerBtn');
+  if (hamburgerBtn) {
+    hamburgerBtn.addEventListener('click', function () {
+      var sb = getSidebar();
+      var bd = getBackdrop();
+      if (!sb) return;
+      sb.classList.toggle('mobile-open');
+      if (bd) bd.classList.toggle('show');
+      localStorage.setItem(MOBILE_KEY, sb.classList.contains('mobile-open') ? 'open' : 'closed');
+    });
+  }
+
+  // Close mobile sidebar on backdrop click
+  var backdrop = getBackdrop();
+  if (backdrop) {
+    backdrop.addEventListener('click', function () {
+      var sb = getSidebar();
+      if (sb) sb.classList.remove('mobile-open');
+      backdrop.classList.remove('show');
+      localStorage.setItem(MOBILE_KEY, 'closed');
+    });
+  }
+
+  // Close mobile sidebar on nav link click (for small screens)
+  document.querySelectorAll('.sidebar .nav-link').forEach(function (link) {
+    link.addEventListener('click', function () {
+      if (!isDesktop()) {
+        var sb = getSidebar();
+        var bd = getBackdrop();
+        if (sb) sb.classList.remove('mobile-open');
+        if (bd) bd.classList.remove('show');
+      }
+    });
+  });
+
+  // Active menu highlighting: match current URL to nav links
+  function highlightActiveMenu() {
+    var currentPath = window.location.pathname;
+    var bestMatch = null;
+    var bestLen = 0;
+    document.querySelectorAll('.sidebar .nav-link').forEach(function (link) {
+      link.classList.remove('active');
+      var href = link.getAttribute('href');
+      if (href && currentPath.indexOf(href) === 0 && href.length > bestLen) {
+        bestMatch = link;
+        bestLen = href.length;
+      }
+    });
+    if (bestMatch) {
+      bestMatch.classList.add('active');
+      // Expand parent accordion if collapsed
+      var parentCollapse = bestMatch.closest('.collapse');
+      if (parentCollapse && !parentCollapse.classList.contains('show')) {
+        new bootstrap.Collapse(parentCollapse, { show: true });
+      }
+    }
+  }
+
+  // Init
+  restoreSidebar();
+  highlightActiveMenu();
+
+  // Save accordion state
+  document.querySelectorAll('#sidebarAccordion .collapse').forEach(function (el) {
+    el.addEventListener('shown.bs.collapse', function () {
+      saveAccordionState();
+    });
+    el.addEventListener('hidden.bs.collapse', function () {
+      saveAccordionState();
+    });
+  });
+
+  function saveAccordionState() {
+    var state = {};
+    document.querySelectorAll('#sidebarAccordion .collapse').forEach(function (el) {
+      state[el.id] = el.classList.contains('show');
+    });
+    localStorage.setItem('vas_sidebar_accordion', JSON.stringify(state));
+  }
+
+  function restoreAccordionState() {
+    try {
+      var state = JSON.parse(localStorage.getItem('vas_sidebar_accordion'));
+      if (!state) return;
+      Object.keys(state).forEach(function (id) {
+        var el = document.getElementById(id);
+        if (!el) return;
+        if (state[id]) {
+          el.classList.add('show');
+          var toggle = document.querySelector('[data-bs-target="#' + id + '"]');
+          if (toggle) toggle.setAttribute('aria-expanded', 'true');
+        } else {
+          el.classList.remove('show');
+          var toggle = document.querySelector('[data-bs-target="#' + id + '"]');
+          if (toggle) toggle.setAttribute('aria-expanded', 'false');
+        }
+      });
+    } catch (e) { /* ignore */ }
+  }
+  restoreAccordionState();
+
+
+  /* ========================================================================
      TOAST NOTIFICATION (Top-Right, auto-hide 3s)
      ======================================================================== */
 
-  // Create toast container on page load
   function ensureToastContainer() {
-    let c = document.getElementById('toastContainer');
+    var c = document.getElementById('toastContainer');
     if (!c) {
       c = document.createElement('div');
       c.id = 'toastContainer';
@@ -20,131 +157,77 @@
     return c;
   }
 
-  /**
-   * Show a toast notification.
-   * @param {string} message
-   * @param {'success'|'danger'|'warning'|'info'} type
-   * @param {number} duration - ms (default 3000)
-   */
   window.showToast = function (message, type, duration) {
     type = type || 'info';
     duration = duration || 3000;
+    var iconMap = { success: 'fa-check-circle', danger: 'fa-exclamation-circle', warning: 'fa-exclamation-triangle', info: 'fa-info-circle' };
+    var bgMap = { success: '#f0fdf4', danger: '#fef2f2', warning: '#fffbeb', info: '#eff6ff' };
+    var borderMap = { success: '#22c55e', danger: '#ef4444', warning: '#f59e0b', info: '#2563eb' };
 
-    const iconMap = {
-      success: 'fa-check-circle',
-      danger: 'fa-exclamation-circle',
-      warning: 'fa-exclamation-triangle',
-      info: 'fa-info-circle'
-    };
-
-    const bgMap = {
-      success: '#f0fdf4',
-      danger: '#fef2f2',
-      warning: '#fffbeb',
-      info: '#eff6ff'
-    };
-
-    const borderMap = {
-      success: '#22c55e',
-      danger: '#ef4444',
-      warning: '#f59e0b',
-      info: '#2563eb'
-    };
-
-    const toast = document.createElement('div');
-    toast.style.cssText =
-      'display:flex;align-items:flex-start;gap:10px;padding:12px 14px;' +
-      'background:' + bgMap[type] + ';' +
-      'border-left:4px solid ' + borderMap[type] + ';' +
-      'border-radius:8px;box-shadow:0 4px 12px rgba(0,0,0,.12);' +
-      'font-size:13px;line-height:1.4;animation:toastSlideIn .2s ease;';
-
-    toast.innerHTML =
-      '<i class="fas ' + iconMap[type] + '" style="color:' + borderMap[type] + ';font-size:1rem;margin-top:2px"></i>' +
+    var toast = document.createElement('div');
+    toast.style.cssText = 'display:flex;align-items:flex-start;gap:10px;padding:12px 14px;background:' + bgMap[type] + ';border-left:4px solid ' + borderMap[type] + ';border-radius:8px;box-shadow:0 4px 12px rgba(0,0,0,.12);font-size:13px;line-height:1.4;animation:toastSlideIn .2s ease;';
+    toast.innerHTML = '<i class="fas ' + iconMap[type] + '" style="color:' + borderMap[type] + ';font-size:1rem;margin-top:2px"></i>' +
       '<div style="flex:1;color:#1e293b">' + message + '</div>' +
-      '<button type="button" style="background:none;border:none;color:#94a3b8;cursor:pointer;font-size:.9rem;padding:0" ' +
-      'onclick="this.parentElement.remove()">&times;</button>';
-
-    const container = ensureToastContainer();
-    container.appendChild(toast);
-
-    // Auto-remove
+      '<button type="button" style="background:none;border:none;color:#94a3b8;cursor:pointer;font-size:.9rem;padding:0" onclick="this.parentElement.remove()">&times;</button>';
+    ensureToastContainer().appendChild(toast);
     setTimeout(function () {
-      toast.style.opacity = '0';
-      toast.style.transform = 'translateX(100%)';
-      toast.style.transition = 'all .2s ease';
+      toast.style.opacity = '0'; toast.style.transform = 'translateX(100%)'; toast.style.transition = 'all .2s ease';
       setTimeout(function () { toast.remove(); }, 200);
     }, duration);
   };
 
-  // Inject CSS animation
-  const toastStyle = document.createElement('style');
-  toastStyle.textContent = '@keyframes toastSlideIn{from{opacity:0;transform:translateX(100%)}to{opacity:1;transform:translateX(0)}}';
-  document.head.appendChild(toastStyle);
-
-  // Auto-show flash messages as toasts
+  // Auto-convert flash alerts to toasts
   document.addEventListener('DOMContentLoaded', function () {
     document.querySelectorAll('.alert-dismissible').forEach(function (el) {
-      const cls = el.classList;
-      let type = 'info';
+      var cls = el.classList;
+      var type = 'info';
       if (cls.contains('alert-success')) type = 'success';
       else if (cls.contains('alert-danger')) type = 'danger';
       else if (cls.contains('alert-warning')) type = 'warning';
-
-      const msg = el.querySelector('.btn-close') ? el.textContent.trim() : el.textContent.trim();
+      var msg = el.textContent.trim();
       if (msg) showToast(msg, type);
       el.style.display = 'none';
     });
   });
 
+  // Inject animation CSS
+  var style = document.createElement('style');
+  style.textContent = '@keyframes toastSlideIn{from{opacity:0;transform:translateX(100%)}to{opacity:1;transform:translateX(0)}}';
+  document.head.appendChild(style);
+
 
   /* ========================================================================
-     LOADING SPINNER (Full-screen overlay)
+     LOADING SPINNER
      ======================================================================== */
 
-  const spinnerOverlay = document.createElement('div');
-  spinnerOverlay.id = 'loadingOverlay';
-  spinnerOverlay.style.cssText =
-    'position:fixed;inset:0;background:rgba(255,255,255,.7);backdrop-filter:blur(2px);' +
-    'display:none;align-items:center;justify-content:center;z-index:9998;';
-  spinnerOverlay.innerHTML =
-    '<div class="spinner-border text-primary" role="status" style="width:3rem;height:3rem">' +
-    '<span class="visually-hidden">Loading...</span></div>';
-  document.body.appendChild(spinnerOverlay);
+  var overlay = document.createElement('div');
+  overlay.id = 'loadingOverlay';
+  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(255,255,255,.7);backdrop-filter:blur(2px);display:none;align-items:center;justify-content:center;z-index:9998;';
+  overlay.innerHTML = '<div class="spinner-border text-primary" role="status" style="width:3rem;height:3rem"><span class="visually-hidden">Loading...</span></div>';
+  document.body.appendChild(overlay);
 
-  window.showLoading = function () {
-    spinnerOverlay.style.display = 'flex';
-  };
-  window.hideLoading = function () {
-    spinnerOverlay.style.display = 'none';
-  };
+  window.showLoading = function () { overlay.style.display = 'flex'; };
+  window.hideLoading = function () { overlay.style.display = 'none'; };
 
-  // Auto-show loading on form submits
   document.addEventListener('submit', function (e) {
-    const form = e.target;
-    if (form.tagName === 'FORM' && !form.hasAttribute('data-no-loading')) {
-      showLoading();
-    }
+    if (e.target.tagName === 'FORM' && !e.target.hasAttribute('data-no-loading')) showLoading();
   });
 
 
   /* ========================================================================
-     CONFIRM DELETE (data-confirm attribute)
+     CONFIRM DELETE
      ======================================================================== */
 
   document.addEventListener('click', function (e) {
-    const btn = e.target.closest('[data-confirm]');
+    var btn = e.target.closest('[data-confirm]');
     if (!btn) return;
-
     e.preventDefault();
-    const msg = btn.getAttribute('data-confirm') || 'Bạn có chắc muốn xóa?';
-    const form = btn.closest('form');
-
-    // Use BS5 modal if exists, else use confirm()
-    const modalEl = document.getElementById('confirmDeleteModal');
+    var msg = btn.getAttribute('data-confirm') || 'Bạn có chắc muốn xóa?';
+    var form = btn.closest('form');
+    var modalEl = document.getElementById('confirmDeleteModal');
     if (modalEl) {
       modalEl.querySelector('.modal-body p').textContent = msg;
-      const confirmBtn = modalEl.querySelector('[data-confirm-yes]');
+      var confirmBtn = modalEl.querySelector('[data-confirm-yes]');
       confirmBtn.onclick = function () {
         bootstrap.Modal.getInstance(modalEl).hide();
         if (form) form.submit();
@@ -152,11 +235,33 @@
       };
       new bootstrap.Modal(modalEl).show();
     } else {
-      if (confirm(msg)) {
-        if (form) form.submit();
-        else if (btn.href) window.location.href = btn.href;
-      }
+      if (confirm(msg)) { if (form) form.submit(); else if (btn.href) window.location.href = btn.href; }
     }
   });
+
+
+  /* ========================================================================
+     NOTIFICATIONS (poll unread count)
+     ======================================================================== */
+
+  function pollNotifications() {
+    var badge = document.getElementById('notifBadge');
+    if (!badge) return;
+    fetch('/notifications/api/unread-count')
+      .then(function (r) { return r.json(); })
+      .then(function (data) {
+        if (data.status === 'success' && data.count > 0) {
+          badge.textContent = data.count > 99 ? '99+' : data.count;
+          badge.style.display = 'flex';
+        } else {
+          badge.style.display = 'none';
+        }
+      })
+      .catch(function () {});
+  }
+
+  // Poll every 30s
+  pollNotifications();
+  setInterval(pollNotifications, 30000);
 
 })();
