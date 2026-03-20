@@ -310,3 +310,98 @@
 </nav>
 {% endif %}
 {% endmacro %}
+
+
+{# --- DataTable Wrapper (server-side rendered table with DataTables JS) --- #}
+{% macro render_data_table(table_id, columns=[], class='', page_length=25) %}
+<div class="data-table-wrapper card">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table id="{{ table_id }}" class="table table-hover table-striped table-sm data-table {{ class }}" style="width:100%">
+                <thead>
+                    <tr>
+                        {% for col in columns %}
+                        <th class="{{ col.get('class', '') }}"
+                            {% if col.get('style') %}style="{{ col.get('style') }}"{% endif %}>
+                            {{ col['title'] }}
+                        </th>
+                        {% endfor %}
+                    </tr>
+                </thead>
+                <tbody>
+                    {{ caller() }}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    if (typeof jQuery !== 'undefined' && jQuery.fn.DataTable) {
+        jQuery('#{{ table_id }}').DataTable({
+            language: {
+                processing:   'Đang xử lý...',
+                lengthMenu:   'Hiển thị _MENU_ dòng',
+                zeroRecords:  'Không tìm thấy dữ liệu',
+                info:         'Hiển thị _START_–_END_ / _TOTAL_ dòng',
+                infoEmpty:    'Không có dữ liệu',
+                infoFiltered: '(lọc từ _MAX_ dòng)',
+                search:       'Tìm kiếm:',
+                paginate: { first: 'Đầu', last: 'Cuối', next: 'Sau', previous: 'Trước' }
+            },
+            pageLength: {{ page_length }},
+            lengthMenu: [10, 25, 50, 100],
+            order: [],
+            columnDefs: [{ orderable: false, targets: 'no-sort' }]
+        });
+    }
+});
+</script>
+{% endmacro %}
+
+
+{# --- Table Row Actions Dropdown --- #}
+{% macro render_row_actions(items=[], view_url='', edit_url='', delete_modal_id='') %}
+<div class="dropdown">
+    <button class="btn btn-sm btn-outline-secondary" type="button"
+            data-bs-toggle="dropdown" data-bs-boundary="viewport" aria-expanded="false">
+        <i class="fas fa-ellipsis-vertical"></i>
+    </button>
+    <ul class="dropdown-menu dropdown-menu-end">
+        {% if view_url %}
+        <li><a class="dropdown-item" href="{{ view_url }}"><i class="fas fa-eye me-2 text-muted"></i>Xem</a></li>
+        {% endif %}
+        {% if edit_url %}
+        <li><a class="dropdown-item" href="{{ edit_url }}"><i class="fas fa-pen-to-square me-2 text-muted"></i>Sửa</a></li>
+        {% endif %}
+        {% if delete_modal_id %}
+        <li><hr class="dropdown-divider"></li>
+        <li><a class="dropdown-item text-danger" href="#" data-bs-toggle="modal" data-bs-target="#{{ delete_modal_id }}"><i class="fas fa-trash me-2"></i>Xóa</a></li>
+        {% endif %}
+        {% for item in items %}
+            {% if item.get('divider') %}
+        <li><hr class="dropdown-divider"></li>
+            {% else %}
+        <li><a class="dropdown-item {{ item.get('class', '') }}" href="{{ item.get('url', '#') }}">
+            <i class="fas {{ item.get('icon', 'fa-circle') }} me-2 text-muted"></i>{{ item.get('label', '') }}
+        </a></li>
+            {% endif %}
+        {% endfor %}
+    </ul>
+</div>
+{% endmacro %}
+
+
+{# --- Money Cell --- #}
+{% macro render_money_cell(value, currency='') %}
+{% set v = value or 0 %}
+<td class="text-end font-monospace{% if v > 0 %} text-success{% elif v < 0 %} text-danger{% endif %}">
+    {{ "{:,.0f}".format(v) }}{% if currency %} {{ currency }}{% endif %}
+</td>
+{% endmacro %}
+
+
+{# --- Status Cell --- #}
+{% macro render_status_cell(status, label='') %}
+<td class="text-center">{{ render_badge(status, label) }}</td>
+{% endmacro %}

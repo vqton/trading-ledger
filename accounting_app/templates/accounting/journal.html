@@ -1,61 +1,70 @@
 {% extends "base.html" %}
+{% from 'macros.html' import render_data_table, render_row_actions, render_badge, render_delete_modal %}
 
 {% block title %}Chứng từ - VAS Accounting{% endblock %}
+{% block page_title %}Danh sách chứng từ{% endblock %}
+
+{% block breadcrumbs %}
+<li><a href="{{ url_for('index') }}"><i class="fas fa-home"></i></a></li>
+<li><a href="#">Chứng từ</a></li>
+{% endblock %}
 
 {% block main_content %}
-<div class="py-4">
-<h1 class="h3 mb-4">Danh sách chứng từ</h1>
-
-<div class="mb-3">
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <div></div>
     <a href="{{ url_for('accounting.create_voucher') }}" class="btn btn-primary">
-        <i class="fas fa-plus"></i> Tạo chứng từ mới
+        <i class="fas fa-plus"></i> Tạo chứng từ
     </a>
 </div>
 
-<div class="card">
-    <div class="card-body">
-        <table class="table table-hover">
-            <thead>
-                <tr>
-                    <th>Số CT</th>
-                    <th>Ngày</th>
-                    <th>Diễn giải</th>
-                    <th>Tài khoản</th>
-                    <th>Số tiền</th>
-                    <th>Trạng thái</th>
-                    <th>Thao tác</th>
-                </tr>
-            </thead>
-            <tbody>
-            {% for voucher in vouchers %}
-            <tr>
-                <td><a href="{{ url_for('accounting.view_voucher', voucher_id=voucher.id) }}">{{ voucher.voucher_no }}</a></td>
-                <td>{{ voucher.voucher_date.strftime('%d/%m/%Y') }}</td>
-                <td>{{ voucher.description[:50] }}</td>
-                <td>-</td>
-                <td>{{ "{:,.0f}".format(voucher.total_debit) }}</td>
-                <td>
-                    {% if voucher.status.value == 'draft' %}
-                    <span class="badge bg-secondary">Nháp</span>
-                    {% elif voucher.status.value == 'posted' %}
-                    <span class="badge bg-success">Đã ghi sổ</span>
-                    {% else %}
-                    <span class="badge bg-warning">{{ voucher.status.value }}</span>
-                    {% endif %}
-                </td>
-                <td>
-                    <a href="{{ url_for('accounting.view_voucher', voucher_id=voucher.id) }}" class="btn btn-sm btn-info">
-                        <i class="fas fa-eye"></i>
-                    </a>
-                </td>
-            </tr>
+{% call render_data_table('journalTable', page_length=25, columns=[
+    {'title': 'Số CT', 'style': 'width:130px'},
+    {'title': 'Ngày', 'style': 'width:110px'},
+    {'title': 'Diễn giải'},
+    {'title': 'Số tiền', 'class': 'text-end no-sort', 'style': 'width:150px'},
+    {'title': 'Trạng thái', 'class': 'text-center', 'style': 'width:110px'},
+    {'title': '', 'class': 'text-center no-sort', 'style': 'width:50px'}
+]) %}
+    {% for voucher in vouchers %}
+    <tr>
+        <td><a href="{{ url_for('accounting.view_voucher', voucher_id=voucher.id) }}">{{ voucher.voucher_no }}</a></td>
+        <td class="text-center">{{ voucher.voucher_date.strftime('%d/%m/%Y') if voucher.voucher_date else '—' }}</td>
+        <td>{{ voucher.description[:60] if voucher.description else '—' }}{% if voucher.description and voucher.description|length > 60 %}…{% endif %}</td>
+        <td class="text-end font-monospace">{{ "{:,.0f}".format(voucher.total_debit or 0) }}</td>
+        <td class="text-center">
+            {% if voucher.status.value == 'draft' %}
+                {{ render_badge('draft') }}
+            {% elif voucher.status.value == 'posted' %}
+                {{ render_badge('posted') }}
+            {% elif voucher.status.value == 'approved' %}
+                {{ render_badge('approved') }}
             {% else %}
-            <tr>
-                <td colspan="7" class="text-center text-muted">Chưa có chứng từ nào</td>
-            </tr>
-            {% endfor %}
-            </tbody>
-        </table>
-    </div>
-</div>
+                {{ render_badge(voucher.status.value) }}
+            {% endif %}
+        </td>
+        <td class="text-center">
+            {{ render_row_actions(
+                view_url=url_for('accounting.view_voucher', voucher_id=voucher.id),
+                edit_url=url_for('accounting.edit_voucher', voucher_id=voucher.id) if voucher.status.value == 'draft' else '',
+                delete_modal_id='delVoucher' ~ voucher.id if voucher.status.value == 'draft' else ''
+            ) }}
+            {% if voucher.status.value == 'draft' %}
+            {{ render_delete_modal(
+                modal_id='delVoucher' ~ voucher.id,
+                action=url_for('accounting.delete_voucher', voucher_id=voucher.id),
+                item_name=voucher.voucher_no,
+                item_type='chứng từ'
+            ) }}
+            {% endif %}
+        </td>
+    </tr>
+    {% else %}
+    <tr>
+        <td colspan="6" class="text-center text-muted py-4">
+            <i class="fas fa-inbox fa-2x mb-2 d-block opacity-50"></i>
+            Chưa có chứng từ nào
+        </td>
+    </tr>
+    {% endfor %}
+{% endcall %}
 {% endblock %}
