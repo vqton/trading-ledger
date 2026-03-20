@@ -83,7 +83,7 @@
             <a href="{{ url_for('index') }}" class="nav-item {% if request.endpoint == 'index' %}active{% endif %}">
                 <i class="fas fa-home"></i> Dashboard
             </a>
-            <a href="{{ url_for('accounting.voucher_form') }}" class="nav-item {% if 'voucher' in request.endpoint %}active{% endif %}">
+            <a href="{{ url_for('accounting.create_voucher') }}" class="nav-item {% if 'voucher' in request.endpoint %}active{% endif %}">
                 <i class="fas fa-file-invoice"></i> Chứng từ
             </a>
             <a href="{{ url_for('financial.reports') }}" class="nav-item {% if 'report' in request.endpoint or 'financial' in request.endpoint %}active{% endif %}">
@@ -98,7 +98,7 @@
             <aside class="accounting-sidebar" id="sidebar">
                 <div class="sidebar-section">
                     <h6 class="sidebar-heading">THƯỜNG DÙNG</h6>
-                    <a href="{{ url_for('accounting.voucher_form') }}" class="sidebar-link">
+                    <a href="{{ url_for('accounting.create_voucher') }}" class="sidebar-link">
                         <i class="fas fa-plus-circle"></i> Tạo chứng từ
                         <kbd>1</kbd>
                     </a>
@@ -385,7 +385,7 @@
                 document.getElementById('searchModal')?.classList.remove('open');
             }
             if (e.key === '1' && !e.ctrlKey && !e.altKey && document.activeElement.tagName !== 'INPUT' && document.activeElement.tagName !== 'TEXTAREA') {
-                window.location.href = '{{ url_for("accounting.voucher_form") }}';
+                window.location.href = '{{ url_for("accounting.create_voucher") }}';
             }
             if (e.key === '2' && !e.ctrlKey && !e.altKey && document.activeElement.tagName !== 'INPUT' && document.activeElement.tagName !== 'TEXTAREA') {
                 window.location.href = '{{ url_for("accounting.trial_balance") }}';
