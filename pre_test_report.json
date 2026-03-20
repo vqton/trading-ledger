@@ -1,0 +1,1786 @@
+{
+  "timestamp": "2026-03-20T14:22:21.872399",
+  "checks": [
+    {
+      "name": "App creation",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "dep: flask",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "dep: flask_login",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "dep: flask_wtf",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "dep: flask_sqlalchemy",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "dep: sqlalchemy",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "dep: alembic",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "dep: werkzeug",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "dep: wtforms",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "dep: pandas",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "dep: openpyxl",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "All dependencies installed",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "model: account",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "model: accounting_period",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "model: approval_workflow",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "model: audit_log",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "model: backup",
+      "status": "fail",
+      "message": "NameError: name 'Backup' is not defined"
+    },
+    {
+      "name": "model: bank",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "model: biological_asset",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "model: budget",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "model: cost_center",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "model: currency",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "model: dividend_payable",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "model: document",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "model: fixed_asset",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "model: inventory",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "model: journal",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "model: notification",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "model: opening_balance",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "model: partner",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "model: project",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "model: seed_data",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "model: supporting_document",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "model: system_setting",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "model: tax_payment",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "model: tax_policy",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "All models importable",
+      "status": "fail",
+      "message": "1 errors"
+    },
+    {
+      "name": "template: accounting/account_form.html",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "template: accounting/account_tree.html",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "template: accounting/accounts.html",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "template: accounting/approval/index.html",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "template: accounting/approval/pending.html",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "template: accounting/approval/request_detail.html",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "template: accounting/approval/requests.html",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "template: accounting/approval/workflow_detail.html",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "template: accounting/approval/workflow_form.html",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "template: accounting/approval/workflows.html",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "template: accounting/backup/backups.html",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "template: accounting/backup/index.html",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "template: accounting/backup/schedule_form.html",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "template: accounting/backup/schedules.html",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "template: accounting/balance_sheet.html",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "template: accounting/biological/asset_detail.html",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "template: accounting/biological/asset_form.html",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "template: accounting/biological/assets.html",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "template: accounting/biological/dispose_asset.html",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "template: accounting/biological/index.html",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "template: accounting/biological/update_value.html",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "template: accounting/cash_flow.html",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "template: accounting/cost_center/budget_report.html",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "template: accounting/cost_center/create.html",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "template: accounting/cost_center/edit.html",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "template: accounting/cost_center/index.html",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "template: accounting/cost_center/tree.html",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "template: accounting/cost_center/view.html",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "template: accounting/dividends/dividend_detail.html",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "template: accounting/dividends/dividend_form.html",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "template: accounting/dividends/dividends.html",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "template: accounting/dividends/index.html",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "template: accounting/dividends/pay_dividend.html",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "template: accounting/dividends/summary.html",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "template: accounting/documents/document_detail.html",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "template: accounting/documents/document_form.html",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "template: accounting/documents/documents.html",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "template: accounting/documents/index.html",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "template: accounting/documents/template_form.html",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "template: accounting/documents/templates.html",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "template: accounting/financial/balance_sheet.html",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "template: accounting/financial/cash_flow.html",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "template: accounting/financial/income_statement.html",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "template: accounting/financial/notes.html",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "template: accounting/financial/reports.html",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "template: accounting/financial/trial_balance.html",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "template: accounting/general_ledger.html",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "template: accounting/income_statement.html",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "template: accounting/journal.html",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "template: accounting/ledger.html",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "template: accounting/ledger_detail.html",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "template: accounting/notifications/index.html",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "template: accounting/partner/ap_aging.html",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "template: accounting/partner/ar_aging.html",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "template: accounting/partner/customer_detail.html",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "template: accounting/partner/customer_form.html",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "template: accounting/partner/customers.html",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "template: accounting/partner/employee_detail.html",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "template: accounting/partner/employee_form.html",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "template: accounting/partner/employees.html",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "template: accounting/partner/index.html",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "template: accounting/partner/vendor_detail.html",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "template: accounting/partner/vendor_form.html",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "template: accounting/partner/vendors.html",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "template: accounting/project/create.html",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "template: accounting/project/edit.html",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "template: accounting/project/index.html",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "template: accounting/project/summary.html",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "template: accounting/project/view.html",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "template: accounting/reports.html",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "template: accounting/settings/accounting.html",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "template: accounting/settings/all.html",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "template: accounting/settings/approval.html",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "template: accounting/settings/backup.html",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "template: accounting/settings/company.html",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "template: accounting/settings/index.html",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "template: accounting/tax/calculator.html",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "template: accounting/tax/cit_estimate.html",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "template: accounting/tax/policies.html",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "template: accounting/tax/policy_form.html",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "template: accounting/tax/summary.html",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "template: accounting/tax/vat_declaration.html",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "template: accounting/tax/vat_monthly.html",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "template: accounting/tax/vat_quarterly.html",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "template: accounting/tax_payment/create.html",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "template: accounting/tax_payment/edit.html",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "template: accounting/tax_payment/index.html",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "template: accounting/tax_payment/mark_paid.html",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "template: accounting/tax_payment/pending.html",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "template: accounting/tax_payment/summary.html",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "template: accounting/tax_payment/view.html",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "template: accounting/tax_report.html",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "template: accounting/trial_balance.html",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "template: accounting/voucher_form.html",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "template: accounting/voucher_view.html",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "template: auth/change_password.html",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "template: auth/login.html",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "template: auth/roles.html",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "template: auth/user_form.html",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "template: auth/users.html",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "template: index.html",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "All templates exist",
+      "status": "pass",
+      "message": "101 templates OK"
+    },
+    {
+      "name": "route: auth.login → /auth/login",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "route: auth.logout → /auth/logout",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "route: auth.change_password → /auth/change-password",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "route: auth.users → /auth/users",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "route: auth.create_user → /auth/users/create",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "route: auth.edit_user → /auth/users/<int:user_id>/edit",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "route: auth.roles → /auth/roles",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "route: api.kpi_summary → /api/v1/kpi/summary",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "route: api.notification_count → /api/v1/notifications/count",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "route: api.global_search → /api/v1/search",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "route: accounting.accounts → /accounting/accounts",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "route: accounting.create_account → /accounting/accounts/create",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "route: accounting.edit_account → /accounting/accounts/<int:account_id>/edit",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "route: accounting.delete_account → /accounting/accounts/<int:account_id>/delete",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "route: accounting.account_tree → /accounting/accounts/tree",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "route: accounting.journal → /accounting/journal",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "route: accounting.create_voucher → /accounting/journal/create",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "route: accounting.view_voucher → /accounting/journal/<int:voucher_id>",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "route: accounting.edit_voucher → /accounting/journal/<int:voucher_id>/edit",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "route: accounting.post_voucher → /accounting/journal/<int:voucher_id>/post",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "route: accounting.unpost_voucher → /accounting/journal/<int:voucher_id>/unpost",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "route: accounting.delete_voucher → /accounting/journal/<int:voucher_id>/delete",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "route: accounting.api_accounts → /accounting/api/accounts",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "route: accounting.ledger → /accounting/ledger",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "route: accounting.ledger_account → /accounting/ledger/account/<int:account_id>",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "route: accounting.trial_balance → /accounting/ledger/trial-balance",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "route: accounting.general_ledger → /accounting/ledger/general",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "route: accounting.reports → /accounting/reports",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "route: accounting.tax_report → /accounting/reports/tax",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "route: accounting.balance_sheet → /accounting/reports/balance-sheet",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "route: accounting.income_statement → /accounting/reports/income-statement",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "route: accounting.cash_flow → /accounting/reports/cash-flow",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "route: accounting.export_trial_balance_excel → /accounting/reports/trial-balance/export/excel",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "route: accounting.export_trial_balance_pdf → /accounting/reports/trial-balance/export/pdf",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "route: accounting.export_balance_sheet_excel → /accounting/reports/balance-sheet/export/excel",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "route: accounting.export_balance_sheet_pdf → /accounting/reports/balance-sheet/export/pdf",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "route: accounting.export_income_statement_excel → /accounting/reports/income-statement/export/excel",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "route: accounting.export_income_statement_pdf → /accounting/reports/income-statement/export/pdf",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "route: accounting.export_voucher_excel → /accounting/journal/<int:voucher_id>/export/excel",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "route: accounting.export_voucher_pdf → /accounting/journal/<int:voucher_id>/export/pdf",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "route: tax.index → /tax/",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "route: tax.summary → /tax/summary/<int:year>",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "route: tax.vat_declaration → /tax/vat/declaration/<int:year>/<int:month>",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "route: tax.export_vat_declaration → /tax/vat/declaration/<int:year>/<int:month>/export",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "route: tax.vat_monthly → /tax/vat/monthly",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "route: tax.vat_quarterly → /tax/vat/quarterly",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "route: tax.cit_estimate → /tax/cit/estimate/<int:year>",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "route: tax.cit_estimate_quarter → /tax/cit/estimate/<int:year>/quarter/<int:quarter>",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "route: tax.export_cit_estimate → /tax/cit/estimate/<int:year>/export",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "route: tax.policies → /tax/policies",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "route: tax.create_policy → /tax/policies/create",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "route: tax.calculator → /tax/calculator",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "route: partner.index → /partner/",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "route: partner.customers → /partner/customers",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "route: partner.customer_detail → /partner/customers/<int:customer_id>",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "route: partner.customer_new → /partner/customers/new",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "route: partner.customer_edit → /partner/customers/<int:customer_id>/edit",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "route: partner.customer_delete → /partner/customers/<int:customer_id>/delete",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "route: partner.vendors → /partner/vendors",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "route: partner.vendor_detail → /partner/vendors/<int:vendor_id>",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "route: partner.vendor_new → /partner/vendors/new",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "route: partner.vendor_edit → /partner/vendors/<int:vendor_id>/edit",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "route: partner.vendor_delete → /partner/vendors/<int:vendor_id>/delete",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "route: partner.employees → /partner/employees",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "route: partner.employee_detail → /partner/employees/<int:employee_id>",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "route: partner.employee_new → /partner/employees/new",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "route: partner.employee_edit → /partner/employees/<int:employee_id>/edit",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "route: partner.employee_delete → /partner/employees/<int:employee_id>/delete",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "route: partner.ar_aging → /partner/ar-aging",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "route: partner.ap_aging → /partner/ap-aging",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "route: partner.api_customers → /partner/api/customers",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "route: partner.api_vendors → /partner/api/vendors",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "route: partner.api_employees → /partner/api/employees",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "route: financial.index → /financial/",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "route: financial.reports → /financial/reports",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "route: financial.balance_sheet → /financial/balance-sheet",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "route: financial.export_balance_sheet → /financial/balance-sheet/export",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "route: financial.income_statement → /financial/income-statement",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "route: financial.export_income_statement → /financial/income-statement/export",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "route: financial.cash_flow → /financial/cash-flow",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "route: financial.export_cash_flow → /financial/cash-flow/export",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "route: financial.trial_balance → /financial/trial-balance",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "route: financial.export_trial_balance → /financial/trial-balance/export",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "route: financial.notes → /financial/notes",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "route: financial.api_balance_sheet → /financial/api/balance-sheet",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "route: financial.api_income_statement → /financial/api/income-statement",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "route: financial.api_cash_flow → /financial/api/cash-flow",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "route: cost_center.index → /cost-centers/",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "route: cost_center.tree → /cost-centers/tree",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "route: cost_center.budget_report → /cost-centers/budget-report",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "route: cost_center.create → /cost-centers/create",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "route: cost_center.view → /cost-centers/<int:cost_center_id>",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "route: cost_center.edit → /cost-centers/<int:cost_center_id>/edit",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "route: cost_center.delete → /cost-centers/<int:cost_center_id>/delete",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "route: cost_center.api_list → /cost-centers/api/list",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "route: project.index → /projects/",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "route: project.summary → /projects/summary",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "route: project.create → /projects/create",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "route: project.view → /projects/<int:project_id>",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "route: project.edit → /projects/<int:project_id>/edit",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "route: project.delete → /projects/<int:project_id>/delete",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "route: project.complete → /projects/<int:project_id>/complete",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "route: project.refresh → /projects/<int:project_id>/refresh",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "route: project.api_list → /projects/api/list",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "route: tax_payment.index → /tax-payments/",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "route: tax_payment.pending → /tax-payments/pending",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "route: tax_payment.summary → /tax-payments/summary",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "route: tax_payment.create → /tax-payments/create",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "route: tax_payment.view → /tax-payments/<int:tax_payment_id>",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "route: tax_payment.edit → /tax-payments/<int:tax_payment_id>/edit",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "route: tax_payment.delete → /tax-payments/<int:tax_payment_id>/delete",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "route: tax_payment.mark_paid → /tax-payments/<int:tax_payment_id>/mark-paid",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "route: tax_payment.api_summary → /tax-payments/api/summary",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "route: approval.index → /approval/",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "route: approval.workflows → /approval/workflows",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "route: approval.workflow_new → /approval/workflows/new",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "route: approval.workflow_detail → /approval/workflows/<int:workflow_id>",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "route: approval.workflow_add_step → /approval/workflows/<int:workflow_id>/steps/new",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "route: approval.requests → /approval/requests",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "route: approval.pending_requests → /approval/requests/pending",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "route: approval.request_detail → /approval/requests/<int:request_id>",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "route: approval.approve_request → /approval/requests/<int:request_id>/approve",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "route: approval.reject_request → /approval/requests/<int:request_id>/reject",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "route: approval.cancel_request → /approval/requests/<int:request_id>/cancel",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "route: approval.api_workflows → /approval/api/workflows",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "route: approval.api_requests → /approval/api/requests",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "route: approval.api_pending_count → /approval/api/pending-count",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "route: document.index → /documents/",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "route: document.documents → /documents/documents",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "route: document.document_new → /documents/documents/new",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "route: document.document_detail → /documents/documents/<int:document_id>",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "route: document.document_approve → /documents/documents/<int:document_id>/approve",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "route: document.document_sign → /documents/documents/<int:document_id>/sign",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "route: document.templates → /documents/templates",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "route: document.template_new → /documents/templates/new",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "route: document.api_documents → /documents/api/documents",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "route: document.api_templates → /documents/api/templates",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "route: notification.index → /notifications/",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "route: notification.mark_read → /notifications/<int:notification_id>/read",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "route: notification.mark_all_read → /notifications/mark-all-read",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "route: notification.delete → /notifications/<int:notification_id>/delete",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "route: notification.api_unread_count → /notifications/api/unread-count",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "route: notification.api_notifications → /notifications/api/notifications",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "route: settings.index → /settings/",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "route: settings.company → /settings/company",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "route: settings.accounting → /settings/accounting",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "route: settings.approval → /settings/approval",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "route: settings.backup_settings → /settings/backup",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "route: settings.all_settings → /settings/all",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "route: settings.api_get_setting → /settings/api/setting/<key>",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "route: settings.api_get_settings → /settings/api/settings",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "route: settings.api_set_setting → /settings/api/setting/<key>",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "route: backup.index → /backup/",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "route: backup.backups → /backup/backups",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "route: backup.create_backup → /backup/backups/create",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "route: backup.download_backup → /backup/backups/<int:backup_id>/download",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "route: backup.restore_backup → /backup/backups/<int:backup_id>/restore",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "route: backup.delete_backup → /backup/backups/<int:backup_id>/delete",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "route: backup.schedules → /backup/schedules",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "route: backup.schedule_new → /backup/schedules/new",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "route: backup.toggle_schedule → /backup/schedules/<int:schedule_id>/toggle",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "route: backup.delete_schedule → /backup/schedules/<int:schedule_id>/delete",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "route: backup.api_stats → /backup/api/stats",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "route: backup.api_backups → /backup/api/backups",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "route: biological.index → /biological/",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "route: biological.assets → /biological/assets",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "route: biological.asset_new → /biological/assets/new",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "route: biological.asset_detail → /biological/assets/<int:asset_id>",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "route: biological.update_value → /biological/assets/<int:asset_id>/value",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "route: biological.record_growth → /biological/assets/<int:asset_id>/growth",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "route: biological.dispose_asset → /biological/assets/<int:asset_id>/dispose",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "route: biological.api_assets → /biological/api/assets",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "route: biological.api_stats → /biological/api/stats",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "route: dividend.index → /dividends/",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "route: dividend.dividends → /dividends/dividends",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "route: dividend.dividend_new → /dividends/dividends/new",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "route: dividend.dividend_detail → /dividends/dividends/<int:dividend_id>",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "route: dividend.pay_dividend → /dividends/dividends/<int:dividend_id>/pay",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "route: dividend.cancel_dividend → /dividends/dividends/<int:dividend_id>/cancel",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "route: dividend.summary → /dividends/summary",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "route: dividend.api_dividends → /dividends/api/dividends",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "route: dividend.api_outstanding → /dividends/api/outstanding",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "route: index → /",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "No duplicate endpoints",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "All expected blueprints registered",
+      "status": "pass",
+      "message": "16 blueprints"
+    },
+    {
+      "name": "Extra blueprints",
+      "status": "pass",
+      "message": "Extra: ['api']"
+    },
+    {
+      "name": "service: account_service",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "service: approval_service",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "service: backup_service",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "service: bank_service",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "service: biological_asset_service",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "service: budget_service",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "service: coa_engine",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "service: cost_center_service",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "service: currency_service",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "service: dividend_payable_service",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "service: document_service",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "service: financial_report_service",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "service: fixed_asset_service",
+      "status": "fail",
+      "message": "ImportError: cannot import name 'JournalRepository' from 'models.journal' (/mnt/e/acct/accoun"
+    },
+    {
+      "name": "service: inventory_service",
+      "status": "fail",
+      "message": "ImportError: cannot import name 'JournalRepository' from 'models.journal' (/mnt/e/acct/accoun"
+    },
+    {
+      "name": "service: journal_service",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "service: ledger_service",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "service: notification_service",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "service: partner_service",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "service: period_service",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "service: project_service",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "service: system_setting_service",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "service: tax_engine",
+      "status": "fail",
+      "message": "AttributeError: attribute '__doc__' of 'method' objects is not writable"
+    },
+    {
+      "name": "service: tax_payment_service",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "service: tax_service",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "service: voucher_numbering_service",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "service: voucher_template_service",
+      "status": "pass",
+      "message": ""
+    },
+    {
+      "name": "All services importable",
+      "status": "fail",
+      "message": "3 import errors"
+    },
+    {
+      "name": "static: css/app.css",
+      "status": "pass",
+      "message": "28,990 bytes"
+    },
+    {
+      "name": "static: js/app.js",
+      "status": "pass",
+      "message": "13,353 bytes"
+    },
+    {
+      "name": "All static files present",
+      "status": "pass",
+      "message": ""
+    }
+  ],
+  "summary": {
+    "total": 355,
+    "passed": 349,
+    "failed": 6,
+    "warnings": 0
+  }
+}
