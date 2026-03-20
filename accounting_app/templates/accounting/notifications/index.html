@@ -10,7 +10,7 @@
         <h5 class="mb-0">Danh sách thông báo <span class="badge bg-danger">{{ unread_count }}</span></h5>
         {% if unread_count > 0 %}
         <form method="POST" action="{{ url_for('accounting.notifications_mark_all_read') }}" class="d-inline">
-            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <input type="hidden" name="csrf_token" value="">
             <button type="submit" class="btn btn-sm btn-outline-primary">Đánh dấu tất cả đã đọc</button>
         </form>
         {% endif %}
@@ -33,7 +33,7 @@
                     </div>
                     {% if not notif.is_read %}
                     <form method="POST" action="{{ url_for('accounting.notification_mark_read', notification_id=notif.id) }}">
-                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <input type="hidden" name="csrf_token" value="">
                         <button type="submit" class="btn btn-sm btn-outline-success" title="Đánh dấu đã đọc">
                             <i class="fas fa-check"></i>
                         </button>

@@ -52,13 +52,13 @@
                 {% if request_obj.status == 'pending' %}
                 <div class="d-flex gap-2 mt-3">
                     <form method="POST" action="{{ url_for('accounting.approval_approve', request_id=request_obj.id) }}">
-                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <input type="hidden" name="csrf_token" value="">
                         <button type="submit" class="btn btn-success">
                             <i class="fas fa-check"></i> Phê duyệt
                         </button>
                     </form>
                     <form method="POST" action="{{ url_for('accounting.approval_reject', request_id=request_obj.id) }}">
-                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <input type="hidden" name="csrf_token" value="">
                         <button type="submit" class="btn btn-danger">
                             <i class="fas fa-times"></i> Từ chối
                         </button>

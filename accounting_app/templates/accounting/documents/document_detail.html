@@ -72,7 +72,7 @@
                 <div class="d-flex gap-2 mt-3">
                     {% if document.status == 'draft' %}
                     <form method="POST" action="{{ url_for('accounting.document_approve', document_id=document.id) }}">
-                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <input type="hidden" name="csrf_token" value="">
                         <button type="submit" class="btn btn-success">
                             <i class="fas fa-check"></i> Phê duyệt
                         </button>
@@ -80,7 +80,7 @@
                     {% endif %}
                     {% if document.status == 'approved' %}
                     <form method="POST" action="{{ url_for('accounting.document_sign', document_id=document.id) }}">
-                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <input type="hidden" name="csrf_token" value="">
                         <button type="submit" class="btn btn-primary">
                             <i class="fas fa-signature"></i> Ký
                         </button>

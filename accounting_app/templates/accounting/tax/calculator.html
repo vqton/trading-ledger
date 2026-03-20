@@ -12,7 +12,7 @@
             </div>
             <div class="card-body">
                 <form method="POST" action="{{ url_for('tax.calculator') }}">
-                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <input type="hidden" name="csrf_token" value="">
                     <div class="mb-3">
                         <label for="amount" class="form-label">Số tiền</label>
                         <input type="number" class="form-control" id="amount" name="amount" step="0.01" value="{{ amount or '' }}" required>

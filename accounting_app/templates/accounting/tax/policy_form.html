@@ -12,7 +12,7 @@
             </div>
             <div class="card-body">
                 <form method="POST" action="{{ url_for('tax.policy_form') }}">
-                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <input type="hidden" name="csrf_token" value="">
                     <div class="mb-3">
                         <label for="tax_type" class="form-label">Loại thuế <span class="text-danger">*</span></label>
                         <select class="form-select" id="tax_type" name="tax_type" required>

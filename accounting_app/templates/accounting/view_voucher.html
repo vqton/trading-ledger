@@ -65,7 +65,7 @@
         
         {% if voucher.status == 'draft' %}
         <form method="POST" action="{{ url_for('accounting.post_voucher', voucher_id=voucher.id) }}">
-            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <input type="hidden" name="csrf_token" value="">
             <button type="submit" class="btn btn-success">
                 <i class="fas fa-check"></i> Ghi sổ
             </button>
