@@ -137,22 +137,22 @@ def create_app(config_name: str = None) -> Flask:
         from flask_login import current_user
         from datetime import date
         
-        if current_user.is_authenticated:
-            from services.account_service import AccountService
-            kpis = AccountService.get_dashboard_kpis(date.today())
-            
-            from models.journal import JournalVoucher, VoucherStatus
-            recent_vouchers = JournalVoucher.query.filter(
-                JournalVoucher.status == VoucherStatus.DRAFT
-            ).order_by(JournalVoucher.created_at.desc()).limit(5).all()
-            
-            return render_template(
-                "index.html",
-                kpis=kpis,
-                recent_vouchers=recent_vouchers
-            )
+        if not current_user.is_authenticated:
+            return redirect(url_for("auth.login"))
         
-        return render_template("index.html")
+        from services.account_service import AccountService
+        kpis = AccountService.get_dashboard_kpis(date.today())
+        
+        from models.journal import JournalVoucher, VoucherStatus
+        recent_vouchers = JournalVoucher.query.filter(
+            JournalVoucher.status == VoucherStatus.DRAFT
+        ).order_by(JournalVoucher.created_at.desc()).limit(5).all()
+        
+        return render_template(
+            "index.html",
+            kpis=kpis,
+            recent_vouchers=recent_vouchers
+        )
 
     return app
 
