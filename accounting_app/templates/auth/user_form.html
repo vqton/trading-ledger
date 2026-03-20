@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% from 'macros.html' import render_field, render_button %}
 
 {% block title %}{% if user %}Chỉnh sửa người dùng{% else %}Thêm người dùng{% endif %}{% endblock %}
 {% block page_title %}{% if user %}Chỉnh sửa người dùng{% else %}Thêm người dùng{% endif %}{% endblock %}
@@ -11,63 +12,28 @@
     <div class="card-body">
         <form method="POST">
             {{ form.csrf_token }}
-            <div class="mb-3">
-                <label for="username" class="form-label">Tên đăng nhập</label>
-                <input type="text" class="form-control {% if form.username.errors %}is-invalid{% endif %}" id="username" name="username" value="{{ form.username.data or '' }}" required>
-                {% if form.username.errors %}
-                <div class="invalid-feedback">
-                    {% for error in form.username.errors %}{{ error }}{% endfor %}
+            <div class="row">
+                <div class="col-md-6">
+                    {{ render_field(form.username, label='Tên đăng nhập', required=true) }}
                 </div>
-                {% endif %}
-            </div>
-            <div class="mb-3">
-                <label for="email" class="form-label">Email</label>
-                <input type="email" class="form-control {% if form.email.errors %}is-invalid{% endif %}" id="email" name="email" value="{{ form.email.data or '' }}" required>
-                {% if form.email.errors %}
-                <div class="invalid-feedback">
-                    {% for error in form.email.errors %}{{ error }}{% endfor %}
+                <div class="col-md-6">
+                    {{ render_field(form.email, label='Email', type='email', required=true) }}
                 </div>
-                {% endif %}
             </div>
-            <div class="mb-3">
-                <label for="password" class="form-label">Mật khẩu{% if user %} (để trống nếu không thay đổi){% endif %}</label>
-                <input type="password" class="form-control {% if form.password.errors %}is-invalid{% endif %}" id="password" name="password" value="{{ form.password.data or '' }}" {% if not user %}required{% endif %}>
-                {% if form.password.errors %}
-                <div class="invalid-feedback">
-                    {% for error in form.password.errors %}{{ error }}{% endfor %}
+            <div class="row">
+                <div class="col-md-6">
+                    {{ render_field(form.password, label='Mật khẩu' ~ (' (để trống nếu không thay đổi)' if user), type='password', required=not user) }}
                 </div>
-                {% endif %}
-            </div>
-            <div class="mb-3">
-                <label for="role_id" class="form-label">Vai trò</label>
-                <select class="form-select {% if form.role_id.errors %}is-invalid{% endif %}" id="role_id" name="role_id" required>
-                    <option value="">-- Chọn vai trò --</option>
-                    {% for value, label in form.role_id.choices %}
-                    <option value="{{ value }}" {% if form.role_id.data == value|string %}selected{% endif %}>{{ label }}</option>
-                    {% endfor %}
-                </select>
-                {% if form.role_id.errors %}
-                <div class="invalid-feedback">
-                    {% for error in form.role_id.errors %}{{ error }}{% endfor %}
+                <div class="col-md-6">
+                    {{ render_field(form.role_id, label='Vai trò', type='select', required=true,
+                                    options=form.role_id.choices, placeholder='-- Chọn vai trò --') }}
                 </div>
-                {% endif %}
             </div>
-            <div class="mb-3 form-check">
-                <input type="checkbox" class="form-check-input" id="is_active" name="is_active" {% if form.is_active.data %}checked{% endif %}>
-                <label class="form-check-label" for="is_active">Kích hoạt</label>
-                {% if form.is_active.errors %}
-                <div class="text-danger">
-                    {% for error in form.is_active.errors %}{{ error }}{% endfor %}
-                </div>
-                {% endif %}
-            </div>
-            <div class="d-flex gap-2">
-                <button type="submit" class="btn btn-primary">
-                    <i class="fas fa-save"></i> {% if user %}Cập nhật{% else %}Tạo mới{% endif %}
-                </button>
-                <a href="{{ url_for('auth.users') }}" class="btn btn-secondary">
-                    <i class="fas fa-arrow-left"></i> Quay lại
-                </a>
+            {{ render_field(form.is_active, label='Kích hoạt', type='checkbox') }}
+
+            <div class="d-flex gap-2 mt-3">
+                {{ render_button('Cập nhật' if user else 'Tạo mới', icon='fa-save', variant='primary') }}
+                {{ render_button('Quay lại', icon='fa-arrow-left', variant='secondary', href=url_for('auth.users')) }}
             </div>
         </form>
     </div>

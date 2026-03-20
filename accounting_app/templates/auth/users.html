@@ -1,49 +1,50 @@
 {% extends "base.html" %}
+{% from 'macros.html' import render_button, render_badge, render_table_actions, render_delete_modal %}
 
 {% block title %}Quản lý người dùng - VAS Accounting{% endblock %}
-
 {% block page_title %}Quản lý người dùng{% endblock %}
 
 {% block main_content %}
 <div class="mb-3">
-    <a href="{{ url_for('auth.create_user') }}" class="btn btn-primary">
-        <i class="fas fa-plus"></i> Thêm người dùng
-    </a>
+    {{ render_button('Thêm người dùng', icon='fa-plus', variant='primary', href=url_for('auth.create_user')) }}
 </div>
 
 <div class="card">
-    <div class="card-body">
-        <table class="table table-hover">
+    <div class="card-body p-0">
+        <table class="table table-compact table-hover mb-0">
             <thead>
                 <tr>
                     <th>Tên đăng nhập</th>
                     <th>Email</th>
                     <th>Vai trò</th>
-                    <th>Trạng thái</th>
+                    <th class="text-center">Trạng thái</th>
                     <th>Đăng nhập cuối</th>
-                    <th>Thao tác</th>
+                    <th class="text-end">Thao tác</th>
                 </tr>
             </thead>
             <tbody>
             {% for user in users %}
             <tr>
-                <td>{{ user.username }}</td>
+                <td class="fw-medium">{{ user.username }}</td>
                 <td>{{ user.email }}</td>
                 <td>{{ user.role.name }}</td>
+                <td class="text-center">{{ render_badge('active' if user.is_active else 'inactive') }}</td>
+                <td>{{ user.last_login.strftime('%d/%m/%Y %H:%M') if user.last_login else '—' }}</td>
                 <td>
-                    {% if user.is_active %}
-                    <span class="badge bg-success">Hoạt động</span>
-                    {% else %}
-                    <span class="badge bg-secondary">Không hoạt động</span>
-                    {% endif %}
-                </td>
-                <td>{{ user.last_login.strftime('%d/%m/%Y %H:%M') if user.last_login else '-' }}</td>
-                <td>
-                    <a href="{{ url_for('auth.edit_user', user_id=user.id) }}" class="btn btn-sm btn-info">
-                        <i class="fas fa-edit"></i>
-                    </a>
+                    {{ render_table_actions(
+                        edit_url=url_for('auth.edit_user', user_id=user.id),
+                        delete_modal_id='deleteUser' ~ user.id
+                    ) }}
+                    {{ render_delete_modal(
+                        modal_id='deleteUser' ~ user.id,
+                        action=url_for('auth.edit_user', user_id=user.id),
+                        item_name=user.username,
+                        item_type='người dùng'
+                    ) }}
                 </td>
             </tr>
+            {% else %}
+            <tr><td colspan="6" class="text-center text-muted py-4">Chưa có người dùng nào</td></tr>
             {% endfor %}
             </tbody>
         </table>

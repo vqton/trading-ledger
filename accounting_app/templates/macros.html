@@ -1,0 +1,314 @@
+{# ==========================================================================
+   VAS Accounting - Jinja2 UI Macros
+   Import in templates: {% from 'macros.html' import render_field, ... %}
+   ========================================================================== #}
+
+
+{# --- Form Field (text, email, password, number, date, textarea, select) ---
+   Usage:
+     {{ render_field(form.username, label='Tên đăng nhập') }}
+     {{ render_field(form.amount, label='Số tiền', type='number', class='text-money') }}
+     {{ render_field(form.note, type='textarea', label='Ghi chú') }}
+     {{ render_field(form.status, type='select', label='Trạng thái', options=[('draft','Nháp'),('posted','Đã ghi sổ')]) }}
+#}
+{% macro render_field(field, label='', type='text', placeholder='', required=false,
+                      options=[], help_text='', class='', value='', readonly=false) %}
+{% set field_id = field.name if field is defined and field.name else (field|string) %}
+{% set field_val = value or (field.data if field is defined and field.data is not none else '') %}
+{% set has_error = field is defined and field.errors %}
+<div class="mb-3">
+    {% if label %}
+    <label for="{{ field_id }}" class="form-label">
+        {{ label }}{% if required %}<span class="text-danger ms-1">*</span>{% endif %}
+    </label>
+    {% endif %}
+
+    {% if type == 'textarea' %}
+    <textarea class="form-control {% if has_error %}is-invalid{% endif %} {{ class }}"
+              id="{{ field_id }}" name="{{ field_id }}"
+              rows="3" placeholder="{{ placeholder }}"
+              {% if required %}required{% endif %}
+              {% if readonly %}readonly{% endif %}>{{ field_val }}</textarea>
+
+    {% elif type == 'select' %}
+    <select class="form-select {% if has_error %}is-invalid{% endif %} {{ class }}"
+            id="{{ field_id }}" name="{{ field_id }}"
+            {% if required %}required{% endif %}>
+        {% if placeholder %}
+        <option value="">{{ placeholder }}</option>
+        {% endif %}
+        {% for val, lbl in options %}
+        <option value="{{ val }}" {% if field_val|string == val|string %}selected{% endif %}>{{ lbl }}</option>
+        {% endfor %}
+    </select>
+
+    {% elif type == 'checkbox' %}
+    <div class="form-check">
+        <input type="checkbox" class="form-check-input {% if has_error %}is-invalid{% endif %}"
+               id="{{ field_id }}" name="{{ field_id }}" value="y"
+               {% if field_val %}checked{% endif %}>
+        <label class="form-check-label" for="{{ field_id }}">{{ label }}</label>
+    </div>
+
+    {% else %}
+    <input type="{{ type }}"
+           class="form-control {% if has_error %}is-invalid{% endif %} {{ class }}"
+           id="{{ field_id }}" name="{{ field_id }}"
+           value="{{ field_val }}" placeholder="{{ placeholder }}"
+           {% if required %}required{% endif %}
+           {% if readonly %}readonly{% endif %}>
+    {% endif %}
+
+    {% if has_error %}
+    <div class="invalid-feedback d-block">
+        {% for error in field.errors %}{{ error }}{% endfor %}
+    </div>
+    {% endif %}
+
+    {% if help_text %}
+    <div class="form-text">{{ help_text }}</div>
+    {% endif %}
+</div>
+{% endmacro %}
+
+
+{# --- Button ---
+   Usage:
+     {{ render_button('Lưu', icon='fa-save', variant='primary') }}
+     {{ render_button('Xóa', icon='fa-trash', variant='danger', size='sm') }}
+     {{ render_button('Quay lại', icon='fa-arrow-left', variant='secondary', href=url_for('...')) }}
+#}
+{% macro render_button(text, icon='', variant='primary', size='', href='',
+                       type='submit', class='', title='', onclick='',
+                       disabled=false, outline=false) %}
+{% set btn_class = 'btn' %}
+{% set btn_class = btn_class ~ (' btn-' if outline else ' btn-') ~ variant %}
+{% set btn_class = btn_class ~ (' btn-' ~ size if size else '') %}
+{% set btn_class = btn_class ~ (' ' ~ class if class else '') %}
+
+{% if href %}
+<a href="{{ href }}" class="{{ btn_class }}"
+   {% if title %}title="{{ title }}"{% endif %}>
+    {% if icon %}<i class="fas {{ icon }}"></i> {% endif %}{{ text }}
+</a>
+{% else %}
+<button type="{{ type }}" class="{{ btn_class }}"
+        {% if title %}title="{{ title }}"{% endif %}
+        {% if onclick %}onclick="{{ onclick }}"{% endif %}
+        {% if disabled %}disabled{% endif %}>
+    {% if icon %}<i class="fas {{ icon }}"></i> {% endif %}{{ text }}
+</button>
+{% endif %}
+{% endmacro %}
+
+
+{# --- Badge (Accounting Status) ---
+   Usage:
+     {{ render_badge('draft') }}
+     {{ render_badge('posted', label='Đã ghi sổ') }}
+#}
+{% macro render_badge(status, label='') %}
+{% set badge_map = {
+    'draft':     ('Nháp',         'badge-draft'),
+    'pending':   ('Chờ duyệt',    'badge-pending'),
+    'approved':  ('Đã duyệt',     'badge-approved'),
+    'posted':    ('Đã ghi sổ',    'badge-posted'),
+    'paid':      ('Đã thanh toán','badge-paid'),
+    'overdue':   ('Quá hạn',      'badge-overdue'),
+    'cancelled': ('Đã hủy',       'badge-cancelled'),
+    'locked':    ('Đã khóa',      'badge-locked'),
+    'active':    ('Hoạt động',    'badge-approved'),
+    'inactive':  ('Ngừng',        'badge-cancelled'),
+} %}
+{% set info = badge_map.get(status|string, (status, 'bg-secondary')) %}
+<span class="badge {{ info[1] }}">{{ label or info[0] }}</span>
+{% endmacro %}
+
+
+{# --- Card ---
+   Usage:
+     {% call render_card('Báo cáo KQKD', icon='fa-chart-line') %}
+       <p>Content here</p>
+     {% endcall %}
+
+     {% call render_card('Thông tin', actions='<a href="#">Edit</a>') %}
+       <p>Content</p>
+     {% endcall %}
+#}
+{% macro render_card(title='', icon='', class='', actions='', footer='', id='') %}
+<div class="card {{ class }}" {% if id %}id="{{ id }}"{% endif %}>
+    {% if title or actions %}
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="card-title mb-0">
+            {% if icon %}<i class="fas {{ icon }} me-2 text-muted"></i>{% endif %}
+            {{ title }}
+        </h5>
+        {% if actions %}<div class="d-flex gap-2">{{ actions|safe }}</div>{% endif %}
+    </div>
+    {% endif %}
+    <div class="card-body">
+        {{ caller() }}
+    </div>
+    {% if footer %}
+    <div class="card-footer">{{ footer|safe }}</div>
+    {% endif %}
+</div>
+{% endmacro %}
+
+
+{# --- KPI Card ---
+   Usage:
+     {{ render_kpi('Tiền mặt', '1,500,000', icon='fa-wallet', color='primary') }}
+#}
+{% macro render_kpi(label, value, icon='', color='primary', subtext='') %}
+<div class="kpi-card">
+    {% if icon %}
+    <div class="kpi-icon kpi-icon-{{ color }}"><i class="fas {{ icon }}"></i></div>
+    {% endif %}
+    <div class="kpi-label">{{ label }}</div>
+    <div class="kpi-value">{{ value }}</div>
+    {% if subtext %}<div class="text-muted" style="font-size:var(--font-size-xs)">{{ subtext }}</div>{% endif %}
+</div>
+{% endmacro %}
+
+
+{# --- Confirm Delete Modal ---
+   Usage (in template):
+     {{ render_delete_modal(
+          modal_id='deleteUserModal',
+          action=url_for('auth.delete_user', user_id=user.id),
+          item_name=user.username,
+          item_type='người dùng'
+     ) }}
+     Then add a button:
+     <button data-bs-toggle="modal" data-bs-target="#deleteUserModal">Xóa</button>
+#}
+{% macro render_delete_modal(modal_id, action, item_name='', item_type='mục') %}
+<div class="modal fade" id="{{ modal_id }}" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-sm modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header border-0">
+                <h5 class="modal-title"><i class="fas fa-exclamation-triangle text-danger me-2"></i>Xác nhận xóa</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>Bạn có chắc muốn xóa {{ item_type }}{% if item_name %} <strong>{{ item_name }}</strong>{% endif %}?</p>
+                <p class="text-muted small mb-0">Hành động này không thể hoàn tác.</p>
+            </div>
+            <div class="modal-footer border-0">
+                <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Hủy</button>
+                <form method="POST" action="{{ action }}" class="d-inline">
+                    <input type="hidden" name="csrf_token" value="">
+                    <button type="submit" class="btn btn-danger btn-sm">
+                        <i class="fas fa-trash"></i> Xóa
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endmacro %}
+
+
+{# --- Quick View Modal ---
+   Usage:
+     {{ render_quick_view_modal(
+          modal_id='viewUserModal',
+          title='Chi tiết người dùng',
+          rows=[
+            ('Tên', user.username),
+            ('Email', user.email),
+            ('Vai trò', user.role.name),
+          ]
+     ) }}
+#}
+{% macro render_quick_view_modal(modal_id, title='', rows=[], actions='') %}
+<div class="modal fade" id="{{ modal_id }}" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">{{ title or 'Chi tiết' }}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <table class="table table-sm mb-0">
+                    {% for label, value in rows %}
+                    <tr>
+                        <td class="text-muted" style="width:140px">{{ label }}</td>
+                        <td class="fw-medium">{{ value or '—' }}</td>
+                    </tr>
+                    {% endfor %}
+                </table>
+            </div>
+            {% if actions %}
+            <div class="modal-footer">
+                {{ actions|safe }}
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endmacro %}
+
+
+{# --- Table Actions (standardized action buttons for table rows) ---
+   Usage:
+     {{ render_table_actions(
+          view_url=url_for('accounting.view_voucher', id=v.id),
+          edit_url=url_for('accounting.edit_voucher', id=v.id),
+          delete_modal_id='deleteVoucher' ~ v.id
+     ) }}
+#}
+{% macro render_table_actions(view_url='', edit_url='', delete_modal_id='',
+                               extra_actions='') %}
+<div class="d-flex gap-1 justify-content-end">
+    {% if view_url %}
+    <a href="{{ view_url }}" class="btn btn-sm btn-outline-secondary" title="Xem">
+        <i class="fas fa-eye"></i>
+    </a>
+    {% endif %}
+    {% if edit_url %}
+    <a href="{{ edit_url }}" class="btn btn-sm btn-outline-secondary" title="Sửa">
+        <i class="fas fa-pen-to-square"></i>
+    </a>
+    {% endif %}
+    {% if delete_modal_id %}
+    <button type="button" class="btn btn-sm btn-outline-danger"
+            data-bs-toggle="modal" data-bs-target="#{{ delete_modal_id }}" title="Xóa">
+        <i class="fas fa-trash"></i>
+    </button>
+    {% endif %}
+    {{ extra_actions|safe }}
+</div>
+{% endmacro %}
+
+
+{# --- Pagination ---
+   Usage:
+     {{ render_pagination(page, per_page, total, url_for('accounting.journal')) }}
+#}
+{% macro render_pagination(page, per_page, total, base_url) %}
+{% set total_pages = ((total + per_page - 1) / per_page)|int %}
+{% if total_pages > 1 %}
+<nav class="d-flex justify-content-between align-items-center mt-3">
+    <div class="text-muted small">Hiển thị {{ (page-1)*per_page + 1 }}–{{ [page*per_page, total]|min }} / {{ total }}</div>
+    <ul class="pagination pagination-sm mb-0">
+        <li class="page-item {% if page <= 1 %}disabled{% endif %}">
+            <a class="page-link" href="{{ base_url }}?page={{ page-1 }}">&laquo;</a>
+        </li>
+        {% for p in range(1, total_pages + 1) %}
+            {% if p <= 3 or p >= total_pages - 2 or (p >= page - 1 and p <= page + 1) %}
+            <li class="page-item {% if p == page %}active{% endif %}">
+                <a class="page-link" href="{{ base_url }}?page={{ p }}">{{ p }}</a>
+            </li>
+            {% elif p == 4 or p == total_pages - 3 %}
+            <li class="page-item disabled"><span class="page-link">…</span></li>
+            {% endif %}
+        {% endfor %}
+        <li class="page-item {% if page >= total_pages %}disabled{% endif %}">
+            <a class="page-link" href="{{ base_url }}?page={{ page+1 }}">&raquo;</a>
+        </li>
+    </ul>
+</nav>
+{% endif %}
+{% endmacro %}
