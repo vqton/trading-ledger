@@ -212,53 +212,14 @@
                     {% endif %}
                 {% endwith %}
 
-                {% block content %}{% endblock %}
-
-                {% block audit_trail %}
-                <div class="audit-trail">
-                    <span class="audit-item">
-                        <i class="fas fa-user"></i>
-                        <span id="lastEditedBy">{{ current_user.username }}</span>
-                    </span>
-                    <span class="audit-item">
-                        <i class="fas fa-clock"></i>
-                        <span id="lastEditedAt">{{ current_time|datetime }}</span>
-                    </span>
-                </div>
-                {% endblock %}
+                {% block app_content %}{% endblock %}
             </main>
         </div>
     </div>
 
-    <div class="search-modal" id="searchModal" role="dialog" aria-modal="true" aria-label="Tìm kiếm">
-        <div class="search-box">
-            <div class="search-input-wrap">
-                <i class="fas fa-search"></i>
-                <input type="text" id="searchInput" placeholder="Tìm chứng từ, tài khoản, đối tác..." autocomplete="off">
-            </div>
-            <div class="search-results" id="searchResults">
-                <div class="search-section">
-                    <div class="section-title">Kết quả</div>
-                    <div id="searchResultsList"></div>
-                </div>
-            </div>
-            <div class="search-footer">
-                <div class="hint"><kbd>↑</kbd><kbd>↓</kbd> Di chuyển</div>
-                <div class="hint"><kbd>Enter</kbd> Chọn</div>
-                <div class="hint"><kbd>Esc</kbd> Đóng</div>
-            </div>
-        </div>
-    </div>
-
     {% else %}
-    <div class="login-prompt">
-        <div class="container py-5 text-center">
-            <h2 class="text-muted mb-4">Hệ thống kế toán theo chuẩn Việt Nam (VAS)</h2>
-            <p class="lead text-muted mb-4">Quản lý tài chính doanh nghiệp chuyên nghiệp</p>
-            <a href="{{ url_for('auth.login') }}" class="btn btn-primary btn-lg">
-                <i class="fas fa-sign-in-alt"></i> Đăng nhập
-            </a>
-        </div>
+    <div class="non-auth-wrapper">
+        {% block content %}{% endblock %}
     </div>
     {% endif %}
     
