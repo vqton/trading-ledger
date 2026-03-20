@@ -197,6 +197,8 @@ def create_voucher():
         from services.voucher_template_service import get_template
         template = get_template(template_id)
     
+    from services.voucher_numbering_service import generate_voucher_number
+    
     form = JournalVoucherForm()
     
     accounts = AccountService.get_all_active_for_journal()
@@ -282,6 +284,9 @@ def create_voucher():
         title="Thêm chứng từ",
         templates=templates,
         selected_template=template,
+        accounts=accounts,
+        today=date.today().strftime("%Y-%m-%d"),
+        voucher_no=generate_voucher_number(form.voucher_type.data, date.today()),
     )
 
 

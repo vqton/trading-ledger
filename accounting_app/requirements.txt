@@ -16,7 +16,7 @@ bleach==6.1.0
 
 # Frontend
 Bootstrap-Flask==2.3.3
-HTMX==1.0.0
+# HTMX - used via CDN, no pip package needed
 
 # Reporting
 pandas==2.1.4

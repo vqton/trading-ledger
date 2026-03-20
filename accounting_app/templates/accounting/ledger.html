@@ -8,10 +8,36 @@
 <div class="card">
     <div class="card-header">
         <h4>SỔ CÁI TÀI KHOẢN</h4>
+        {% if account %}
         <h5>{{ account.code }} - {{ account.name_vi }}</h5>
         <h6>Ngày {{ from_date.strftime('%d/%m/%Y') if from_date else '' }} đến {{ to_date.strftime('%d/%m/%Y') if to_date else '' }}</h6>
+        {% endif %}
     </div>
     <div class="card-body">
+        <form method="get" class="row g-3 mb-3">
+            <div class="col-md-4">
+                <label class="form-label">Chọn tài khoản</label>
+                <select name="account_id" class="form-select" required>
+                    <option value="">-- Chọn tài khoản --</option>
+                    {% for acc in accounts %}
+                    <option value="{{ acc.id }}">{{ acc.code }} - {{ acc.name_vi }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">Từ ngày</label>
+                <input type="date" name="start_date" class="form-control">
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">Đến ngày</label>
+                <input type="date" name="end_date" class="form-control">
+            </div>
+            <div class="col-md-2 d-flex align-items-end">
+                <button type="submit" class="btn btn-primary w-100">Xem sổ</button>
+            </div>
+        </form>
+
+        {% if account %}
         <table class="table table-sm">
             <thead>
                 <tr>
@@ -37,9 +63,9 @@
             
             {% for entry in entries %}
             <tr>
-                <td>{{ entry.voucher_date.strftime('%d/%m/%Y') }}</td>
-                <td>{{ entry.voucher_no }}</td>
-                <td>{{ entry.description }}</td>
+                <td>{{ entry.voucher_date.strftime('%d/%m/%Y') if entry.voucher_date else '' }}</td>
+                <td>{{ entry.voucher_no or '' }}</td>
+                <td>{{ entry.description or '' }}</td>
                 <td class="text-end">{{ "{:,.0f}".format(entry.debit) if entry.debit > 0 else '' }}</td>
                 <td class="text-end">{{ "{:,.0f}".format(entry.credit) if entry.credit > 0 else '' }}</td>
                 <td class="text-end">{{ "{:,.0f}".format(entry.running_debit) if entry.running_debit > 0 else '' }}</td>
@@ -49,13 +75,14 @@
             
             <tr class="fw-bold table-secondary">
                 <td colspan="3">Dư cuối kỳ</td>
-                <td class="text-end">{{ "{:,.0f}".format(total_debit) }}</td>
-                <td class="text-end">{{ "{:,.0f}".format(total_credit) }}</td>
+                <td class="text-end">{{ "{:,.0f}".format(total_debit) if total_debit else '' }}</td>
+                <td class="text-end">{{ "{:,.0f}".format(total_credit) if total_credit else '' }}</td>
                 <td class="text-end">{{ "{:,.0f}".format(closing_debit) if closing_debit > 0 else '' }}</td>
                 <td class="text-end">{{ "{:,.0f}".format(closing_credit) if closing_credit > 0 else '' }}</td>
             </tr>
             </tbody>
         </table>
+        {% endif %}
     </div>
 </div>
 {% endblock %}

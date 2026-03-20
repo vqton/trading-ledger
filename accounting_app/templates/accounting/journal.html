@@ -2,7 +2,7 @@
 
 {% block title %}Chứng từ - VAS Accounting{% endblock %}
 
-{% block app_content %}
+{% block main_content %}
 <div class="py-4">
 <h1 class="h3 mb-4">Danh sách chứng từ</h1>
 
@@ -33,14 +33,14 @@
                 <td>{{ voucher.voucher_date.strftime('%d/%m/%Y') }}</td>
                 <td>{{ voucher.description[:50] }}</td>
                 <td>-</td>
-                <td>{{ "{:,.0f}".format(voucher.total_amount) }}</td>
+                <td>{{ "{:,.0f}".format(voucher.total_debit) }}</td>
                 <td>
-                    {% if voucher.status == 'draft' %}
+                    {% if voucher.status.value == 'draft' %}
                     <span class="badge bg-secondary">Nháp</span>
-                    {% elif voucher.status == 'posted' %}
+                    {% elif voucher.status.value == 'posted' %}
                     <span class="badge bg-success">Đã ghi sổ</span>
                     {% else %}
-                    <span class="badge bg-warning">{{ voucher.status }}</span>
+                    <span class="badge bg-warning">{{ voucher.status.value }}</span>
                     {% endif %}
                 </td>
                 <td>
@@ -57,6 +57,5 @@
             </tbody>
         </table>
     </div>
-</div>
 </div>
 {% endblock %}
