@@ -1,105 +1,171 @@
 {% extends "base.html" %}
+{% from 'macros.html' import render_field, render_form_section, render_form_actions %}
 
 {% block title %}Tạo chứng từ - VAS Accounting{% endblock %}
+{% block page_title %}Tạo chứng từ{% endblock %}
+
+{% block breadcrumbs %}
+<li><a href="{{ url_for('index') }}"><i class="fas fa-home"></i></a></li>
+<li><a href="{{ url_for('accounting.journal') }}">Chứng từ</a></li>
+<li><a href="#">Tạo mới</a></li>
+{% endblock %}
 
 {% block main_content %}
-<div class="py-4">
-<h1 class="h3 mb-4">Tạo chứng từ mới</h1>
+<form method="POST" id="voucherForm">
+    <input type="hidden" name="csrf_token" value="">
 
-<div class="card">
-    <div class="card-body">
-        <form method="POST">
-            <input type="hidden" name="csrf_token" value="">
-            
-            <div class="row mb-3">
-                <div class="col-md-4">
-                    <label class="form-label">Số chứng từ</label>
-                    <input type="text" class="form-control" name="voucher_no" value="{{ voucher_no }}" readonly>
-                </div>
-                <div class="col-md-4">
-                    <label class="form-label">Ngày chứng từ</label>
-                    <input type="date" class="form-control" name="voucher_date" value="{{ today }}" required>
-                </div>
-                <div class="col-md-4">
-                    <label class="form-label">Đối tượng</label>
-                    <input type="text" class="form-control" name="partner_name" placeholder="Khách hàng/Nhà cung cấp">
-                </div>
-            </div>
-            
-            <div class="mb-3">
-                <label class="form-label">Diễn giải</label>
-                <input type="text" class="form-control" name="description" required>
-            </div>
-            
-            <h5>Danh sách định khoản</h5>
-            <table class="table table-sm" id="entries-table">
-                <thead>
-                    <tr>
-                        <th>Tài khoản</th>
-                        <th>Diễn giải</th>
-                        <th>Nợ</th>
-                        <th>Có</th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody id="entries-body">
-                    <tr>
-                        <td>
-                            <select class="form-select" name="account_id[]">
-                                <option value="">-- Chọn TK --</option>
-                                {% for acc in accounts %}
-                                <option value="{{ acc.id }}">{{ acc.code }} - {{ acc.name_vi }}</option>
-                                {% endfor %}
-                            </select>
-                        </td>
-                        <td><input type="text" class="form-control" name="entry_desc[]"></td>
-                        <td><input type="number" class="form-control" name="debit[]" step="0.01" value="0"></td>
-                        <td><input type="number" class="form-control" name="credit[]" step="0.01" value="0"></td>
-                        <td><button type="button" class="btn btn-sm btn-danger" onclick="removeRow(this)"><i class="fas fa-trash"></i></button></td>
-                    </tr>
-                </tbody>
-            </table>
-            
-            <button type="button" class="btn btn-secondary mb-3" onclick="addEntry()">
-                <i class="fas fa-plus"></i> Thêm dòng
-            </button>
-            
-            <div class="mb-3">
-                <button type="submit" class="btn btn-primary">
-                    <i class="fas fa-save"></i> Lưu nháp
-                </button>
+    <!-- Section 1: Thông tin chung -->
+    {% call render_form_section('Thông tin chung', icon='fa-info-circle') %}
+        {{ render_field(form.voucher_no if form is defined and form.voucher_no is defined else {'name':'voucher_no','data':voucher_no,'errors':[]},
+                       label='Số chứng từ', readonly=true, col='col-md-4') }}
+        {{ render_field(form.voucher_date if form is defined and form.voucher_date is defined else {'name':'voucher_date','data':today,'errors':[]},
+                       label='Ngày chứng từ', type='date', required=true, col='col-md-4') }}
+        {{ render_field({'name':'partner_name','data':'','errors':[]},
+                       label='Đối tượng', placeholder='Khách hàng / Nhà cung cấp', col='col-md-4') }}
+    {% endcall %}
 
-            </div>
-        </form>
-    </div>
-</div>
+    <!-- Section 2: Diễn giải -->
+    {% call render_form_section('Nội dung', icon='fa-align-left') %}
+        {{ render_field({'name':'description','data':'','errors':[]},
+                       label='Diễn giải', placeholder='Nội dung chứng từ...', required=true, col='col-12') }}
+
+        <div class="col-md-4">
+            {{ render_field({'name':'has_tax','data':false,'errors':[]},
+                           label='Có thuế GTGT', type='checkbox', show_if='tax-fields') }}
+        </div>
+        <div class="col-md-4" data-show-if="tax-fields" data-show-value="y" style="display:none">
+            {{ render_field({'name':'tax_rate','data':'10','errors':[]},
+                           label='Thuế suất', type='number', money=true, append='%', min='0', max='100') }}
+        </div>
+    {% endcall %}
+
+    <!-- Section 3: Định khoản -->
+    <fieldset class="form-section">
+        <legend class="form-section-legend">
+            <i class="fas fa-list-ol"></i> Danh sách định khoản
+        </legend>
+
+        <table class="table entry-table" id="entries-table">
+            <thead>
+                <tr>
+                    <th style="width:50px" class="text-center">#</th>
+                    <th style="width:280px">Tài khoản</th>
+                    <th>Diễn giải</th>
+                    <th style="width:160px" class="text-end">Nợ</th>
+                    <th style="width:160px" class="text-end">Có</th>
+                    <th style="width:50px"></th>
+                </tr>
+            </thead>
+            <tbody id="entries-body">
+                <tr>
+                    <td class="text-center text-muted entry-num">1</td>
+                    <td>
+                        <select class="form-select" name="account_id[]">
+                            <option value="">-- Chọn TK --</option>
+                            {% for acc in accounts %}
+                            <option value="{{ acc.id }}">{{ acc.code }} - {{ acc.name_vi }}</option>
+                            {% endfor %}
+                        </select>
+                    </td>
+                    <td><input type="text" class="form-control" name="entry_desc[]" placeholder="Nội dung"></td>
+                    <td><input type="number" class="form-control" name="debit[]" step="1000" value="0" min="0"></td>
+                    <td><input type="number" class="form-control" name="credit[]" step="1000" value="0" min="0"></td>
+                    <td class="text-center">
+                        <button type="button" class="btn btn-sm btn-outline-danger" onclick="removeEntry(this)" title="Xóa dòng">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                </tr>
+            </tbody>
+            <tfoot>
+                <tr class="fw-bold">
+                    <td colspan="3" class="text-end">Tổng cộng:</td>
+                    <td class="text-end font-monospace" id="total-debit">0</td>
+                    <td class="text-end font-monospace" id="total-credit">0</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td colspan="6" class="text-end">
+                        <span id="balance-status" class="badge bg-secondary">Chưa cân</span>
+                    </td>
+                </tr>
+            </tfoot>
+        </table>
+
+        <button type="button" class="btn btn-outline-secondary btn-sm mt-2" onclick="addEntry()">
+            <i class="fas fa-plus"></i> Thêm dòng
+        </button>
+    </fieldset>
+
+    <!-- Sticky actions -->
+    {{ render_form_actions(
+        save_text='Lưu nháp',
+        save_icon='fa-save',
+        cancel_url=url_for('accounting.journal'),
+        extra='<button type="submit" class="btn btn-success" name="action" value="post"><i class="fas fa-check"></i> Ghi sổ</button>'
+    ) }}
+</form>
 
 <script>
+// Template for new entry row (uses Jinja accounts data)
+var accountOptions = '<option value="">-- Chọn TK --</option>{% for acc in accounts %}<option value="{{ acc.id }}">{{ acc.code }} - {{ acc.name_vi }}</option>{% endfor %}';
+
 function addEntry() {
-    const tbody = document.getElementById('entries-body');
-    const row = document.createElement('tr');
-    row.innerHTML = `
-        <td>
-            <select class="form-select" name="account_id[]">
-                <option value="">-- Chọn TK --</option>
-                {% for acc in accounts %}
-                <option value="{{ acc.id }}">{{ acc.code }} - {{ acc.name_vi }}</option>
-                {% endfor %}
-            </select>
-        </td>
-        <td><input type="text" class="form-control" name="entry_desc[]"></td>
-        <td><input type="number" class="form-control" name="debit[]" step="0.01" value="0"></td>
-        <td><input type="number" class="form-control" name="credit[]" step="0.01" value="0"></td>
-        <td><button type="button" class="btn btn-sm btn-danger" onclick="removeRow(this)"><i class="fas fa-trash"></i></button></td>
-    `;
+    var tbody = document.getElementById('entries-body');
+    var num = tbody.rows.length + 1;
+    var row = document.createElement('tr');
+    row.innerHTML =
+        '<td class="text-center text-muted entry-num">' + num + '</td>' +
+        '<td><select class="form-select" name="account_id[]">' + accountOptions + '</select></td>' +
+        '<td><input type="text" class="form-control" name="entry_desc[]" placeholder="Nội dung"></td>' +
+        '<td><input type="number" class="form-control" name="debit[]" step="1000" value="0" min="0"></td>' +
+        '<td><input type="number" class="form-control" name="credit[]" step="1000" value="0" min="0"></td>' +
+        '<td class="text-center"><button type="button" class="btn btn-sm btn-outline-danger" onclick="removeEntry(this)"><i class="fas fa-trash"></i></button></td>';
     tbody.appendChild(row);
+    row.querySelector('select').focus();
 }
 
-function removeRow(btn) {
-    const row = btn.closest('tr');
-    row.remove();
+function removeEntry(btn) {
+    var tbody = document.getElementById('entries-body');
+    if (tbody.rows.length <= 1) { showToast('Cần ít nhất 1 dòng định khoản', 'warning'); return; }
+    btn.closest('tr').remove();
+    renumberEntries();
+    calculateTotals();
 }
+
+function renumberEntries() {
+    document.querySelectorAll('#entries-body .entry-num').forEach(function (td, i) {
+        td.textContent = i + 1;
+    });
+}
+
+function calculateTotals() {
+    var totalDebit = 0, totalCredit = 0;
+    document.querySelectorAll('#entries-body input[name="debit[]"]').forEach(function (el) {
+        totalDebit += parseFloat(el.value) || 0;
+    });
+    document.querySelectorAll('#entries-body input[name="credit[]"]').forEach(function (el) {
+        totalCredit += parseFloat(el.value) || 0;
+    });
+    document.getElementById('total-debit').textContent = totalDebit.toLocaleString('vi-VN');
+    document.getElementById('total-credit').textContent = totalCredit.toLocaleString('vi-VN');
+
+    var status = document.getElementById('balance-status');
+    if (totalDebit === 0 && totalCredit === 0) {
+        status.className = 'badge bg-secondary'; status.textContent = 'Chưa nhập';
+    } else if (totalDebit === totalCredit) {
+        status.className = 'badge bg-success'; status.textContent = 'Đã cân';
+    } else {
+        status.className = 'badge bg-danger'; status.textContent = 'Chưa cân';
+    }
+}
+
+// Auto-calculate on input change
+document.getElementById('entries-body').addEventListener('input', function (e) {
+    if (e.target.name === 'debit[]' || e.target.name === 'credit[]') calculateTotals();
+});
+
+// Initial calc
+calculateTotals();
 </script>
-</div>
-</div>
 {% endblock %}

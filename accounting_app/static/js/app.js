@@ -264,4 +264,75 @@
   pollNotifications();
   setInterval(pollNotifications, 30000);
 
+
+  /* ========================================================================
+     FORM ENHANCEMENTS
+     ======================================================================== */
+
+  // 1. Auto-scroll to first error on page load
+  document.addEventListener('DOMContentLoaded', function () {
+    var firstError = document.querySelector('.has-error, .is-invalid');
+    if (firstError) {
+      firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      // Focus the input inside
+      var input = firstError.querySelector('.form-control, .form-select');
+      if (input) setTimeout(function () { input.focus(); }, 300);
+    }
+  });
+
+  // 2. Dynamic show/hide fields based on checkbox/select
+  //    Usage: <input data-toggle-target="myField">  +  <div data-show-if="myField" data-show-value="y">
+  function initDynamicFields() {
+    // Checkbox toggle
+    document.querySelectorAll('[data-toggle-target]').forEach(function (el) {
+      var target = el.getAttribute('data-toggle-target');
+      function update() {
+        var checked = el.checked;
+        document.querySelectorAll('[data-show-if="' + target + '"]').forEach(function (dep) {
+          var showVal = dep.getAttribute('data-show-value') || 'y';
+          var shouldShow = checked ? (showVal === 'y') : (showVal !== 'y');
+          dep.style.display = shouldShow ? '' : 'none';
+          if (shouldShow) dep.classList.remove('hidden-field');
+          else dep.classList.add('hidden-field');
+        });
+      }
+      el.addEventListener('change', update);
+      update(); // init on load
+    });
+
+    // Select toggle
+    document.querySelectorAll('select').forEach(function (sel) {
+      sel.addEventListener('change', function () {
+        var val = this.value;
+        var id = this.id;
+        document.querySelectorAll('[data-show-if="' + id + '"]').forEach(function (dep) {
+          var showVal = dep.getAttribute('data-show-value') || '';
+          dep.style.display = (val === showVal) ? '' : 'none';
+        });
+      });
+    });
+  }
+  initDynamicFields();
+
+  // 3. Native date picker enhancement (click to open)
+  document.querySelectorAll('input[data-datepicker], input[type="date"]').forEach(function (el) {
+    el.addEventListener('click', function () {
+      if (this.showPicker) this.showPicker();
+    });
+  });
+
+  // 4. Form dirty state warning
+  var formDirty = false;
+  document.querySelectorAll('form').forEach(function (form) {
+    if (form.hasAttribute('data-no-dirty')) return;
+    form.querySelectorAll('input, select, textarea').forEach(function (input) {
+      input.addEventListener('change', function () { formDirty = true; });
+      input.addEventListener('input', function () { formDirty = true; });
+    });
+    form.addEventListener('submit', function () { formDirty = false; });
+  });
+  window.addEventListener('beforeunload', function (e) {
+    if (formDirty) { e.preventDefault(); e.returnValue = ''; }
+  });
+
 })();

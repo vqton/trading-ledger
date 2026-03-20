@@ -568,3 +568,133 @@ input[type="number"], input.form-control.text-number { font-family: var(--font-m
   .breadcrumb-custom { font-size: var(--font-size-xs); }
   .user-btn .user-name, .user-btn .user-role { display: none; }
 }
+
+/* ==========================================================================
+   DATA ENTRY FORMS
+   ========================================================================== */
+
+/* Form section (fieldset grouping) */
+.form-section {
+  border: 1px solid var(--neutral-200);
+  border-radius: var(--radius-md);
+  padding: var(--sp-lg);
+  margin-bottom: var(--sp-lg);
+  background: #fff;
+}
+.form-section-legend {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--neutral-700);
+  float: none;
+  width: auto;
+  padding: 0 var(--sp-sm);
+  margin-bottom: var(--sp-md);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.form-section-legend i { color: var(--neutral-400); font-size: .85rem; }
+
+/* Sticky form action bar */
+.form-actions-bar {
+  padding: 12px 0;
+  margin-top: var(--sp-lg);
+}
+.form-actions-bar.sticky-actions {
+  position: sticky;
+  bottom: 0;
+  background: #fff;
+  border-top: 1px solid var(--neutral-200);
+  padding: 12px var(--sp-lg);
+  margin: var(--sp-lg) calc(-1 * var(--sp-lg)) calc(-1 * var(--sp-lg));
+  border-radius: 0 0 var(--radius-md) var(--radius-md);
+  box-shadow: 0 -2px 8px rgba(0,0,0,.04);
+  z-index: 10;
+}
+
+/* Error state - red bg on field group */
+.has-error .form-control,
+.has-error .form-select {
+  border-color: var(--danger-500);
+  background-color: var(--danger-50);
+}
+.has-error .form-control:focus,
+.has-error .form-select:focus {
+  border-color: var(--danger-500);
+  box-shadow: 0 0 0 3px rgba(239,68,68,.12);
+}
+.has-error .form-label { color: var(--danger-600); }
+.has-error .invalid-feedback { color: var(--danger-600); font-size: var(--font-size-xs); }
+
+/* Input group */
+.input-group-text {
+  font-size: var(--font-size-sm);
+  background: var(--neutral-50);
+  border-color: var(--neutral-300);
+  color: var(--neutral-500);
+}
+.input-group .form-control { border-radius: var(--radius); }
+.input-group .form-control.is-invalid { border-radius: var(--radius); }
+
+/* Money inputs */
+.form-control.text-end.font-monospace {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -.02em;
+}
+
+/* Date picker input */
+input[data-datepicker] { cursor: pointer; }
+
+/* Dynamic fields (show/hide) */
+[data-show-if] { transition: opacity var(--transition-fast), max-height var(--transition); }
+[data-show-if].hidden-field {
+  opacity: 0;
+  max-height: 0;
+  overflow: hidden;
+  margin: 0;
+  padding: 0;
+}
+
+/* Form card (wraps form in a card) */
+.form-card {
+  background: #fff;
+  border: 1px solid var(--neutral-200);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+}
+.form-card .form-card-header {
+  padding: var(--sp-lg);
+  border-bottom: 1px solid var(--neutral-200);
+}
+.form-card .form-card-body {
+  padding: var(--sp-lg);
+}
+
+/* Journal entry table (inside forms) */
+.entry-table th {
+  font-size: var(--font-size-xs);
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  color: var(--neutral-500);
+  font-weight: 600;
+  padding: 8px 12px;
+  background: var(--neutral-50);
+  border-bottom: 2px solid var(--neutral-200);
+}
+.entry-table td { padding: 6px 12px; vertical-align: middle; }
+.entry-table .form-control, .entry-table .form-select {
+  height: 34px;
+  font-size: var(--font-size-sm);
+  border-color: var(--neutral-200);
+}
+.entry-table .form-control:focus, .entry-table .form-select:focus {
+  border-color: var(--primary-500);
+  box-shadow: none;
+}
+.entry-table input[name*="debit"],
+.entry-table input[name*="credit"] {
+  font-family: var(--font-mono);
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
