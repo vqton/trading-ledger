@@ -1,13 +1,73 @@
 {% extends "base.html" %}
-
-{% block title %}Page{% endblock %}
-{% block page_title %}{{ self.title() }}{% endblock %}
-
+{% block title %}{% if customer %}Sửa Khách hàng{% else %}Thêm Khách hàng{% endif %} - VAS Accounting{% endblock %}
+{% block page_title %}{% if customer %}Sửa Khách hàng{% else %}Thêm Khách hàng mới{% endif %}{% endblock %}
 {% block main_content %}
+<div class="mb-3">
+    <a href="{{ url_for('accounting.customers') }}" class="btn btn-outline-secondary"><i class="fas fa-arrow-left"></i> Quay lại</a>
+</div>
 <div class="card">
     <div class="card-body">
-        <h5>{{ self.page_title() }}</h5>
-        <p class="text-muted">Page under construction</p>
+        <form method="post">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label class="form-label">Tên khách hàng *</label>
+                    <input type="text" name="name" class="form-control" value="{{ customer.name if customer else '' }}" required>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Mã số thuế</label>
+                    <input type="text" name="tax_id" class="form-control" value="{{ customer.tax_id if customer else '' }}">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Email</label>
+                    <input type="email" name="email" class="form-control" value="{{ customer.email if customer else '' }}">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Điện thoại</label>
+                    <input type="text" name="phone" class="form-control" value="{{ customer.phone if customer else '' }}">
+                </div>
+                <div class="col-md-12">
+                    <label class="form-label">Địa chỉ</label>
+                    <input type="text" name="address" class="form-control" value="{{ customer.address if customer else '' }}">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Thành phố</label>
+                    <input type="text" name="city" class="form-control" value="{{ customer.city if customer else '' }}">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Quốc gia</label>
+                    <input type="text" name="country" class="form-control" value="{{ customer.country if customer else 'Việt Nam' }}">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Người liên hệ</label>
+                    <input type="text" name="contact_person" class="form-control" value="{{ customer.contact_person if customer else '' }}">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Hạn mức tín dụng</label>
+                    <input type="number" name="credit_limit" class="form-control" value="{{ customer.credit_limit if customer else 0 }}" step="1000">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Điều khoản TT (ngày)</label>
+                    <input type="number" name="payment_terms" class="form-control" value="{{ customer.payment_terms if customer else 30 }}">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Loại khách hàng</label>
+                    <select name="customer_type" class="form-select">
+                        {% for val, label in customer_types %}
+                        <option value="{{ val }}" {% if customer and customer.customer_type == val %}selected{% endif %}>{{ label }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-12">
+                    <label class="form-label">Ghi chú</label>
+                    <textarea name="notes" class="form-control" rows="3">{{ customer.notes if customer else '' }}</textarea>
+                </div>
+                <div class="col-12">
+                    <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Lưu</button>
+                    <a href="{{ url_for('accounting.customers') }}" class="btn btn-secondary">Hủy</a>
+                </div>
+            </div>
+        </form>
     </div>
 </div>
 {% endblock %}

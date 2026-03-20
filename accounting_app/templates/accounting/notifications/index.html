@@ -1,101 +1,49 @@
 {% extends "base.html" %}
 
-{% block title %}Dashboard - VAS Accounting{% endblock %}
+{% block title %}Thông báo - VAS Accounting{% endblock %}
 
-{% block page_title %}Tổng quan{% endblock %}
+{% block page_title %}Thông báo{% endblock %}
 
 {% block main_content %}
-<div class="row">
-    <div class="col-md-3 mb-3">
-        <div class="card bg-primary text-white">
-            <div class="card-body">
-                <h5 class="card-title">Tài khoản</h5>
-                <h2>{{ account_count }}</h2>
-                <small>Đang hoạt động</small>
-            </div>
-        </div>
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="mb-0">Danh sách thông báo <span class="badge bg-danger">{{ unread_count }}</span></h5>
+        {% if unread_count > 0 %}
+        <form method="POST" action="{{ url_for('accounting.notifications_mark_all_read') }}" class="d-inline">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button type="submit" class="btn btn-sm btn-outline-primary">Đánh dấu tất cả đã đọc</button>
+        </form>
+        {% endif %}
     </div>
-    <div class="col-md-3 mb-3">
-        <div class="card bg-success text-white">
-            <div class="card-body">
-                <h5 class="card-title">Chứng từ</h5>
-                <h2>{{ voucher_count }}</h2>
-                <small>Tổng số</small>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-3 mb-3">
-        <div class="card bg-info text-white">
-            <div class="card-body">
-                <h5 class="card-title">Đã ghi sổ</h5>
-                <h2>{{ posted_count }}</h2>
-                <small>Chứng từ hợp lệ</small>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-3 mb-3">
-        <div class="card bg-warning text-white">
-            <div class="card-body">
-                <h5 class="card-title">Nháp</h5>
-                <h2>{{ draft_count }}</h2>
-                <small>Chờ xử lý</small>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="row mt-4">
-    <div class="col-md-6">
-        <div class="card">
-            <div class="card-header">
-                <h5>Chứng từ gần đây</h5>
-            </div>
-            <div class="card-body">
-                <table class="table table-sm">
-                    <thead>
-                        <tr>
-                            <th>Số CT</th>
-                            <th>Ngày</th>
-                            <th>Diễn giải</th>
-                            <th>Số tiền</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                    {% for voucher in recent_vouchers %}
-                    <tr>
-                        <td><a href="{{ url_for('accounting.view_voucher', voucher_id=voucher.id) }}">{{ voucher.voucher_no }}</a></td>
-                        <td>{{ voucher.voucher_date.strftime('%d/%m/%Y') }}</td>
-                        <td>{{ voucher.description[:30] }}</td>
-                        <td>{{ "{:,.0f}".format(voucher.total_amount) }}</td>
-                    </tr>
-                    {% else %}
-                    <tr>
-                        <td colspan="4" class="text-center text-muted">Chưa có chứng từ nào</td>
-                    </tr>
-                    {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-6">
-        <div class="card">
-            <div class="card-header">
-                <h5>Thao tác nhanh</h5>
-            </div>
-            <div class="card-body">
-                <div class="d-grid gap-2">
-                    <a href="{{ url_for('accounting.create_voucher') }}" class="btn btn-primary">
-                        <i class="fas fa-plus"></i> Tạo chứng từ mới
-                    </a>
-                    <a href="{{ url_for('accounting.journal') }}" class="btn btn-outline-secondary">
-                        <i class="fas fa-list"></i> Danh sách chứng từ
-                    </a>
-                    <a href="{{ url_for('accounting.tax_report') }}" class="btn btn-outline-info">
-                        <i class="fas fa-file-invoice-dollar"></i> Báo cáo thuế
-                    </a>
+    <div class="card-body">
+        <div class="list-group">
+            {% for notif in notifications %}
+            <div class="list-group-item {% if not notif.is_read %}list-group-item-light{% endif %}">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div class="flex-grow-1">
+                        <div class="d-flex align-items-center">
+                            {% if not notif.is_read %}<span class="badge bg-primary me-2">Mới</span>{% endif %}
+                            <h6 class="mb-1">{{ notif.title }}</h6>
+                        </div>
+                        <p class="mb-1 text-muted">{{ notif.message }}</p>
+                        <small class="text-muted">
+                            <span class="badge bg-secondary">{{ notif.notification_type }}</span>
+                            {{ notif.created_at.strftime('%d/%m/%Y %H:%M') if notif.created_at else '' }}
+                        </small>
+                    </div>
+                    {% if not notif.is_read %}
+                    <form method="POST" action="{{ url_for('accounting.notification_mark_read', notification_id=notif.id) }}">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <button type="submit" class="btn btn-sm btn-outline-success" title="Đánh dấu đã đọc">
+                            <i class="fas fa-check"></i>
+                        </button>
+                    </form>
+                    {% endif %}
                 </div>
             </div>
+            {% else %}
+            <div class="list-group-item text-center text-muted">Không có thông báo nào</div>
+            {% endfor %}
         </div>
     </div>
 </div>

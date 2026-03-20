@@ -1,13 +1,109 @@
 {% extends "base.html" %}
 
-{% block title %}Page{% endblock %}
-{% block page_title %}{{ self.title() }}{% endblock %}
+{% block title %}Chi tiết tài liệu - VAS Accounting{% endblock %}
+
+{% block page_title %}Chi tiết tài liệu{% endblock %}
 
 {% block main_content %}
-<div class="card">
-    <div class="card-body">
-        <h5>{{ self.page_title() }}</h5>
-        <p class="text-muted">Page under construction</p>
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">{{ document.reference_no or 'Tài liệu' }}</h5>
+                <a href="{{ url_for('accounting.document_edit', document_id=document.id) }}" class="btn btn-sm btn-outline-primary">
+                    <i class="fas fa-edit"></i> Sửa
+                </a>
+            </div>
+            <div class="card-body">
+                <table class="table table-bordered">
+                    <tr>
+                        <th style="width:200px;">Loại tài liệu</th>
+                        <td>{{ document.document_type }}</td>
+                    </tr>
+                    <tr>
+                        <th>Ngày</th>
+                        <td>{{ document.document_date.strftime('%d/%m/%Y') if document.document_date else '—' }}</td>
+                    </tr>
+                    <tr>
+                        <th>Số tham chiếu</th>
+                        <td>{{ document.reference_no or '—' }}</td>
+                    </tr>
+                    <tr>
+                        <th>Loại đối tượng</th>
+                        <td>{{ document.entity_type or '—' }}</td>
+                    </tr>
+                    <tr>
+                        <th>Mã đối tượng</th>
+                        <td>{{ document.entity_id or '—' }}</td>
+                    </tr>
+                    <tr>
+                        <th>Số tiền</th>
+                        <td>{{ "{:,.0f}".format(document.amount) if document.amount else '—' }}</td>
+                    </tr>
+                    <tr>
+                        <th>Tiền tệ</th>
+                        <td>{{ document.currency or 'VND' }}</td>
+                    </tr>
+                    <tr>
+                        <th>Mô tả</th>
+                        <td>{{ document.description or '—' }}</td>
+                    </tr>
+                    <tr>
+                        <th>Trạng thái</th>
+                        <td>
+                            {% if document.status == 'draft' %}
+                            <span class="badge bg-secondary">Nháp</span>
+                            {% elif document.status == 'pending' %}
+                            <span class="badge bg-warning">Chờ duyệt</span>
+                            {% elif document.status == 'approved' %}
+                            <span class="badge bg-success">Đã duyệt</span>
+                            {% elif document.status == 'signed' %}
+                            <span class="badge bg-primary">Đã ký</span>
+                            {% elif document.status == 'rejected' %}
+                            <span class="badge bg-danger">Từ chối</span>
+                            {% else %}
+                            <span class="badge bg-secondary">{{ document.status }}</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                </table>
+
+                {% if document.status in ['draft', 'pending'] %}
+                <div class="d-flex gap-2 mt-3">
+                    {% if document.status == 'draft' %}
+                    <form method="POST" action="{{ url_for('accounting.document_approve', document_id=document.id) }}">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <button type="submit" class="btn btn-success">
+                            <i class="fas fa-check"></i> Phê duyệt
+                        </button>
+                    </form>
+                    {% endif %}
+                    {% if document.status == 'approved' %}
+                    <form method="POST" action="{{ url_for('accounting.document_sign', document_id=document.id) }}">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-signature"></i> Ký
+                        </button>
+                    </form>
+                    {% endif %}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Thao tác</h5>
+            </div>
+            <div class="card-body">
+                <div class="d-grid gap-2">
+                    <a href="{{ url_for('accounting.documents_list') }}" class="btn btn-outline-secondary">
+                        <i class="fas fa-arrow-left"></i> Quay lại
+                    </a>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 {% endblock %}

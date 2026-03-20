@@ -1,13 +1,126 @@
 {% extends "base.html" %}
 
-{% block title %}Page{% endblock %}
-{% block page_title %}{{ self.title() }}{% endblock %}
+{% block title %}Tờ khai thuế GTGT tháng {{ month }}/{{ year }}{% endblock %}
+{% block page_title %}Tờ khai thuế GTGT tháng {{ month }}/{{ year }}{% endblock %}
 
 {% block main_content %}
-<div class="card">
-    <div class="card-body">
-        <h5>{{ self.page_title() }}</h5>
-        <p class="text-muted">Page under construction</p>
+<div class="row mb-4">
+    <div class="col-md-4">
+        <div class="card text-bg-info">
+            <div class="card-body">
+                <h6 class="card-title">Thuế GTGT đầu ra</h6>
+                <h4>{{ "{:,.0f}".format(declaration.vat_output) }}</h4>
+            </div>
+        </div>
     </div>
+    <div class="col-md-4">
+        <div class="card text-bg-success">
+            <div class="card-body">
+                <h6 class="card-title">Thuế GTGT đầu vào</h6>
+                <h4>{{ "{:,.0f}".format(declaration.vat_input) }}</h4>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card text-bg-warning">
+            <div class="card-body">
+                <h6 class="card-title">Thuế GTGT phải nộp</h6>
+                <h4>{{ "{:,.0f}".format(declaration.vat_payable) }}</h4>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Bảng kê hóa đơn đầu ra</h5>
+            </div>
+            <div class="card-body">
+                {% if declaration.transactions_output %}
+                <table class="table table-sm table-hover">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Số HĐ</th>
+                            <th>Ngày</th>
+                            <th>Đối tượng</th>
+                            <th class="text-end">Doanh số</th>
+                            <th class="text-end">Thuế</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for t in declaration.transactions_output %}
+                        <tr>
+                            <td>{{ t.invoice_no }}</td>
+                            <td>{{ t.date }}</td>
+                            <td>{{ t.partner_name }}</td>
+                            <td class="text-end">{{ "{:,.0f}".format(t.amount) }}</td>
+                            <td class="text-end">{{ "{:,.0f}".format(t.vat_amount) }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                    <tfoot class="table-light">
+                        <tr class="fw-bold">
+                            <td colspan="3">Tổng</td>
+                            <td class="text-end">{{ "{:,.0f}".format(declaration.total_output_amount) if declaration.total_output_amount is defined else '' }}</td>
+                            <td class="text-end">{{ "{:,.0f}".format(declaration.vat_output) }}</td>
+                        </tr>
+                    </tfoot>
+                </table>
+                {% else %}
+                <p class="text-muted text-center py-3">Không có giao dịch đầu ra</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Bảng kê hóa đơn đầu vào</h5>
+            </div>
+            <div class="card-body">
+                {% if declaration.transactions_input %}
+                <table class="table table-sm table-hover">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Số HĐ</th>
+                            <th>Ngày</th>
+                            <th>Đối tượng</th>
+                            <th class="text-end">Giá trị</th>
+                            <th class="text-end">Thuế</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for t in declaration.transactions_input %}
+                        <tr>
+                            <td>{{ t.invoice_no }}</td>
+                            <td>{{ t.date }}</td>
+                            <td>{{ t.partner_name }}</td>
+                            <td class="text-end">{{ "{:,.0f}".format(t.amount) }}</td>
+                            <td class="text-end">{{ "{:,.0f}".format(t.vat_amount) }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                    <tfoot class="table-light">
+                        <tr class="fw-bold">
+                            <td colspan="3">Tổng</td>
+                            <td class="text-end">{{ "{:,.0f}".format(declaration.total_input_amount) if declaration.total_input_amount is defined else '' }}</td>
+                            <td class="text-end">{{ "{:,.0f}".format(declaration.vat_input) }}</td>
+                        </tr>
+                    </tfoot>
+                </table>
+                {% else %}
+                <p class="text-muted text-center py-3">Không có giao dịch đầu vào</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="mt-3">
+    <a href="{{ url_for('tax.vat_monthly', year=year) }}" class="btn btn-outline-secondary">
+        <i class="fas fa-arrow-left me-1"></i> Quay lại VAT tháng
+    </a>
 </div>
 {% endblock %}

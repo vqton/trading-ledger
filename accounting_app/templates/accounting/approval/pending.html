@@ -1,13 +1,47 @@
 {% extends "base.html" %}
 
-{% block title %}Page{% endblock %}
-{% block page_title %}{{ self.title() }}{% endblock %}
+{% block title %}Chờ phê duyệt - VAS Accounting{% endblock %}
+
+{% block page_title %}Yêu cầu chờ phê duyệt{% endblock %}
 
 {% block main_content %}
 <div class="card">
+    <div class="card-header">
+        <h5 class="mb-0">Yêu cầu cần xử lý</h5>
+    </div>
     <div class="card-body">
-        <h5>{{ self.page_title() }}</h5>
-        <p class="text-muted">Page under construction</p>
+        <table class="table table-striped table-hover">
+            <thead>
+                <tr>
+                    <th>Số yêu cầu</th>
+                    <th>Loại</th>
+                    <th>Mã đối tượng</th>
+                    <th>Số tiền</th>
+                    <th>Ngày yêu cầu</th>
+                    <th>Thao tác</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for req in pending %}
+                <tr>
+                    <td><a href="{{ url_for('accounting.approval_request_detail', request_id=req.id) }}">{{ req.request_no }}</a></td>
+                    <td>{{ req.entity_type }}</td>
+                    <td>{{ req.entity_id }}</td>
+                    <td class="text-end">{{ "{:,.0f}".format(req.amount) if req.amount else '—' }}</td>
+                    <td>{{ req.requested_at.strftime('%d/%m/%Y') if req.requested_at else '—' }}</td>
+                    <td>
+                        <a href="{{ url_for('accounting.approval_request_detail', request_id=req.id) }}" class="btn btn-sm btn-primary">
+                            <i class="fas fa-eye"></i> Xem
+                        </a>
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="6" class="text-center text-muted">Không có yêu cầu nào chờ xử lý</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
 </div>
 {% endblock %}

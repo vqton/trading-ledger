@@ -1,13 +1,53 @@
 {% extends "base.html" %}
-
-{% block title %}Page{% endblock %}
-{% block page_title %}{{ self.title() }}{% endblock %}
-
+{% block title %}{{ employee.name }} - VAS Accounting{% endblock %}
+{% block page_title %}Chi tiết Nhân viên{% endblock %}
 {% block main_content %}
-<div class="card">
-    <div class="card-body">
-        <h5>{{ self.page_title() }}</h5>
-        <p class="text-muted">Page under construction</p>
+<div class="mb-3">
+    <a href="{{ url_for('accounting.employees') }}" class="btn btn-outline-secondary"><i class="fas fa-arrow-left"></i> Quay lại</a>
+    <a href="{{ url_for('accounting.employee_edit', employee_id=employee.id) }}" class="btn btn-warning"><i class="fas fa-edit"></i> Sửa</a>
+</div>
+<div class="row g-4">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">Thông tin cá nhân</div>
+            <div class="card-body">
+                <table class="table table-borderless mb-0">
+                    <tr><th width="40%">Mã NV:</th><td>{{ employee.employee_id }}</td></tr>
+                    <tr><th>Tên:</th><td>{{ employee.name }}</td></tr>
+                    <tr><th>Ngày sinh:</th><td>{{ employee.date_of_birth.strftime('%d/%m/%Y') if employee.date_of_birth else '' }}</td></tr>
+                    <tr><th>Giới tính:</th><td>{{ employee.gender or '' }}</td></tr>
+                    <tr><th>CMND/CCCD:</th><td>{{ employee.id_card or '' }}</td></tr>
+                    <tr><th>MST cá nhân:</th><td>{{ employee.tax_id or '' }}</td></tr>
+                    <tr><th>Số BHXH:</th><td>{{ employee.social_insurance_no or '' }}</td></tr>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">Thông tin công việc</div>
+            <div class="card-body">
+                <table class="table table-borderless mb-0">
+                    <tr><th width="40%">Email:</th><td>{{ employee.email or '' }}</td></tr>
+                    <tr><th>Điện thoại:</th><td>{{ employee.phone or '' }}</td></tr>
+                    <tr><th>Địa chỉ:</th><td>{{ employee.address or '' }}</td></tr>
+                    <tr><th>Thành phố:</th><td>{{ employee.city or '' }}</td></tr>
+                    <tr><th>Phòng ban:</th><td>{{ employee.department or '' }}</td></tr>
+                    <tr><th>Chức vụ:</th><td>{{ employee.position or '' }}</td></tr>
+                    <tr><th>Ngày vào:</th><td>{{ employee.join_date.strftime('%d/%m/%Y') if employee.join_date else '' }}</td></tr>
+                    <tr><th>Loại NV:</th><td>{{ employee.employee_type or '' }}</td></tr>
+                    <tr><th>Ngân hàng:</th><td>{{ employee.bank_name or '' }}</td></tr>
+                    <tr><th>Số TK:</th><td>{{ employee.bank_account or '' }}</td></tr>
+                    <tr><th>Trạng thái:</th><td>{% if employee.is_active %}<span class="badge bg-success">Hoạt động</span>{% else %}<span class="badge bg-secondary">Ngừng</span>{% endif %}</td></tr>
+                </table>
+            </div>
+        </div>
     </div>
 </div>
+{% if employee.notes %}
+<div class="card mt-4">
+    <div class="card-header">Ghi chú</div>
+    <div class="card-body">{{ employee.notes }}</div>
+</div>
+{% endif %}
 {% endblock %}

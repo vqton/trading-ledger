@@ -1,13 +1,105 @@
 {% extends "base.html" %}
 
-{% block title %}Page{% endblock %}
-{% block page_title %}{{ self.title() }}{% endblock %}
+{% block title %}Chi tiết quy trình - VAS Accounting{% endblock %}
+
+{% block page_title %}Chi tiết quy trình{% endblock %}
 
 {% block main_content %}
-<div class="card">
-    <div class="card-body">
-        <h5>{{ self.page_title() }}</h5>
-        <p class="text-muted">Page under construction</p>
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">{{ workflow.name }}</h5>
+                <a href="{{ url_for('accounting.approval_workflow_edit', workflow_id=workflow.id) }}" class="btn btn-sm btn-outline-primary">
+                    <i class="fas fa-edit"></i> Sửa
+                </a>
+            </div>
+            <div class="card-body">
+                <table class="table table-bordered">
+                    <tr>
+                        <th style="width:200px;">Mã quy trình</th>
+                        <td>{{ workflow.code }}</td>
+                    </tr>
+                    <tr>
+                        <th>Tên quy trình</th>
+                        <td>{{ workflow.name }}</td>
+                    </tr>
+                    <tr>
+                        <th>Loại đối tượng</th>
+                        <td>{{ workflow.entity_type }}</td>
+                    </tr>
+                    <tr>
+                        <th>Mô tả</th>
+                        <td>{{ workflow.description or '—' }}</td>
+                    </tr>
+                    <tr>
+                        <th>Cấp phê duyệt</th>
+                        <td>{{ workflow.approval_levels }}</td>
+                    </tr>
+                    <tr>
+                        <th>Trạng thái</th>
+                        <td>
+                            {% if workflow.is_active %}
+                            <span class="badge bg-success">Hoạt động</span>
+                            {% else %}
+                            <span class="badge bg-secondary">Tạm dừng</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                </table>
+
+                <h6 class="mt-4">Các bước phê duyệt</h6>
+                <table class="table table-sm">
+                    <thead>
+                        <tr>
+                            <th>Bước</th>
+                            <th>Vai trò</th>
+                            <th>Điều kiện</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for step in workflow.steps %}
+                        <tr>
+                            <td>{{ step.level }}</td>
+                            <td>{{ step.role }}</td>
+                            <td>{{ step.condition or '—' }}</td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="3" class="text-center text-muted">Chưa cấu hình bước</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Thống kê</h5>
+            </div>
+            <div class="card-body">
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item d-flex justify-content-between">
+                        <span>Tổng yêu cầu</span>
+                        <strong>{{ stats.get('total_requests', 0) }}</strong>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between">
+                        <span>Chờ phê duyệt</span>
+                        <strong>{{ stats.get('pending', 0) }}</strong>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between">
+                        <span>Đã phê duyệt</span>
+                        <strong>{{ stats.get('approved', 0) }}</strong>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between">
+                        <span>Đã từ chối</span>
+                        <strong>{{ stats.get('rejected', 0) }}</strong>
+                    </li>
+                </ul>
+            </div>
+        </div>
     </div>
 </div>
 {% endblock %}

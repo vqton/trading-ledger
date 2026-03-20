@@ -1,13 +1,81 @@
 {% extends "base.html" %}
-
-{% block title %}Page{% endblock %}
-{% block page_title %}{{ self.title() }}{% endblock %}
-
+{% block title %}{% if vendor %}Sửa NCC{% else %}Thêm NCC{% endif %} - VAS Accounting{% endblock %}
+{% block page_title %}{% if vendor %}Sửa Nhà cung cấp{% else %}Thêm Nhà cung cấp mới{% endif %}{% endblock %}
 {% block main_content %}
+<div class="mb-3">
+    <a href="{{ url_for('accounting.vendors') }}" class="btn btn-outline-secondary"><i class="fas fa-arrow-left"></i> Quay lại</a>
+</div>
 <div class="card">
     <div class="card-body">
-        <h5>{{ self.page_title() }}</h5>
-        <p class="text-muted">Page under construction</p>
+        <form method="post">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label class="form-label">Tên NCC *</label>
+                    <input type="text" name="name" class="form-control" value="{{ vendor.name if vendor else '' }}" required>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Mã số thuế</label>
+                    <input type="text" name="tax_id" class="form-control" value="{{ vendor.tax_id if vendor else '' }}">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Email</label>
+                    <input type="email" name="email" class="form-control" value="{{ vendor.email if vendor else '' }}">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Điện thoại</label>
+                    <input type="text" name="phone" class="form-control" value="{{ vendor.phone if vendor else '' }}">
+                </div>
+                <div class="col-md-12">
+                    <label class="form-label">Địa chỉ</label>
+                    <input type="text" name="address" class="form-control" value="{{ vendor.address if vendor else '' }}">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Thành phố</label>
+                    <input type="text" name="city" class="form-control" value="{{ vendor.city if vendor else '' }}">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Quốc gia</label>
+                    <input type="text" name="country" class="form-control" value="{{ vendor.country if vendor else 'Việt Nam' }}">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Người liên hệ</label>
+                    <input type="text" name="contact_person" class="form-control" value="{{ vendor.contact_person if vendor else '' }}">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Hạn mức tín dụng</label>
+                    <input type="number" name="credit_limit" class="form-control" value="{{ vendor.credit_limit if vendor else 0 }}" step="1000">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Điều khoản TT (ngày)</label>
+                    <input type="number" name="payment_terms" class="form-control" value="{{ vendor.payment_terms if vendor else 30 }}">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Loại NCC</label>
+                    <select name="vendor_type" class="form-select">
+                        {% for val, label in vendor_types %}
+                        <option value="{{ val }}" {% if vendor and vendor.vendor_type == val %}selected{% endif %}>{{ label }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Ngân hàng</label>
+                    <input type="text" name="bank_name" class="form-control" value="{{ vendor.bank_name if vendor else '' }}">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Số tài khoản</label>
+                    <input type="text" name="bank_account" class="form-control" value="{{ vendor.bank_account if vendor else '' }}">
+                </div>
+                <div class="col-md-12">
+                    <label class="form-label">Ghi chú</label>
+                    <textarea name="notes" class="form-control" rows="3">{{ vendor.notes if vendor else '' }}</textarea>
+                </div>
+                <div class="col-12">
+                    <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Lưu</button>
+                    <a href="{{ url_for('accounting.vendors') }}" class="btn btn-secondary">Hủy</a>
+                </div>
+            </div>
+        </form>
     </div>
 </div>
 {% endblock %}

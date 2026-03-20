@@ -1,13 +1,99 @@
 {% extends "base.html" %}
 
-{% block title %}Page{% endblock %}
-{% block page_title %}{{ self.title() }}{% endblock %}
+{% block title %}Báo cáo kết quả kinh doanh - VAS Accounting{% endblock %}
+
+{% block page_title %}Báo cáo kết quả kinh doanh{% endblock %}
 
 {% block main_content %}
-<div class="card">
-    <div class="card-body">
-        <h5>{{ self.page_title() }}</h5>
-        <p class="text-muted">Page under construction</p>
+<div class="py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h3 mb-0">Báo cáo kết quả kinh doanh</h1>
+        <div>
+            <a href="{{ url_for('financial.export_income_statement', start_date=start_date, end_date=end_date) }}?format=excel" class="btn btn-sm btn-outline-success">
+                <i class="fas fa-file-excel"></i> Excel
+            </a>
+            <a href="{{ url_for('financial.export_income_statement', start_date=start_date, end_date=end_date) }}?format=pdf" class="btn btn-sm btn-outline-danger">
+                <i class="fas fa-file-pdf"></i> PDF
+            </a>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            <form method="get" class="row g-3">
+                <div class="col-auto">
+                    <label class="form-label">Từ ngày:</label>
+                    <input type="date" name="start_date" value="{{ start_date }}" class="form-control">
+                </div>
+                <div class="col-auto">
+                    <label class="form-label">Đến ngày:</label>
+                    <input type="date" name="end_date" value="{{ end_date }}" class="form-control">
+                </div>
+                <div class="col-auto">
+                    <label class="form-label">&nbsp;</label>
+                    <button type="submit" class="btn btn-primary">Xem</button>
+                </div>
+            </form>
+            <p class="text-muted mt-2 mb-0">
+                Từ {{ start_date.strftime('%d/%m/%Y') if start_date else '' }} đến {{ end_date.strftime('%d/%m/%Y') if end_date else '' }}
+            </p>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Chỉ tiêu</th>
+                            <th class="text-end">Số tiền</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="table-primary fw-bold">
+                            <td colspan="2">1. DOANH THU</td>
+                        </tr>
+                        {% for item in report.revenue %}
+                        <tr>
+                            <td>{{ item.account_code }} - {{ item.account_name }}</td>
+                            <td class="text-end">{{ "{:,.0f}".format(item.balance) if item.balance != 0 else '' }}</td>
+                        </tr>
+                        {% endfor %}
+                        <tr class="table-secondary fw-bold">
+                            <td>Tổng doanh thu</td>
+                            <td class="text-end">{{ "{:,.0f}".format(report.total_revenue) }}</td>
+                        </tr>
+
+                        <tr class="table-primary fw-bold">
+                            <td colspan="2">2. CHI PHÍ</td>
+                        </tr>
+                        {% for item in report.expenses %}
+                        <tr>
+                            <td>{{ item.account_code }} - {{ item.account_name }}</td>
+                            <td class="text-end">{{ "{:,.0f}".format(item.balance) if item.balance != 0 else '' }}</td>
+                        </tr>
+                        {% endfor %}
+                        <tr class="table-secondary fw-bold">
+                            <td>Tổng chi phí</td>
+                            <td class="text-end">{{ "{:,.0f}".format(report.total_expenses) }}</td>
+                        </tr>
+
+                        <tr class="{% if report.gross_profit >= 0 %}table-success{% else %}table-danger{% endif %} fw-bold">
+                            <td>LỢI NHUẬN GỘP (1) - (2)</td>
+                            <td class="text-end">{{ "{:,.0f}".format(report.gross_profit) }}</td>
+                        </tr>
+
+                        <tr class="{% if report.net_profit_before_tax >= 0 %}table-success{% else %}table-danger{% endif %} fw-bold">
+                            <td>LỢI NHUẬN TRƯỚC THUẾ</td>
+                            <td class="text-end">{{ "{:,.0f}".format(report.net_profit_before_tax) }}</td>
+                        </tr>
+
+                        <tr class="{% if report.net_profit_after_tax >= 0 %}table-success{% else %}table-danger{% endif %} fw-bold">
+                            <td>LỢI NHUẬN SAU THUẾ</td>
+                            <td class="text-end">{{ "{:,.0f}".format(report.net_profit_after_tax) }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
 </div>
 {% endblock %}

@@ -1,13 +1,114 @@
 {% extends "base.html" %}
 
-{% block title %}Page{% endblock %}
-{% block page_title %}{{ self.title() }}{% endblock %}
+{% block title %}Chi tiết cổ tức{% endblock %}
+{% block page_title %}Chi tiết khoản chi trả cổ tức{% endblock %}
 
 {% block main_content %}
-<div class="card">
-    <div class="card-body">
-        <h5>{{ self.page_title() }}</h5>
-        <p class="text-muted">Page under construction</p>
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h4 class="mb-0">{{ dividend.shareholder_name }}</h4>
+    <div class="btn-group">
+        {% if dividend.status == 'pending' %}
+        <a href="{{ url_for('dividend.pay_dividend', dividend_id=dividend.id) }}" class="btn btn-success">
+            <i class="fas fa-dollar-sign me-1"></i> Thanh toán
+        </a>
+        {% endif %}
+        <a href="{{ url_for('dividend.dividends') }}" class="btn btn-outline-secondary">
+            <i class="fas fa-arrow-left me-1"></i> Quay lại
+        </a>
     </div>
 </div>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card mb-3">
+            <div class="card-header"><h5 class="mb-0">Thông tin cổ đông</h5></div>
+            <div class="card-body">
+                <table class="table table-borderless table-sm mb-0">
+                    <tr>
+                        <td class="text-muted" style="width:40%">Tên cổ đông</td>
+                        <td class="fw-bold">{{ dividend.shareholder_name }}</td>
+                    </tr>
+                    <tr>
+                        <td class="text-muted">Loại cổ đông</td>
+                        <td>{{ dividend.shareholder_type }}</td>
+                    </tr>
+                    <tr>
+                        <td class="text-muted">Số lượng cổ phần</td>
+                        <td>{{ "{:,.0f}".format(dividend.share_quantity) }}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card mb-3">
+            <div class="card-header"><h5 class="mb-0">Thông tin chi trả</h5></div>
+            <div class="card-body">
+                <table class="table table-borderless table-sm mb-0">
+                    <tr>
+                        <td class="text-muted" style="width:40%">Cổ tức / 1 CP</td>
+                        <td>{{ "{:,.2f}".format(dividend.dividend_per_share) }} VNĐ</td>
+                    </tr>
+                    <tr>
+                        <td class="text-muted">Tổng tiền</td>
+                        <td class="fw-bold text-success">{{ "{:,.0f}".format(dividend.gross_amount) }} VNĐ</td>
+                    </tr>
+                    <tr>
+                        <td class="text-muted">Ngày tuyên bố</td>
+                        <td>{{ dividend.declaration_date.strftime('%d/%m/%Y') if dividend.declaration_date else '-' }}</td>
+                    </tr>
+                    <tr>
+                        <td class="text-muted">Ngày đến hạn</td>
+                        <td>{{ dividend.due_date.strftime('%d/%m/%Y') if dividend.due_date else '-' }}</td>
+                    </tr>
+                    <tr>
+                        <td class="text-muted">Trạng thái</td>
+                        <td>
+                            {% if dividend.status == 'paid' %}
+                            <span class="badge bg-success">Đã thanh toán</span>
+                            {% elif dividend.status == 'pending' %}
+                            <span class="badge bg-warning">Chờ thanh toán</span>
+                            {% elif dividend.status == 'cancelled' %}
+                            <span class="badge bg-secondary">Đã hủy</span>
+                            {% else %}
+                            <span class="badge bg-info">{{ dividend.status }}</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if dividend.payment_date %}
+<div class="card mb-3">
+    <div class="card-header"><h5 class="mb-0">Thông tin thanh toán</h5></div>
+    <div class="card-body">
+        <table class="table table-borderless table-sm mb-0">
+            <tr>
+                <td class="text-muted" style="width:25%">Ngày thanh toán</td>
+                <td>{{ dividend.payment_date.strftime('%d/%m/%Y') }}</td>
+            </tr>
+            <tr>
+                <td class="text-muted">Phương thức</td>
+                <td>{{ dividend.payment_method or '-' }}</td>
+            </tr>
+            <tr>
+                <td class="text-muted">Tài khoản ngân hàng</td>
+                <td>{{ dividend.bank_account or '-' }}</td>
+            </tr>
+        </table>
+    </div>
+</div>
+{% endif %}
+
+{% if dividend.notes %}
+<div class="card mb-3">
+    <div class="card-header"><h5 class="mb-0">Ghi chú</h5></div>
+    <div class="card-body">
+        <p class="mb-0">{{ dividend.notes }}</p>
+    </div>
+</div>
+{% endif %}
 {% endblock %}

@@ -1,13 +1,59 @@
 {% extends "base.html" %}
 
-{% block title %}Page{% endblock %}
-{% block page_title %}{{ self.title() }}{% endblock %}
+{% block title %}{% if workflow %}Sửa quy trình{% else %}Thêm quy trình{% endif %} - VAS Accounting{% endblock %}
+
+{% block page_title %}{% if workflow %}Sửa quy trình{% else %}Thêm quy trình{% endif %}{% endblock %}
 
 {% block main_content %}
 <div class="card">
+    <div class="card-header">
+        <h5 class="mb-0">{% if workflow %}Sửa quy trình{% else %}Thêm quy trình mới{% endif %}</h5>
+    </div>
     <div class="card-body">
-        <h5>{{ self.page_title() }}</h5>
-        <p class="text-muted">Page under construction</p>
+        <form method="POST">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label for="code" class="form-label">Mã quy trình</label>
+                    <input type="text" class="form-control" id="code" name="code" value="{{ workflow.code if workflow else '' }}" required>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label for="name" class="form-label">Tên quy trình</label>
+                    <input type="text" class="form-control" id="name" name="name" value="{{ workflow.name if workflow else '' }}" required>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label for="entity_type" class="form-label">Loại đối tượng</label>
+                    <select class="form-select" id="entity_type" name="entity_type" required>
+                        <option value="">-- Chọn --</option>
+                        {% for value, label in entity_types %}
+                        <option value="{{ value }}" {% if workflow and workflow.entity_type == value %}selected{% endif %}>{{ label }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label for="approval_levels" class="form-label">Cấp phê duyệt</label>
+                    <input type="number" class="form-control" id="approval_levels" name="approval_levels" value="{{ workflow.approval_levels if workflow else 1 }}" min="1">
+                </div>
+            </div>
+            <div class="mb-3">
+                <label for="description" class="form-label">Mô tả</label>
+                <textarea class="form-control" id="description" name="description" rows="3">{{ workflow.description if workflow else '' }}</textarea>
+            </div>
+            <div class="mb-3">
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="auto_approve_below" name="auto_approve_below" {% if workflow and workflow.auto_approve_below %}checked{% endif %}>
+                    <label class="form-check-label" for="auto_approve_below">Tự động phê duyệt dưới ngưỡng</label>
+                </div>
+            </div>
+            <div class="d-flex gap-2">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save"></i> Lưu
+                </button>
+                <a href="{{ url_for('accounting.approval_workflows') }}" class="btn btn-secondary">Hủy</a>
+            </div>
+        </form>
     </div>
 </div>
 {% endblock %}

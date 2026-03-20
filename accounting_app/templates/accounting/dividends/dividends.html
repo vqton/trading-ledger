@@ -1,13 +1,102 @@
 {% extends "base.html" %}
 
-{% block title %}Page{% endblock %}
-{% block page_title %}{{ self.title() }}{% endblock %}
+{% block title %}Danh sách cổ tức{% endblock %}
+{% block page_title %}Danh sách cổ tức phải trả{% endblock %}
 
 {% block main_content %}
+<div class="card mb-3">
+    <div class="card-body">
+        <form method="GET" class="row g-3 align-items-end">
+            <div class="col-md-3">
+                <label class="form-label">Trạng thái</label>
+                <select name="status" class="form-select">
+                    <option value="">Tất cả</option>
+                    {% for value, label in statuses %}
+                    <option value="{{ value }}">{{ label }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">Loại cổ đông</label>
+                <select name="shareholder_type" class="form-select">
+                    <option value="">Tất cả</option>
+                    {% for value, label in shareholder_types %}
+                    <option value="{{ value }}">{{ label }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-primary w-100">
+                    <i class="fas fa-search me-1"></i> Lọc
+                </button>
+            </div>
+            <div class="col-md-2">
+                <a href="{{ url_for('dividend.dividends') }}" class="btn btn-outline-secondary w-100">Xóa lọc</a>
+            </div>
+            <div class="col-md-2">
+                <a href="{{ url_for('dividend.dividend_new') }}" class="btn btn-success w-100">
+                    <i class="fas fa-plus me-1"></i> Thêm mới
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
 <div class="card">
     <div class="card-body">
-        <h5>{{ self.page_title() }}</h5>
-        <p class="text-muted">Page under construction</p>
+        <table class="table table-hover table-striped">
+            <thead>
+                <tr>
+                    <th>Cổ đông</th>
+                    <th>Loại</th>
+                    <th class="text-end">Số CP</th>
+                    <th class="text-end">CP/1 cổ phần</th>
+                    <th class="text-end">Tổng tiền</th>
+                    <th>Ngày đến hạn</th>
+                    <th>Trạng thái</th>
+                    <th>Thao tác</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for d in dividends %}
+                <tr>
+                    <td><a href="{{ url_for('dividend.dividend_detail', dividend_id=d.id) }}">{{ d.shareholder_name }}</a></td>
+                    <td>{{ d.shareholder_type }}</td>
+                    <td class="text-end">{{ "{:,.0f}".format(d.share_quantity) }}</td>
+                    <td class="text-end">{{ "{:,.2f}".format(d.dividend_per_share) }}</td>
+                    <td class="text-end fw-bold">{{ "{:,.0f}".format(d.gross_amount) }}</td>
+                    <td>{{ d.due_date.strftime('%d/%m/%Y') if d.due_date else '-' }}</td>
+                    <td>
+                        {% if d.status == 'paid' %}
+                        <span class="badge bg-success">{{ d.status }}</span>
+                        {% elif d.status == 'pending' %}
+                        <span class="badge bg-warning">{{ d.status }}</span>
+                        {% elif d.status == 'cancelled' %}
+                        <span class="badge bg-secondary">{{ d.status }}</span>
+                        {% else %}
+                        <span class="badge bg-info">{{ d.status }}</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <div class="btn-group btn-group-sm">
+                            <a href="{{ url_for('dividend.dividend_detail', dividend_id=d.id) }}" class="btn btn-outline-primary" title="Chi tiết">
+                                <i class="fas fa-eye"></i>
+                            </a>
+                            {% if d.status == 'pending' %}
+                            <a href="{{ url_for('dividend.pay_dividend', dividend_id=d.id) }}" class="btn btn-outline-success" title="Thanh toán">
+                                <i class="fas fa-dollar-sign"></i>
+                            </a>
+                            {% endif %}
+                        </div>
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="8" class="text-center text-muted py-4">Không có khoản cổ tức nào</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
 </div>
 {% endblock %}

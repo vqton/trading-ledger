@@ -1,13 +1,84 @@
 {% extends "base.html" %}
 
-{% block title %}Page{% endblock %}
-{% block page_title %}{{ self.title() }}{% endblock %}
+{% block title %}Sổ cái chung - VAS Accounting{% endblock %}
+
+{% block page_title %}Sổ cái chung{% endblock %}
 
 {% block main_content %}
-<div class="card">
-    <div class="card-body">
-        <h5>{{ self.page_title() }}</h5>
-        <p class="text-muted">Page under construction</p>
+<div class="py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h3 mb-0">Sổ cái chung</h1>
     </div>
+
+    <div class="card mb-3">
+        <div class="card-header">
+            <form method="get" class="row g-3">
+                <div class="col-auto">
+                    <label class="form-label">Từ ngày:</label>
+                    <input type="date" name="start_date" value="{{ start_date }}" class="form-control">
+                </div>
+                <div class="col-auto">
+                    <label class="form-label">Đến ngày:</label>
+                    <input type="date" name="end_date" value="{{ end_date }}" class="form-control">
+                </div>
+                <div class="col-auto">
+                    <label class="form-label">&nbsp;</label>
+                    <button type="submit" class="btn btn-primary">Xem</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    {% for ledger in ledger_data %}
+    <div class="card mb-3">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <strong>{{ ledger.account.code }} - {{ ledger.account.name_vi }}</strong>
+            <a href="{{ url_for('accounting.ledger_account', account_id=ledger.account.id, start_date=start_date, end_date=end_date) }}" class="btn btn-sm btn-outline-primary">
+                Chi tiết
+            </a>
+        </div>
+        <div class="card-body p-0">
+            <table class="table table-bordered table-sm mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>Ngày</th>
+                        <th>Số CT</th>
+                        <th>Diễn giải</th>
+                        <th class="text-end">Nợ</th>
+                        <th class="text-end">Có</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="fw-bold">
+                        <td colspan="3">Dư đầu kỳ</td>
+                        <td class="text-end">{{ "{:,.0f}".format(ledger.opening_balance) if ledger.opening_balance != 0 else '' }}</td>
+                        <td></td>
+                    </tr>
+                    {% for entry in ledger.entries %}
+                    <tr>
+                        <td>{{ entry.voucher_date.strftime('%d/%m/%Y') if entry.voucher_date else '' }}</td>
+                        <td>{{ entry.voucher_no or '' }}</td>
+                        <td>{{ entry.description or '' }}</td>
+                        <td class="text-end">{{ "{:,.0f}".format(entry.debit) if entry.debit > 0 else '' }}</td>
+                        <td class="text-end">{{ "{:,.0f}".format(entry.credit) if entry.credit > 0 else '' }}</td>
+                    </tr>
+                    {% endfor %}
+                    <tr class="fw-bold table-secondary">
+                        <td colspan="3">Dư cuối kỳ</td>
+                        <td class="text-end" colspan="2">{{ "{:,.0f}".format(ledger.closing_balance) }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% endfor %}
+
+    {% if not ledger_data %}
+    <div class="card">
+        <div class="card-body text-center text-muted">
+            Không có dữ liệu sổ cái trong khoảng thời gian này
+        </div>
+    </div>
+    {% endif %}
 </div>
 {% endblock %}

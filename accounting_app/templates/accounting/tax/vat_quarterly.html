@@ -1,13 +1,53 @@
 {% extends "base.html" %}
 
-{% block title %}Page{% endblock %}
-{% block page_title %}{{ self.title() }}{% endblock %}
+{% block title %}Tổng hợp VAT theo quý năm {{ year }}{% endblock %}
+{% block page_title %}Tổng hợp VAT theo quý năm {{ year }}{% endblock %}
 
 {% block main_content %}
 <div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="card-title mb-0">Bảng tổng hợp thuế GTGT theo quý</h5>
+        <a href="{{ url_for('tax.summary', year=year) }}" class="btn btn-sm btn-outline-secondary">
+            <i class="fas fa-arrow-left me-1"></i> Tổng hợp thuế
+        </a>
+    </div>
     <div class="card-body">
-        <h5>{{ self.page_title() }}</h5>
-        <p class="text-muted">Page under construction</p>
+        <table class="table table-hover">
+            <thead class="table-light">
+                <tr>
+                    <th>Quý</th>
+                    <th class="text-end">VAT đầu ra</th>
+                    <th class="text-end">VAT đầu vào</th>
+                    <th class="text-end">VAT khấu trừ</th>
+                    <th class="text-end">VAT phải nộp</th>
+                    <th class="text-end">VAT chuyển kỳ sau</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for q in quarterly_vat %}
+                <tr>
+                    <td>Quý {{ q.quarter }}</td>
+                    <td class="text-end">{{ "{:,.0f}".format(q.vat_output) }}</td>
+                    <td class="text-end">{{ "{:,.0f}".format(q.vat_input) }}</td>
+                    <td class="text-end">{{ "{:,.0f}".format(q.vat_deducted) }}</td>
+                    <td class="text-end {{ 'text-danger fw-bold' if q.vat_payable > 0 else '' }}">
+                        {{ "{:,.0f}".format(q.vat_payable) }}
+                    </td>
+                    <td class="text-end">{{ "{:,.0f}".format(q.vat_carry_forward) }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+            <tfoot class="table-light">
+                <tr class="fw-bold">
+                    <td>Tổng năm {{ year }}</td>
+                    <td class="text-end">{{ "{:,.0f}".format(quarterly_vat | sum(attribute='vat_output')) }}</td>
+                    <td class="text-end">{{ "{:,.0f}".format(quarterly_vat | sum(attribute='vat_input')) }}</td>
+                    <td class="text-end">{{ "{:,.0f}".format(quarterly_vat | sum(attribute='vat_deducted')) }}</td>
+                    <td class="text-end">{{ "{:,.0f}".format(quarterly_vat | sum(attribute='vat_payable')) }}</td>
+                    <td class="text-end">{{ "{:,.0f}".format(quarterly_vat | sum(attribute='vat_carry_forward')) }}</td>
+                </tr>
+            </tfoot>
+        </table>
     </div>
 </div>
 {% endblock %}

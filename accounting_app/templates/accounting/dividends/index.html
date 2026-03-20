@@ -1,98 +1,98 @@
 {% extends "base.html" %}
 
-{% block title %}Dashboard - VAS Accounting{% endblock %}
-
-{% block page_title %}Tổng quan{% endblock %}
+{% block title %}Cổ tức - Dashboard{% endblock %}
+{% block page_title %}Cổ tức phải trả{% endblock %}
 
 {% block main_content %}
-<div class="row">
+<div class="row mb-4">
     <div class="col-md-3 mb-3">
         <div class="card bg-primary text-white">
             <div class="card-body">
-                <h5 class="card-title">Tài khoản</h5>
-                <h2>{{ account_count }}</h2>
-                <small>Đang hoạt động</small>
+                <h6 class="card-title"><i class="fas fa-hand-holding-usd me-1"></i> Chờ thanh toán</h6>
+                <h2>{{ outstanding|length }}</h2>
+                <small>Khoản cổ tức</small>
             </div>
         </div>
     </div>
     <div class="col-md-3 mb-3">
-        <div class="card bg-success text-white">
+        <div class="card bg-danger text-white">
             <div class="card-body">
-                <h5 class="card-title">Chứng từ</h5>
-                <h2>{{ voucher_count }}</h2>
-                <small>Tổng số</small>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-3 mb-3">
-        <div class="card bg-info text-white">
-            <div class="card-body">
-                <h5 class="card-title">Đã ghi sổ</h5>
-                <h2>{{ posted_count }}</h2>
-                <small>Chứng từ hợp lệ</small>
+                <h6 class="card-title"><i class="fas fa-money-bill-wave me-1"></i> Tổng phải trả</h6>
+                <h2>{{ "{:,.0f}".format(outstanding|sum(attribute='gross_amount') if outstanding else 0) }}</h2>
+                <small>VNĐ</small>
             </div>
         </div>
     </div>
     <div class="col-md-3 mb-3">
         <div class="card bg-warning text-white">
             <div class="card-body">
-                <h5 class="card-title">Nháp</h5>
-                <h2>{{ draft_count }}</h2>
-                <small>Chờ xử lý</small>
+                <h6 class="card-title"><i class="fas fa-clock me-1"></i> Quá hạn</h6>
+                <h2>{{ outstanding|selectattr('due_date')|rejectattr('due_date', 'ge', now())|list|length if outstanding else 0 }}</h2>
+                <small>Khoản quá hạn</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-3">
+        <div class="card bg-info text-white">
+            <div class="card-body">
+                <h6 class="card-title"><i class="fas fa-users me-1"></i> Cổ đông</h6>
+                <h2>{{ outstanding|map(attribute='shareholder_name')|unique|list|length if outstanding else 0 }}</h2>
+                <small>Người thụ hưởng</small>
             </div>
         </div>
     </div>
 </div>
 
-<div class="row mt-4">
-    <div class="col-md-6">
+<div class="row">
+    <div class="col-md-8">
         <div class="card">
-            <div class="card-header">
-                <h5>Chứng từ gần đây</h5>
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">Cổ tức chờ thanh toán</h5>
+                <a href="{{ url_for('dividend.dividends') }}" class="btn btn-sm btn-outline-primary">Xem tất cả</a>
             </div>
             <div class="card-body">
-                <table class="table table-sm">
+                <table class="table table-sm table-hover">
                     <thead>
                         <tr>
-                            <th>Số CT</th>
-                            <th>Ngày</th>
-                            <th>Diễn giải</th>
-                            <th>Số tiền</th>
+                            <th>Cổ đông</th>
+                            <th>Loại</th>
+                            <th class="text-end">Số tiền</th>
+                            <th>Ngày đến hạn</th>
+                            <th>Trạng thái</th>
                         </tr>
                     </thead>
                     <tbody>
-                    {% for voucher in recent_vouchers %}
-                    <tr>
-                        <td><a href="{{ url_for('accounting.view_voucher', voucher_id=voucher.id) }}">{{ voucher.voucher_no }}</a></td>
-                        <td>{{ voucher.voucher_date.strftime('%d/%m/%Y') }}</td>
-                        <td>{{ voucher.description[:30] }}</td>
-                        <td>{{ "{:,.0f}".format(voucher.total_amount) }}</td>
-                    </tr>
-                    {% else %}
-                    <tr>
-                        <td colspan="4" class="text-center text-muted">Chưa có chứng từ nào</td>
-                    </tr>
-                    {% endfor %}
+                        {% for d in outstanding %}
+                        <tr>
+                            <td><a href="{{ url_for('dividend.dividend_detail', dividend_id=d.id) }}">{{ d.shareholder_name }}</a></td>
+                            <td>{{ d.shareholder_type }}</td>
+                            <td class="text-end">{{ "{:,.0f}".format(d.gross_amount) }}</td>
+                            <td>{{ d.due_date.strftime('%d/%m/%Y') if d.due_date else '-' }}</td>
+                            <td><span class="badge bg-warning">{{ d.status }}</span></td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="5" class="text-center text-muted py-3">Không có khoản cổ tức nào</td>
+                        </tr>
+                        {% endfor %}
                     </tbody>
                 </table>
             </div>
         </div>
     </div>
-    <div class="col-md-6">
+    <div class="col-md-4">
         <div class="card">
-            <div class="card-header">
-                <h5>Thao tác nhanh</h5>
-            </div>
+            <div class="card-header"><h5 class="mb-0">Thao tác nhanh</h5></div>
             <div class="card-body">
                 <div class="d-grid gap-2">
-                    <a href="{{ url_for('accounting.create_voucher') }}" class="btn btn-primary">
-                        <i class="fas fa-plus"></i> Tạo chứng từ mới
+                    <a href="{{ url_for('dividend.dividend_new') }}" class="btn btn-primary">
+                        <i class="fas fa-plus me-1"></i> Tạo khoản chi trả mới
                     </a>
-                    <a href="{{ url_for('accounting.journal') }}" class="btn btn-outline-secondary">
-                        <i class="fas fa-list"></i> Danh sách chứng từ
+                    <a href="{{ url_for('dividend.dividends') }}" class="btn btn-outline-secondary">
+                        <i class="fas fa-list me-1"></i> Danh sách cổ tức
                     </a>
-                    <a href="{{ url_for('accounting.tax_report') }}" class="btn btn-outline-info">
-                        <i class="fas fa-file-invoice-dollar"></i> Báo cáo thuế
+                    <a href="{{ url_for('dividend.summary') }}" class="btn btn-outline-info">
+                        <i class="fas fa-chart-bar me-1"></i> Tổng hợp theo năm
                     </a>
                 </div>
             </div>

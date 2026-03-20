@@ -1,102 +1,82 @@
 {% extends "base.html" %}
 
-{% block title %}Dashboard - VAS Accounting{% endblock %}
-
-{% block page_title %}Tổng quan{% endblock %}
-
 {% block main_content %}
-<div class="row">
-    <div class="col-md-3 mb-3">
-        <div class="card bg-primary text-white">
-            <div class="card-body">
-                <h5 class="card-title">Tài khoản</h5>
-                <h2>{{ account_count }}</h2>
-                <small>Đang hoạt động</small>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-3 mb-3">
-        <div class="card bg-success text-white">
-            <div class="card-body">
-                <h5 class="card-title">Chứng từ</h5>
-                <h2>{{ voucher_count }}</h2>
-                <small>Tổng số</small>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-3 mb-3">
-        <div class="card bg-info text-white">
-            <div class="card-body">
-                <h5 class="card-title">Đã ghi sổ</h5>
-                <h2>{{ posted_count }}</h2>
-                <small>Chứng từ hợp lệ</small>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-3 mb-3">
-        <div class="card bg-warning text-white">
-            <div class="card-body">
-                <h5 class="card-title">Nháp</h5>
-                <h2>{{ draft_count }}</h2>
-                <small>Chờ xử lý</small>
-            </div>
-        </div>
-    </div>
-</div>
+<div class="container-fluid">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Cost Centers</h2>
+    <a href="{{ url_for('accounting.create_cost_center') }}" class="btn btn-primary">
+      <i class="bi bi-plus-lg"></i> Create Cost Center
+    </a>
+  </div>
 
-<div class="row mt-4">
-    <div class="col-md-6">
-        <div class="card">
-            <div class="card-header">
-                <h5>Chứng từ gần đây</h5>
-            </div>
-            <div class="card-body">
-                <table class="table table-sm">
-                    <thead>
-                        <tr>
-                            <th>Số CT</th>
-                            <th>Ngày</th>
-                            <th>Diễn giải</th>
-                            <th>Số tiền</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                    {% for voucher in recent_vouchers %}
-                    <tr>
-                        <td><a href="{{ url_for('accounting.view_voucher', voucher_id=voucher.id) }}">{{ voucher.voucher_no }}</a></td>
-                        <td>{{ voucher.voucher_date.strftime('%d/%m/%Y') }}</td>
-                        <td>{{ voucher.description[:30] }}</td>
-                        <td>{{ "{:,.0f}".format(voucher.total_amount) }}</td>
-                    </tr>
-                    {% else %}
-                    <tr>
-                        <td colspan="4" class="text-center text-muted">Chưa có chứng từ nào</td>
-                    </tr>
-                    {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-        </div>
+  <div class="card">
+    <div class="card-body">
+      <div class="table-responsive">
+        <table class="table table-striped table-hover">
+          <thead class="table-dark">
+            <tr>
+              <th>Code</th>
+              <th>Name</th>
+              <th>Description</th>
+              <th>Department</th>
+              <th>Budget Allocated</th>
+              <th>Parent</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for cc in cost_centers %}
+            <tr>
+              <td>{{ cc.code }}</td>
+              <td>
+                <a href="{{ url_for('accounting.view_cost_center', cost_center_id=cc.id) }}">
+                  {{ cc.name }}
+                </a>
+              </td>
+              <td>{{ cc.description or '-' }}</td>
+              <td>{{ cc.department or '-' }}</td>
+              <td class="text-end">{{ "{:,.2f}".format(cc.budget_allocated) }}</td>
+              <td>{{ cc.parent_id or '-' }}</td>
+              <td>
+                {% if cc.is_active %}
+                  <span class="badge bg-success">Active</span>
+                {% else %}
+                  <span class="badge bg-secondary">Inactive</span>
+                {% endif %}
+              </td>
+              <td>
+                <a href="{{ url_for('accounting.edit_cost_center', cost_center_id=cc.id) }}" class="btn btn-sm btn-outline-primary">Edit</a>
+              </td>
+            </tr>
+            {% else %}
+            <tr>
+              <td colspan="8" class="text-center text-muted">No cost centers found.</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+      <div class="d-flex justify-content-between align-items-center mt-3">
+        <span class="text-muted">Showing {{ cost_centers|length }} of {{ total }}</span>
+        <nav>
+          <ul class="pagination mb-0">
+            {% if page > 1 %}
+            <li class="page-item">
+              <a class="page-link" href="?page={{ page - 1 }}&per_page={{ per_page }}">Previous</a>
+            </li>
+            {% endif %}
+            <li class="page-item active"><span class="page-link">{{ page }}</span></li>
+            {% if cost_centers|length == per_page %}
+            <li class="page-item">
+              <a class="page-link" href="?page={{ page + 1 }}&per_page={{ per_page }}">Next</a>
+            </li>
+            {% endif %}
+          </ul>
+        </nav>
+      </div>
     </div>
-    <div class="col-md-6">
-        <div class="card">
-            <div class="card-header">
-                <h5>Thao tác nhanh</h5>
-            </div>
-            <div class="card-body">
-                <div class="d-grid gap-2">
-                    <a href="{{ url_for('accounting.create_voucher') }}" class="btn btn-primary">
-                        <i class="fas fa-plus"></i> Tạo chứng từ mới
-                    </a>
-                    <a href="{{ url_for('accounting.journal') }}" class="btn btn-outline-secondary">
-                        <i class="fas fa-list"></i> Danh sách chứng từ
-                    </a>
-                    <a href="{{ url_for('accounting.tax_report') }}" class="btn btn-outline-info">
-                        <i class="fas fa-file-invoice-dollar"></i> Báo cáo thuế
-                    </a>
-                </div>
-            </div>
-        </div>
-    </div>
+  </div>
 </div>
 {% endblock %}

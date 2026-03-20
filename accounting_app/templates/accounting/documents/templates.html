@@ -1,13 +1,48 @@
 {% extends "base.html" %}
 
-{% block title %}Page{% endblock %}
-{% block page_title %}{{ self.title() }}{% endblock %}
+{% block title %}Mẫu tài liệu - VAS Accounting{% endblock %}
+
+{% block page_title %}Mẫu tài liệu{% endblock %}
 
 {% block main_content %}
 <div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="mb-0">Danh sách mẫu</h5>
+        <a href="{{ url_for('accounting.document_template_create') }}" class="btn btn-primary btn-sm">
+            <i class="fas fa-plus"></i> Thêm mẫu
+        </a>
+    </div>
     <div class="card-body">
-        <h5>{{ self.page_title() }}</h5>
-        <p class="text-muted">Page under construction</p>
+        <table class="table table-striped table-hover">
+            <thead>
+                <tr>
+                    <th>Mã mẫu</th>
+                    <th>Tên mẫu</th>
+                    <th>Loại tài liệu</th>
+                    <th>Mô tả</th>
+                    <th>Thao tác</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for tpl in templates %}
+                <tr>
+                    <td>{{ tpl.code }}</td>
+                    <td>{{ tpl.name }}</td>
+                    <td>{{ tpl.document_type }}</td>
+                    <td>{{ tpl.description[:50] if tpl.description else '—' }}</td>
+                    <td>
+                        <a href="{{ url_for('accounting.document_template_edit', template_id=tpl.id) }}" class="btn btn-sm btn-outline-primary">
+                            <i class="fas fa-edit"></i>
+                        </a>
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="5" class="text-center text-muted">Chưa có mẫu nào</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
 </div>
 {% endblock %}

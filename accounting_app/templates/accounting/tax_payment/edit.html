@@ -1,13 +1,129 @@
 {% extends "base.html" %}
 
-{% block title %}Page{% endblock %}
-{% block page_title %}{{ self.title() }}{% endblock %}
+{% block title %}Sửa thanh toán thuế - VAS Accounting{% endblock %}
+{% block page_title %}Sửa thanh toán thuế{% endblock %}
 
 {% block main_content %}
+<div class="mb-3">
+    <a href="{{ url_for('accounting.view_tax_payment', payment_id=payment.id) }}" class="btn btn-outline-secondary"><i class="fas fa-arrow-left"></i> Quay lại</a>
+</div>
+
 <div class="card">
     <div class="card-body">
-        <h5>{{ self.page_title() }}</h5>
-        <p class="text-muted">Page under construction</p>
+        <form method="post">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label class="form-label">Số thanh toán *</label>
+                    <input type="text" name="payment_no" class="form-control" value="{{ payment.payment_no }}" required>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Loại thuế *</label>
+                    <select name="tax_type" class="form-select" required>
+                        <option value="">-- Chọn loại thuế --</option>
+                        {% for val, label in tax_type_choices %}
+                        <option value="{{ val }}" {% if payment.tax_type == val %}selected{% endif %}>{{ label }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="col-md-4">
+                    <label class="form-label">Năm *</label>
+                    <input type="number" name="period_year" class="form-control" value="{{ payment.period_year }}" required min="2000" max="2099">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Tháng</label>
+                    <input type="number" name="period_month" class="form-control" value="{{ payment.period_month or '' }}" min="1" max="12">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Quý</label>
+                    <input type="number" name="period_quarter" class="form-control" value="{{ payment.period_quarter or '' }}" min="1" max="4">
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label">Số tờ khai</label>
+                    <input type="text" name="declaration_no" class="form-control" value="{{ payment.declaration_no or '' }}">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Ngày tờ khai</label>
+                    <input type="date" name="declaration_date" class="form-control" value="{{ payment.declaration_date.strftime('%Y-%m-%d') if payment.declaration_date else '' }}">
+                </div>
+
+                <div class="col-md-4">
+                    <label class="form-label">Thu nhập chịu thuế</label>
+                    <input type="number" name="taxable_amount" class="form-control" step="0.01" min="0" value="{{ payment.taxable_amount }}">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Thuế suất (%)</label>
+                    <input type="number" name="tax_rate" class="form-control" step="0.01" min="0" value="{{ payment.tax_rate }}">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Số thuế *</label>
+                    <input type="number" name="tax_amount" class="form-control" step="0.01" min="0" value="{{ payment.tax_amount }}" required>
+                </div>
+
+                <div class="col-md-4">
+                    <label class="form-label">Tiền lãi chậm nộp</label>
+                    <input type="number" name="interest_amount" class="form-control" step="0.01" min="0" value="{{ payment.interest_amount or 0 }}">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Tiền phạt</label>
+                    <input type="number" name="penalty_amount" class="form-control" step="0.01" min="0" value="{{ payment.penalty_amount or 0 }}">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Ngày nộp</label>
+                    <input type="date" name="payment_date" class="form-control" value="{{ payment.payment_date.strftime('%Y-%m-%d') if payment.payment_date else '' }}">
+                </div>
+
+                <div class="col-md-4">
+                    <label class="form-label">Hạn nộp *</label>
+                    <input type="date" name="due_date" class="form-control" value="{{ payment.due_date.strftime('%Y-%m-%d') if payment.due_date else '' }}" required>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Trạng thái *</label>
+                    <select name="payment_status" class="form-select" required>
+                        <option value="">-- Chọn trạng thái --</option>
+                        {% for val, label in status_choices %}
+                        <option value="{{ val }}" {% if payment.payment_status == val %}selected{% endif %}>{{ label }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Phương thức nộp</label>
+                    <select name="payment_method" class="form-select">
+                        <option value="">-- Chọn phương thức --</option>
+                        {% for val, label in payment_method_choices %}
+                        <option value="{{ val }}" {% if payment.payment_method == val %}selected{% endif %}>{{ label }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label">Số giao dịch ngân hàng</label>
+                    <input type="text" name="bank_transaction_no" class="form-control" value="{{ payment.bank_transaction_no or '' }}">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Cơ quan thuế</label>
+                    <input type="text" name="tax_authority" class="form-control" value="{{ payment.tax_authority or '' }}">
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label">Mã cơ quan thuế</label>
+                    <input type="text" name="tax_office_code" class="form-control" value="{{ payment.tax_office_code or '' }}">
+                </div>
+
+                <div class="col-md-12">
+                    <label class="form-label">Ghi chú</label>
+                    <textarea name="notes" class="form-control" rows="3">{{ payment.notes or '' }}</textarea>
+                </div>
+
+                <div class="col-12">
+                    <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Lưu</button>
+                    <a href="{{ url_for('accounting.view_tax_payment', payment_id=payment.id) }}" class="btn btn-secondary">Hủy</a>
+                </div>
+            </div>
+        </form>
     </div>
 </div>
 {% endblock %}

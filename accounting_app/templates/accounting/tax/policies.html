@@ -1,13 +1,75 @@
 {% extends "base.html" %}
 
-{% block title %}Page{% endblock %}
-{% block page_title %}{{ self.title() }}{% endblock %}
+{% block title %}Chính sách thuế{% endblock %}
+{% block page_title %}Chính sách thuế{% endblock %}
 
 {% block main_content %}
+<div class="mb-3 d-flex justify-content-between align-items-center">
+    <div>
+        <a href="{{ url_for('tax.policy_form') }}" class="btn btn-primary">
+            <i class="fas fa-plus me-1"></i> Thêm chính sách
+        </a>
+    </div>
+    <div>
+        <form method="GET" class="d-inline">
+            <select name="tax_type" class="form-select d-inline-block w-auto" onchange="this.form.submit()">
+                <option value="">Tất cả loại thuế</option>
+                <option value="vat" {% if tax_type == 'vat' %}selected{% endif %}>VAT</option>
+                <option value="cit" {% if tax_type == 'cit' %}selected{% endif %}>CIT</option>
+                <option value="pit" {% if tax_type == 'pit' %}selected{% endif %}>PIT</option>
+                <option value="fct" {% if tax_type == 'fct' %}selected{% endif %}>FCT</option>
+                <option value="other" {% if tax_type == 'other' %}selected{% endif %}>Khác</option>
+            </select>
+        </form>
+    </div>
+</div>
+
 <div class="card">
     <div class="card-body">
-        <h5>{{ self.page_title() }}</h5>
-        <p class="text-muted">Page under construction</p>
+        {% if policies %}
+        <table class="table table-hover">
+            <thead class="table-light">
+                <tr>
+                    <th>Loại thuế</th>
+                    <th>Năm</th>
+                    <th>Mức thuế</th>
+                    <th>Tên mức thuế</th>
+                    <th>Mô tả</th>
+                    <th>Trạng thái</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for policy in policies %}
+                <tr>
+                    <td>
+                        {% if policy.tax_type == 'vat' %}VAT
+                        {% elif policy.tax_type == 'cit' %}CIT
+                        {% elif policy.tax_type == 'pit' %}PIT
+                        {% elif policy.tax_type == 'fct' %}FCT
+                        {% else %}{{ policy.tax_type }}
+                        {% endif %}
+                    </td>
+                    <td>{{ policy.year }}</td>
+                    <td>{{ policy.rate }}%</td>
+                    <td>{{ policy.rate_name }}</td>
+                    <td>{{ policy.description or '' }}</td>
+                    <td>
+                        {% if policy.active %}
+                        <span class="badge bg-success">Áp dụng</span>
+                        {% else %}
+                        <span class="badge bg-secondary">Ngừng áp dụng</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <div class="text-center text-muted py-4">
+            <i class="fas fa-file-invoice-dollar fa-2x mb-2"></i>
+            <p>Chưa có chính sách thuế nào</p>
+        </div>
+        {% endif %}
     </div>
 </div>
 {% endblock %}

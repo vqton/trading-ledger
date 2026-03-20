@@ -1,13 +1,107 @@
 {% extends "base.html" %}
 
-{% block title %}Page{% endblock %}
-{% block page_title %}{{ self.title() }}{% endblock %}
+{% block title %}Sơ đồ tài khoản - VAS Accounting{% endblock %}
+
+{% block page_title %}Sơ đồ tài khoản{% endblock %}
 
 {% block main_content %}
-<div class="card">
-    <div class="card-body">
-        <h5>{{ self.page_title() }}</h5>
-        <p class="text-muted">Page under construction</p>
+<div class="py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h3 mb-0">Sơ đồ tài khoản</h1>
+        <a href="{{ url_for('accounting.accounts') }}" class="btn btn-outline-secondary">
+            <i class="fas fa-list"></i> Danh sách
+        </a>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            <div class="d-flex mb-3">
+                <button class="btn btn-sm btn-outline-secondary me-2" onclick="expandAll()">
+                    <i class="fas fa-expand-alt"></i> Mở tất cả
+                </button>
+                <button class="btn btn-sm btn-outline-secondary" onclick="collapseAll()">
+                    <i class="fas fa-compress-alt"></i> Thu tất cả
+                </button>
+            </div>
+
+            {% macro render_tree(nodes) %}
+            <ul class="list-unstyled ms-3">
+                {% for node in nodes %}
+                <li class="mb-1">
+                    <div class="d-flex align-items-center">
+                        {% if node.children %}
+                        <button class="btn btn-sm btn-link p-0 me-2 tree-toggle" type="button">
+                            <i class="fas fa-chevron-down fa-xs"></i>
+                        </button>
+                        {% else %}
+                        <span class="me-3"></span>
+                        {% endif %}
+                        <span class="badge {% if node.is_detail %}bg-info{% else %}bg-primary{% endif %} me-2">
+                            {{ node.code }}
+                        </span>
+                        <span class="{% if not node.is_active %}text-muted text-decoration-line-through{% endif %}">
+                            {{ node.name }}
+                        </span>
+                        {% if node.type %}
+                        <span class="badge bg-light text-dark ms-2">{{ node.type }}</span>
+                        {% endif %}
+                        {% if not node.is_detail %}
+                        <span class="badge bg-secondary ms-1">Tổng hợp</span>
+                        {% endif %}
+                        {% if not node.is_active %}
+                        <span class="badge bg-warning text-dark ms-1">Ngừng</span>
+                        {% endif %}
+                    </div>
+                    {% if node.children %}
+                    <div class="tree-children">
+                        {{ render_tree(node.children) }}
+                    </div>
+                    {% endif %}
+                </li>
+                {% endfor %}
+            </ul>
+            {% endmacro %}
+
+            <div id="account-tree">
+                {{ render_tree(tree) }}
+            </div>
+        </div>
     </div>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.querySelectorAll('.tree-toggle').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+        var children = this.parentElement.nextElementSibling;
+        if (children && children.classList.contains('tree-children')) {
+            children.classList.toggle('d-none');
+            var icon = this.querySelector('i');
+            icon.classList.toggle('fa-chevron-down');
+            icon.classList.toggle('fa-chevron-right');
+        }
+    });
+});
+
+function expandAll() {
+    document.querySelectorAll('.tree-children').forEach(function(el) {
+        el.classList.remove('d-none');
+    });
+    document.querySelectorAll('.tree-toggle i').forEach(function(icon) {
+        icon.classList.remove('fa-chevron-right');
+        icon.classList.add('fa-chevron-down');
+    });
+}
+
+function collapseAll() {
+    document.querySelectorAll('.tree-children').forEach(function(el) {
+        el.classList.add('d-none');
+    });
+    document.querySelectorAll('.tree-toggle i').forEach(function(icon) {
+        icon.classList.remove('fa-chevron-down');
+        icon.classList.add('fa-chevron-right');
+    });
+}
+</script>
 {% endblock %}

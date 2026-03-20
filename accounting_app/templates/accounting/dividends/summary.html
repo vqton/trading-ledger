@@ -1,13 +1,121 @@
 {% extends "base.html" %}
 
-{% block title %}Page{% endblock %}
-{% block page_title %}{{ self.title() }}{% endblock %}
+{% block title %}Tổng hợp cổ tức - Năm {{ fiscal_year }}{% endblock %}
+{% block page_title %}Tổng hợp cổ tức năm {{ fiscal_year }}{% endblock %}
 
 {% block main_content %}
-<div class="card">
+<div class="card mb-3">
     <div class="card-body">
-        <h5>{{ self.page_title() }}</h5>
-        <p class="text-muted">Page under construction</p>
+        <form method="GET" class="row g-3 align-items-end">
+            <div class="col-md-3">
+                <label class="form-label">Năm tài chính</label>
+                <input type="number" name="year" class="form-control" value="{{ fiscal_year }}" min="2020" max="2030">
+            </div>
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-primary w-100">
+                    <i class="fas fa-search me-1"></i> Xem
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-3 mb-3">
+        <div class="card bg-primary text-white">
+            <div class="card-body">
+                <h6 class="card-title">Tổng khoản chi</h6>
+                <h2>{{ summary.get('total_items', 0) }}</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-3">
+        <div class="card bg-success text-white">
+            <div class="card-body">
+                <h6 class="card-title">Đã thanh toán</h6>
+                <h2>{{ "{:,.0f}".format(summary.get('total_paid', 0)) }}</h2>
+                <small>VNĐ</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-3">
+        <div class="card bg-warning text-white">
+            <div class="card-body">
+                <h6 class="card-title">Chờ thanh toán</h6>
+                <h2>{{ "{:,.0f}".format(summary.get('total_pending', 0)) }}</h2>
+                <small>VNĐ</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-3">
+        <div class="card bg-info text-white">
+            <div class="card-body">
+                <h6 class="card-title">Tổng cộng</h6>
+                <h2>{{ "{:,.0f}".format(summary.get('total_amount', 0)) }}</h2>
+                <small>VNĐ</small>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header"><h5 class="mb-0">Theo loại cổ đông</h5></div>
+            <div class="card-body">
+                {% if summary.get('by_type') %}
+                <table class="table table-sm">
+                    <thead>
+                        <tr>
+                            <th>Loại cổ đông</th>
+                            <th class="text-end">Số khoản</th>
+                            <th class="text-end">Tổng tiền</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in summary.get('by_type', []) %}
+                        <tr>
+                            <td>{{ item.type }}</td>
+                            <td class="text-end">{{ item.count }}</td>
+                            <td class="text-end">{{ "{:,.0f}".format(item.amount) }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% else %}
+                <p class="text-muted text-center mb-0">Chưa có dữ liệu</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header"><h5 class="mb-0">Theo tháng</h5></div>
+            <div class="card-body">
+                {% if summary.get('by_month') %}
+                <table class="table table-sm">
+                    <thead>
+                        <tr>
+                            <th>Tháng</th>
+                            <th class="text-end">Số khoản</th>
+                            <th class="text-end">Tổng tiền</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in summary.get('by_month', []) %}
+                        <tr>
+                            <td>Tháng {{ item.month }}</td>
+                            <td class="text-end">{{ item.count }}</td>
+                            <td class="text-end">{{ "{:,.0f}".format(item.amount) }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% else %}
+                <p class="text-muted text-center mb-0">Chưa có dữ liệu</p>
+                {% endif %}
+            </div>
+        </div>
     </div>
 </div>
 {% endblock %}

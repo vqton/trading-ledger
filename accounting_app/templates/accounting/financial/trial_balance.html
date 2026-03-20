@@ -1,13 +1,80 @@
 {% extends "base.html" %}
 
-{% block title %}Page{% endblock %}
-{% block page_title %}{{ self.title() }}{% endblock %}
+{% block title %}Bảng cân đối thử - VAS Accounting{% endblock %}
+
+{% block page_title %}Bảng cân đối thử{% endblock %}
 
 {% block main_content %}
-<div class="card">
-    <div class="card-body">
-        <h5>{{ self.page_title() }}</h5>
-        <p class="text-muted">Page under construction</p>
+<div class="py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h3 mb-0">Bảng cân đối thử</h1>
+        <div>
+            <a href="{{ url_for('financial.export_trial_balance', end_date=end_date) }}?format=excel" class="btn btn-sm btn-outline-success">
+                <i class="fas fa-file-excel"></i> Excel
+            </a>
+            <a href="{{ url_for('financial.export_trial_balance', end_date=end_date) }}?format=pdf" class="btn btn-sm btn-outline-danger">
+                <i class="fas fa-file-pdf"></i> PDF
+            </a>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            <form method="get" class="row g-3">
+                <div class="col-auto">
+                    <label class="form-label">Đến ngày:</label>
+                    <input type="date" name="end_date" value="{{ end_date }}" class="form-control">
+                </div>
+                <div class="col-auto">
+                    <label class="form-label">&nbsp;</label>
+                    <button type="submit" class="btn btn-primary">Xem</button>
+                </div>
+            </form>
+            <p class="text-muted mt-2 mb-0">Đến ngày {{ end_date.strftime('%d/%m/%Y') if end_date else '' }}</p>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered table-sm">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Số TK</th>
+                            <th>Tên tài khoản</th>
+                            <th>Loại</th>
+                            <th class="text-end">Dư Nợ</th>
+                            <th class="text-end">Dư Có</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for acc in trial_balance.accounts %}
+                        <tr>
+                            <td>{{ acc.account_code }}</td>
+                            <td>{{ acc.account_name }}</td>
+                            <td>
+                                {% if acc.account_type == 'asset' %}Tài sản
+                                {% elif acc.account_type == 'liability' %}Nợ phải trả
+                                {% elif acc.account_type == 'equity' %}Vốn CSH
+                                {% elif acc.account_type == 'revenue' %}Doanh thu
+                                {% elif acc.account_type == 'expense' %}Chi phí
+                                {% endif %}
+                            </td>
+                            <td class="text-end">{{ "{:,.0f}".format(acc.debit_balance) if acc.debit_balance > 0 else '' }}</td>
+                            <td class="text-end">{{ "{:,.0f}".format(acc.credit_balance) if acc.credit_balance > 0 else '' }}</td>
+                        </tr>
+                        {% endfor %}
+                        <tr class="table-secondary fw-bold">
+                            <td colspan="3" class="text-end">TỔNG CỘNG</td>
+                            <td class="text-end">{{ "{:,.0f}".format(trial_balance.total_debit) }}</td>
+                            <td class="text-end">{{ "{:,.0f}".format(trial_balance.total_credit) }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            {% if trial_balance.total_debit != trial_balance.total_credit %}
+            <div class="alert alert-danger mt-3">
+                <i class="fas fa-exclamation-triangle"></i> Bảng cân đối thử không cân bằng! Chênh lệch: {{ "{:,.0f}".format(trial_balance.total_debit - trial_balance.total_credit) }}
+            </div>
+            {% endif %}
+        </div>
     </div>
 </div>
 {% endblock %}

@@ -1,13 +1,176 @@
 {% extends "base.html" %}
 
-{% block title %}Page{% endblock %}
-{% block page_title %}{{ self.title() }}{% endblock %}
+{% block title %}Thuyết minh BCTC - {{ year }} - VAS Accounting{% endblock %}
+
+{% block page_title %}Thuyết minh báo cáo tài chính{% endblock %}
 
 {% block main_content %}
-<div class="card">
-    <div class="card-body">
-        <h5>{{ self.page_title() }}</h5>
-        <p class="text-muted">Page under construction</p>
+<div class="py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h3 mb-0">Thuyết minh báo cáo tài chính năm {{ year }}</h1>
+        <div>
+            <a href="{{ url_for('financial.balance_sheet', end_date=end_date) }}" class="btn btn-sm btn-outline-primary">
+                <i class="fas fa-balance-scale"></i> Bảng cân đối
+            </a>
+            <a href="{{ url_for('financial.income_statement', start_date=start_date, end_date=end_date) }}" class="btn btn-sm btn-outline-primary">
+                <i class="fas fa-chart-line"></i> KQKD
+            </a>
+        </div>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-header bg-primary text-white">
+            <strong>1. Thông tin chung</strong>
+        </div>
+        <div class="card-body">
+            <table class="table table-bordered table-sm">
+                <tr>
+                    <td class="fw-bold" style="width:30%">Năm tài chính</td>
+                    <td>{{ year }}</td>
+                </tr>
+                <tr>
+                    <td class="fw-bold">Từ ngày</td>
+                    <td>{{ start_date.strftime('%d/%m/%Y') }}</td>
+                </tr>
+                <tr>
+                    <td class="fw-bold">Đến ngày</td>
+                    <td>{{ end_date.strftime('%d/%m/%Y') }}</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-header bg-primary text-white">
+            <strong>2. Tình hình tài chính (Bảng cân đối kế toán)</strong>
+        </div>
+        <div class="card-body">
+            <h6 class="fw-bold">Tài sản</h6>
+            <table class="table table-bordered table-sm mb-3">
+                <thead class="table-light">
+                    <tr>
+                        <th>Tài khoản</th>
+                        <th class="text-end">Số dư</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in balance_sheet.assets %}
+                    <tr>
+                        <td>{{ item.account_code }} - {{ item.account_name }}</td>
+                        <td class="text-end">{{ "{:,.0f}".format(item.balance) if item.balance != 0 else '' }}</td>
+                    </tr>
+                    {% endfor %}
+                    <tr class="fw-bold table-secondary">
+                        <td>Tổng tài sản</td>
+                        <td class="text-end">{{ "{:,.0f}".format(balance_sheet.total_assets) }}</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h6 class="fw-bold">Nợ phải trả và Vốn chủ sở hữu</h6>
+            <table class="table table-bordered table-sm mb-3">
+                <thead class="table-light">
+                    <tr>
+                        <th>Tài khoản</th>
+                        <th class="text-end">Số dư</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in balance_sheet.liabilities %}
+                    <tr>
+                        <td>{{ item.account_code }} - {{ item.account_name }}</td>
+                        <td class="text-end">{{ "{:,.0f}".format(item.balance) if item.balance != 0 else '' }}</td>
+                    </tr>
+                    {% endfor %}
+                    {% for item in balance_sheet.equity %}
+                    <tr>
+                        <td>{{ item.account_code }} - {{ item.account_name }}</td>
+                        <td class="text-end">{{ "{:,.0f}".format(item.balance) if item.balance != 0 else '' }}</td>
+                    </tr>
+                    {% endfor %}
+                    <tr class="fw-bold table-secondary">
+                        <td>Tổng nợ phải trả và Vốn CSH</td>
+                        <td class="text-end">{{ "{:,.0f}".format(balance_sheet.total_liab_equity) }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-header bg-primary text-white">
+            <strong>3. Kết quả hoạt động kinh doanh</strong>
+        </div>
+        <div class="card-body">
+            <table class="table table-bordered table-sm">
+                <thead class="table-light">
+                    <tr>
+                        <th>Chỉ tiêu</th>
+                        <th class="text-end">Số tiền</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in income_statement.revenue %}
+                    <tr>
+                        <td>{{ item.account_code }} - {{ item.account_name }}</td>
+                        <td class="text-end">{{ "{:,.0f}".format(item.balance) if item.balance != 0 else '' }}</td>
+                    </tr>
+                    {% endfor %}
+                    <tr class="fw-bold table-secondary">
+                        <td>Tổng doanh thu</td>
+                        <td class="text-end">{{ "{:,.0f}".format(income_statement.total_revenue) }}</td>
+                    </tr>
+                    {% for item in income_statement.expenses %}
+                    <tr>
+                        <td>{{ item.account_code }} - {{ item.account_name }}</td>
+                        <td class="text-end">{{ "{:,.0f}".format(item.balance) if item.balance != 0 else '' }}</td>
+                    </tr>
+                    {% endfor %}
+                    <tr class="fw-bold table-secondary">
+                        <td>Tổng chi phí</td>
+                        <td class="text-end">{{ "{:,.0f}".format(income_statement.total_expenses) }}</td>
+                    </tr>
+                    <tr class="fw-bold table-success">
+                        <td>Lợi nhuận sau thuế</td>
+                        <td class="text-end">{{ "{:,.0f}".format(income_statement.net_profit_after_tax) }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-header bg-primary text-white">
+            <strong>4. Chi tiết tài khoản</strong>
+        </div>
+        <div class="card-body">
+            {% if account_details %}
+            <table class="table table-bordered table-sm">
+                <thead class="table-light">
+                    <tr>
+                        <th>Tài khoản</th>
+                        <th class="text-end">Dư đầu kỳ</th>
+                        <th class="text-end">Phát sinh Nợ</th>
+                        <th class="text-end">Phát sinh Có</th>
+                        <th class="text-end">Dư cuối kỳ</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for detail in account_details %}
+                    <tr>
+                        <td>{{ detail.account_code }} - {{ detail.account_name }}</td>
+                        <td class="text-end">{{ "{:,.0f}".format(detail.opening_balance) if detail.opening_balance else '' }}</td>
+                        <td class="text-end">{{ "{:,.0f}".format(detail.debit_turnover) if detail.debit_turnover else '' }}</td>
+                        <td class="text-end">{{ "{:,.0f}".format(detail.credit_turnover) if detail.credit_turnover else '' }}</td>
+                        <td class="text-end">{{ "{:,.0f}".format(detail.closing_balance) if detail.closing_balance else '' }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <p class="text-muted">Không có dữ liệu chi tiết tài khoản</p>
+            {% endif %}
+        </div>
     </div>
 </div>
 {% endblock %}

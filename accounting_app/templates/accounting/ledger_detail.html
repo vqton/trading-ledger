@@ -1,13 +1,83 @@
 {% extends "base.html" %}
 
-{% block title %}Page{% endblock %}
-{% block page_title %}{{ self.title() }}{% endblock %}
+{% block title %}Sổ chi tiết - {{ account.code }} - VAS Accounting{% endblock %}
+
+{% block page_title %}Sổ chi tiết tài khoản {{ account.code }}{% endblock %}
 
 {% block main_content %}
-<div class="card">
-    <div class="card-body">
-        <h5>{{ self.page_title() }}</h5>
-        <p class="text-muted">Page under construction</p>
+<div class="py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h3 mb-0">{{ account.code }} - {{ account.name_vi }}</h1>
+        <a href="{{ url_for('accounting.ledger') }}" class="btn btn-outline-secondary">
+            <i class="fas fa-arrow-left"></i> Quay lại sổ cái
+        </a>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            <form method="get" class="row g-3">
+                <div class="col-auto">
+                    <label class="form-label">Từ ngày:</label>
+                    <input type="date" name="start_date" value="{{ start_date }}" class="form-control">
+                </div>
+                <div class="col-auto">
+                    <label class="form-label">Đến ngày:</label>
+                    <input type="date" name="end_date" value="{{ end_date }}" class="form-control">
+                </div>
+                <div class="col-auto">
+                    <label class="form-label">&nbsp;</label>
+                    <button type="submit" class="btn btn-primary">Xem</button>
+                </div>
+            </form>
+        </div>
+        <div class="card-body">
+            <table class="table table-bordered table-sm">
+                <thead class="table-light">
+                    <tr>
+                        <th>Ngày</th>
+                        <th>Số CT</th>
+                        <th>Diễn giải</th>
+                        <th class="text-end">Nợ</th>
+                        <th class="text-end">Có</th>
+                        <th class="text-end">Dư Nợ</th>
+                        <th class="text-end">Dư Có</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="fw-bold">
+                        <td colspan="3">Dư đầu kỳ</td>
+                        <td></td>
+                        <td></td>
+                        <td class="text-end">{{ "{:,.0f}".format(opening_balance) if opening_balance > 0 else '' }}</td>
+                        <td class="text-end">{{ "{:,.0f}".format(-opening_balance) if opening_balance < 0 else '' }}</td>
+                    </tr>
+                    {% set running = opening_balance %}
+                    {% for entry in entries %}
+                    {% if account.normal_balance == 'debit' %}
+                        {% set running = running + entry.debit - entry.credit %}
+                    {% else %}
+                        {% set running = running + entry.credit - entry.debit %}
+                    {% endif %}
+                    <tr>
+                        <td>{{ entry.voucher_date.strftime('%d/%m/%Y') if entry.voucher_date else '' }}</td>
+                        <td>{{ entry.voucher_no or '' }}</td>
+                        <td>{{ entry.description or '' }}</td>
+                        <td class="text-end">{{ "{:,.0f}".format(entry.debit) if entry.debit > 0 else '' }}</td>
+                        <td class="text-end">{{ "{:,.0f}".format(entry.credit) if entry.credit > 0 else '' }}</td>
+                        <td class="text-end">{{ "{:,.0f}".format(running) if running > 0 else '' }}</td>
+                        <td class="text-end">{{ "{:,.0f}".format(-running) if running < 0 else '' }}</td>
+                    </tr>
+                    {% endfor %}
+                    <tr class="fw-bold table-secondary">
+                        <td colspan="3">Dư cuối kỳ</td>
+                        <td class="text-end">{{ "{:,.0f}".format(closing_balance) if closing_balance else '' }}</td>
+                        <td class="text-end"></td>
+                        <td class="text-end">{{ "{:,.0f}".format(closing_balance) if closing_balance > 0 else '' }}</td>
+                        <td class="text-end">{{ "{:,.0f}".format(-closing_balance) if closing_balance < 0 else '' }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
 {% endblock %}

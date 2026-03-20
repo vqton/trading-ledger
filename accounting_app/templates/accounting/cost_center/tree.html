@@ -1,13 +1,24 @@
 {% extends "base.html" %}
 
-{% block title %}Page{% endblock %}
-{% block page_title %}{{ self.title() }}{% endblock %}
-
 {% block main_content %}
-<div class="card">
+<div class="container-fluid">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Cost Center Hierarchy</h2>
+    <a href="{{ url_for('accounting.cost_center_index') }}" class="btn btn-outline-secondary">List View</a>
+  </div>
+
+  <div class="card">
     <div class="card-body">
-        <h5>{{ self.page_title() }}</h5>
-        <p class="text-muted">Page under construction</p>
+      {% if tree %}
+      <ul class="list-unstyled">
+        {% for node in tree %}
+          {% include "accounting/cost_center/_tree_node.html" %}
+        {% endfor %}
+      </ul>
+      {% else %}
+      <p class="text-muted text-center py-4">No cost centers defined.</p>
+      {% endif %}
     </div>
+  </div>
 </div>
 {% endblock %}

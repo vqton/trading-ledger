@@ -1,101 +1,115 @@
 {% extends "base.html" %}
 
-{% block title %}Dashboard - VAS Accounting{% endblock %}
-
-{% block page_title %}Tổng quan{% endblock %}
+{% block title %}Thanh toán thuế - VAS Accounting{% endblock %}
+{% block page_title %}Thanh toán thuế{% endblock %}
 
 {% block main_content %}
-<div class="row">
-    <div class="col-md-3 mb-3">
-        <div class="card bg-primary text-white">
-            <div class="card-body">
-                <h5 class="card-title">Tài khoản</h5>
-                <h2>{{ account_count }}</h2>
-                <small>Đang hoạt động</small>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-3 mb-3">
-        <div class="card bg-success text-white">
-            <div class="card-body">
-                <h5 class="card-title">Chứng từ</h5>
-                <h2>{{ voucher_count }}</h2>
-                <small>Tổng số</small>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-3 mb-3">
-        <div class="card bg-info text-white">
-            <div class="card-body">
-                <h5 class="card-title">Đã ghi sổ</h5>
-                <h2>{{ posted_count }}</h2>
-                <small>Chứng từ hợp lệ</small>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-3 mb-3">
-        <div class="card bg-warning text-white">
-            <div class="card-body">
-                <h5 class="card-title">Nháp</h5>
-                <h2>{{ draft_count }}</h2>
-                <small>Chờ xử lý</small>
-            </div>
-        </div>
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <div>
+        <a href="{{ url_for('accounting.create_tax_payment') }}" class="btn btn-primary"><i class="fas fa-plus"></i> Thêm mới</a>
+        <a href="{{ url_for('accounting.pending_tax_payments') }}" class="btn btn-outline-warning"><i class="fas fa-clock"></i> Chờ thanh toán</a>
+        <a href="{{ url_for('accounting.tax_payment_summary') }}" class="btn btn-outline-info"><i class="fas fa-chart-bar"></i> Tổng hợp</a>
     </div>
 </div>
 
-<div class="row mt-4">
-    <div class="col-md-6">
-        <div class="card">
-            <div class="card-header">
-                <h5>Chứng từ gần đây</h5>
-            </div>
-            <div class="card-body">
-                <table class="table table-sm">
-                    <thead>
-                        <tr>
-                            <th>Số CT</th>
-                            <th>Ngày</th>
-                            <th>Diễn giải</th>
-                            <th>Số tiền</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                    {% for voucher in recent_vouchers %}
+<div class="mb-3">
+    <form method="GET" class="row g-2 align-items-center">
+        <div class="col-auto">
+            <select name="tax_type" class="form-select form-select-sm">
+                <option value="">Tất cả loại thuế</option>
+                {% for val, label in tax_type_choices %}
+                <option value="{{ val }}" {% if request.args.get('tax_type') == val %}selected{% endif %}>{{ label }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-auto">
+            <select name="status" class="form-select form-select-sm">
+                <option value="">Tất cả trạng thái</option>
+                {% for val, label in status_choices %}
+                <option value="{{ val }}" {% if request.args.get('status') == val %}selected{% endif %}>{{ label }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-auto">
+            <input type="number" name="year" class="form-control form-control-sm" value="{{ request.args.get('year', current_year) }}" placeholder="Năm" min="2000" max="2099">
+        </div>
+        <div class="col-auto">
+            <button type="submit" class="btn btn-sm btn-primary"><i class="fas fa-search"></i> Lọc</button>
+        </div>
+    </form>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-striped table-hover">
+                <thead class="table-light">
                     <tr>
-                        <td><a href="{{ url_for('accounting.view_voucher', voucher_id=voucher.id) }}">{{ voucher.voucher_no }}</a></td>
-                        <td>{{ voucher.voucher_date.strftime('%d/%m/%Y') }}</td>
-                        <td>{{ voucher.description[:30] }}</td>
-                        <td>{{ "{:,.0f}".format(voucher.total_amount) }}</td>
+                        <th>Số thanh toán</th>
+                        <th>Loại thuế</th>
+                        <th>Năm</th>
+                        <th class="text-end">Thu nhập chịu thuế</th>
+                        <th class="text-end">Số thuế</th>
+                        <th>Hạn nộp</th>
+                        <th>Trạng thái</th>
+                        <th>Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for p in payments %}
+                    <tr>
+                        <td><a href="{{ url_for('accounting.view_tax_payment', payment_id=p.id) }}">{{ p.payment_no }}</a></td>
+                        <td>
+                            {% for val, label in tax_type_choices %}
+                            {% if val == p.tax_type %}{{ label }}{% endif %}
+                            {% endfor %}
+                        </td>
+                        <td>{{ p.period_year }}</td>
+                        <td class="text-end">{{ "{:,.0f}".format(p.taxable_amount) }}</td>
+                        <td class="text-end">{{ "{:,.0f}".format(p.tax_amount) }}</td>
+                        <td>{{ p.due_date.strftime('%d/%m/%Y') if p.due_date else '' }}</td>
+                        <td>
+                            {% if p.payment_status == 'paid' %}
+                            <span class="badge bg-success">Đã nộp</span>
+                            {% elif p.payment_status == 'overdue' %}
+                            <span class="badge bg-danger">Quá hạn</span>
+                            {% elif p.payment_status == 'pending' %}
+                            <span class="badge bg-warning text-dark">Chờ nộp</span>
+                            {% else %}
+                            <span class="badge bg-secondary">{{ p.payment_status }}</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <a href="{{ url_for('accounting.view_tax_payment', payment_id=p.id) }}" class="btn btn-sm btn-info"><i class="fas fa-eye"></i></a>
+                            <a href="{{ url_for('accounting.edit_tax_payment', payment_id=p.id) }}" class="btn btn-sm btn-warning"><i class="fas fa-edit"></i></a>
+                        </td>
                     </tr>
                     {% else %}
                     <tr>
-                        <td colspan="4" class="text-center text-muted">Chưa có chứng từ nào</td>
+                        <td colspan="8" class="text-center text-muted">Không có dữ liệu</td>
                     </tr>
                     {% endfor %}
-                    </tbody>
-                </table>
-            </div>
+                </tbody>
+            </table>
         </div>
-    </div>
-    <div class="col-md-6">
-        <div class="card">
-            <div class="card-header">
-                <h5>Thao tác nhanh</h5>
-            </div>
-            <div class="card-body">
-                <div class="d-grid gap-2">
-                    <a href="{{ url_for('accounting.create_voucher') }}" class="btn btn-primary">
-                        <i class="fas fa-plus"></i> Tạo chứng từ mới
-                    </a>
-                    <a href="{{ url_for('accounting.journal') }}" class="btn btn-outline-secondary">
-                        <i class="fas fa-list"></i> Danh sách chứng từ
-                    </a>
-                    <a href="{{ url_for('accounting.tax_report') }}" class="btn btn-outline-info">
-                        <i class="fas fa-file-invoice-dollar"></i> Báo cáo thuế
-                    </a>
-                </div>
-            </div>
+
+        <div class="d-flex justify-content-between align-items-center mt-3">
+            <span class="text-muted">Tổng: {{ total }}</span>
+            <nav>
+                <ul class="pagination mb-0">
+                    {% if page > 1 %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page - 1 }}&per_page={{ per_page }}&tax_type={{ request.args.get('tax_type', '') }}&status={{ request.args.get('status', '') }}&year={{ request.args.get('year', current_year) }}">Trước</a>
+                    </li>
+                    {% endif %}
+                    <li class="page-item active"><span class="page-link">{{ page }}</span></li>
+                    {% if payments|length == per_page %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page + 1 }}&per_page={{ per_page }}&tax_type={{ request.args.get('tax_type', '') }}&status={{ request.args.get('status', '') }}&year={{ request.args.get('year', current_year) }}">Tiếp</a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </nav>
         </div>
     </div>
 </div>

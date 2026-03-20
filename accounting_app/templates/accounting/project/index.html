@@ -1,102 +1,136 @@
 {% extends "base.html" %}
 
-{% block title %}Dashboard - VAS Accounting{% endblock %}
-
-{% block page_title %}Tổng quan{% endblock %}
+{% block title %}Quản lý dự án{% endblock %}
+{% block page_title %}Quản lý dự án{% endblock %}
 
 {% block main_content %}
-<div class="row">
-    <div class="col-md-3 mb-3">
-        <div class="card bg-primary text-white">
-            <div class="card-body">
-                <h5 class="card-title">Tài khoản</h5>
-                <h2>{{ account_count }}</h2>
-                <small>Đang hoạt động</small>
+<div class="card mb-3">
+    <div class="card-body">
+        <form method="GET" class="row g-3 align-items-end">
+            <div class="col-md-2">
+                <label class="form-label">Trạng thái</label>
+                <select name="status" class="form-select">
+                    <option value="">Tất cả</option>
+                    {% for value, label in status_choices %}
+                    <option value="{{ value }}" {% if request.args.get('status') == value %}selected{% endif %}>{{ label }}</option>
+                    {% endfor %}
+                </select>
             </div>
-        </div>
-    </div>
-    <div class="col-md-3 mb-3">
-        <div class="card bg-success text-white">
-            <div class="card-body">
-                <h5 class="card-title">Chứng từ</h5>
-                <h2>{{ voucher_count }}</h2>
-                <small>Tổng số</small>
+            <div class="col-md-2">
+                <label class="form-label">Loại dự án</label>
+                <select name="project_type" class="form-select">
+                    <option value="">Tất cả</option>
+                    {% for value, label in type_choices %}
+                    <option value="{{ value }}" {% if request.args.get('project_type') == value %}selected{% endif %}>{{ label }}</option>
+                    {% endfor %}
+                </select>
             </div>
-        </div>
-    </div>
-    <div class="col-md-3 mb-3">
-        <div class="card bg-info text-white">
-            <div class="card-body">
-                <h5 class="card-title">Đã ghi sổ</h5>
-                <h2>{{ posted_count }}</h2>
-                <small>Chứng từ hợp lệ</small>
+            <div class="col-md-3">
+                <label class="form-label">Tìm kiếm</label>
+                <input type="text" name="search" class="form-control" value="{{ request.args.get('search', '') }}" placeholder="Tên hoặc mã dự án">
             </div>
-        </div>
-    </div>
-    <div class="col-md-3 mb-3">
-        <div class="card bg-warning text-white">
-            <div class="card-body">
-                <h5 class="card-title">Nháp</h5>
-                <h2>{{ draft_count }}</h2>
-                <small>Chờ xử lý</small>
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-primary w-100">
+                    <i class="fas fa-search me-1"></i> Lọc
+                </button>
             </div>
-        </div>
+            <div class="col-md-1">
+                <a href="{{ url_for('project.index') }}" class="btn btn-outline-secondary w-100">Xóa</a>
+            </div>
+            <div class="col-md-2">
+                <a href="{{ url_for('project.create') }}" class="btn btn-success w-100">
+                    <i class="fas fa-plus me-1"></i> Tạo dự án
+                </a>
+            </div>
+        </form>
     </div>
 </div>
 
-<div class="row mt-4">
-    <div class="col-md-6">
-        <div class="card">
-            <div class="card-header">
-                <h5>Chứng từ gần đây</h5>
-            </div>
-            <div class="card-body">
-                <table class="table table-sm">
-                    <thead>
-                        <tr>
-                            <th>Số CT</th>
-                            <th>Ngày</th>
-                            <th>Diễn giải</th>
-                            <th>Số tiền</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                    {% for voucher in recent_vouchers %}
-                    <tr>
-                        <td><a href="{{ url_for('accounting.view_voucher', voucher_id=voucher.id) }}">{{ voucher.voucher_no }}</a></td>
-                        <td>{{ voucher.voucher_date.strftime('%d/%m/%Y') }}</td>
-                        <td>{{ voucher.description[:30] }}</td>
-                        <td>{{ "{:,.0f}".format(voucher.total_amount) }}</td>
-                    </tr>
-                    {% else %}
-                    <tr>
-                        <td colspan="4" class="text-center text-muted">Chưa có chứng từ nào</td>
-                    </tr>
-                    {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-6">
-        <div class="card">
-            <div class="card-header">
-                <h5>Thao tác nhanh</h5>
-            </div>
-            <div class="card-body">
-                <div class="d-grid gap-2">
-                    <a href="{{ url_for('accounting.create_voucher') }}" class="btn btn-primary">
-                        <i class="fas fa-plus"></i> Tạo chứng từ mới
-                    </a>
-                    <a href="{{ url_for('accounting.journal') }}" class="btn btn-outline-secondary">
-                        <i class="fas fa-list"></i> Danh sách chứng từ
-                    </a>
-                    <a href="{{ url_for('accounting.tax_report') }}" class="btn btn-outline-info">
-                        <i class="fas fa-file-invoice-dollar"></i> Báo cáo thuế
-                    </a>
-                </div>
-            </div>
-        </div>
+<div class="card">
+    <div class="card-body">
+        <table class="table table-hover table-striped">
+            <thead>
+                <tr>
+                    <th>Mã</th>
+                    <th>Tên dự án</th>
+                    <th>Loại</th>
+                    <th>Trạng thái</th>
+                    <th class="text-end">Giá trị HĐ</th>
+                    <th>Ngày BĐ</th>
+                    <th>Ngày KT</th>
+                    <th class="text-end">Tiến độ</th>
+                    <th>Thao tác</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for p in projects %}
+                <tr>
+                    <td><a href="{{ url_for('project.view', project_id=p.id) }}">{{ p.code }}</a></td>
+                    <td>{{ p.name }}</td>
+                    <td>{{ p.project_type }}</td>
+                    <td>
+                        {% if p.status == 'completed' %}
+                        <span class="badge bg-success">{{ p.status }}</span>
+                        {% elif p.status == 'in_progress' %}
+                        <span class="badge bg-primary">{{ p.status }}</span>
+                        {% elif p.status == 'on_hold' %}
+                        <span class="badge bg-warning">{{ p.status }}</span>
+                        {% elif p.status == 'cancelled' %}
+                        <span class="badge bg-danger">{{ p.status }}</span>
+                        {% else %}
+                        <span class="badge bg-secondary">{{ p.status }}</span>
+                        {% endif %}
+                    </td>
+                    <td class="text-end">{{ "{:,.0f}".format(p.total_contract_value or 0) }}</td>
+                    <td>{{ p.start_date.strftime('%d/%m/%Y') if p.start_date else '-' }}</td>
+                    <td>{{ p.end_date.strftime('%d/%m/%Y') if p.end_date else '-' }}</td>
+                    <td class="text-end">
+                        <div class="progress" style="height:18px">
+                            <div class="progress-bar {% if p.completion_percentage >= 100 %}bg-success{% elif p.completion_percentage >= 50 %}bg-info{% else %}bg-warning{% endif %}"
+                                 style="width:{{ p.completion_percentage or 0 }}%">
+                                {{ p.completion_percentage or 0 }}%
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="btn-group btn-group-sm">
+                            <a href="{{ url_for('project.view', project_id=p.id) }}" class="btn btn-outline-primary" title="Xem">
+                                <i class="fas fa-eye"></i>
+                            </a>
+                            <a href="{{ url_for('project.edit', project_id=p.id) }}" class="btn btn-outline-secondary" title="Sửa">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="9" class="text-center text-muted py-4">Không có dự án nào</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        {% set total_pages = (total // per_page) + (1 if total % per_page else 0) %}
+        {% if total_pages > 1 %}
+        <nav>
+            <ul class="pagination justify-content-center mb-0">
+                <li class="page-item {% if page <= 1 %}disabled{% endif %}">
+                    <a class="page-link" href="{{ url_for('project.index', page=page-1) }}">&laquo;</a>
+                </li>
+                {% for p in range(1, total_pages + 1) %}
+                <li class="page-item {% if p == page %}active{% endif %}">
+                    <a class="page-link" href="{{ url_for('project.index', page=p) }}">{{ p }}</a>
+                </li>
+                {% endfor %}
+                <li class="page-item {% if page >= total_pages %}disabled{% endif %}">
+                    <a class="page-link" href="{{ url_for('project.index', page=page+1) }}">&raquo;</a>
+                </li>
+            </ul>
+        </nav>
+        {% endif %}
+
+        <div class="text-muted text-center mt-2">Tổng: {{ total }} dự án</div>
     </div>
 </div>
 {% endblock %}

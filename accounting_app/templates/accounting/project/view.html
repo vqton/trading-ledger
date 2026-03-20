@@ -1,13 +1,131 @@
 {% extends "base.html" %}
 
-{% block title %}Page{% endblock %}
-{% block page_title %}{{ self.title() }}{% endblock %}
+{% block title %}Dự án: {{ project.code }}{% endblock %}
+{% block page_title %}Chi tiết dự án{% endblock %}
 
 {% block main_content %}
-<div class="card">
-    <div class="card-body">
-        <h5>{{ self.page_title() }}</h5>
-        <p class="text-muted">Page under construction</p>
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h4 class="mb-0">{{ project.code }} - {{ project.name }}</h4>
+    <div class="btn-group">
+        <a href="{{ url_for('project.edit', project_id=project.id) }}" class="btn btn-outline-primary">
+            <i class="fas fa-edit me-1"></i> Chỉnh sửa
+        </a>
+        <form method="POST" action="{{ url_for('project.complete', project_id=project.id) }}" class="d-inline">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button type="submit" class="btn btn-outline-success" {% if project.status == 'completed' %}disabled{% endif %}>
+                <i class="fas fa-check me-1"></i> Hoàn thành
+            </button>
+        </form>
+        <form method="POST" action="{{ url_for('project.refresh', project_id=project.id) }}" class="d-inline">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button type="submit" class="btn btn-outline-info">
+                <i class="fas fa-sync me-1"></i> Làm mới số liệu
+            </button>
+        </form>
+        <a href="{{ url_for('project.index') }}" class="btn btn-outline-secondary">
+            <i class="fas fa-arrow-left me-1"></i> Quay lại
+        </a>
     </div>
 </div>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card mb-3">
+            <div class="card-header"><h5 class="mb-0">Thông tin chung</h5></div>
+            <div class="card-body">
+                <table class="table table-borderless table-sm mb-0">
+                    <tr>
+                        <td class="text-muted" style="width:40%">Mã dự án</td>
+                        <td class="fw-bold">{{ project.code }}</td>
+                    </tr>
+                    <tr>
+                        <td class="text-muted">Tên dự án</td>
+                        <td>{{ project.name }}</td>
+                    </tr>
+                    <tr>
+                        <td class="text-muted">Loại dự án</td>
+                        <td>{{ project.project_type }}</td>
+                    </tr>
+                    <tr>
+                        <td class="text-muted">Trạng thái</td>
+                        <td>
+                            {% if project.status == 'completed' %}
+                            <span class="badge bg-success">Hoàn thành</span>
+                            {% elif project.status == 'in_progress' %}
+                            <span class="badge bg-primary">Đang thực hiện</span>
+                            {% elif project.status == 'on_hold' %}
+                            <span class="badge bg-warning">Tạm dừng</span>
+                            {% elif project.status == 'cancelled' %}
+                            <span class="badge bg-danger">Đã hủy</span>
+                            {% else %}
+                            <span class="badge bg-secondary">{{ project.status }}</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="text-muted">Trung tâm chi phí</td>
+                        <td>{{ project.cost_center.name if project.cost_center else '-' }}</td>
+                    </tr>
+                    <tr>
+                        <td class="text-muted">Quản lý</td>
+                        <td>{{ project.manager.username if project.manager else '-' }}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card mb-3">
+            <div class="card-header"><h5 class="mb-0">Thông tin tài chính & tiến độ</h5></div>
+            <div class="card-body">
+                <table class="table table-borderless table-sm mb-0">
+                    <tr>
+                        <td class="text-muted" style="width:40%">Giá trị hợp đồng</td>
+                        <td class="fw-bold">{{ "{:,.0f}".format(project.total_contract_value or 0) }} VNĐ</td>
+                    </tr>
+                    <tr>
+                        <td class="text-muted">Chi phí thực tế</td>
+                        <td>{{ "{:,.0f}".format(project.actual_cost or 0) }} VNĐ</td>
+                    </tr>
+                    <tr>
+                        <td class="text-muted">Doanh thu thực tế</td>
+                        <td>{{ "{:,.0f}".format(project.actual_revenue or 0) }} VNĐ</td>
+                    </tr>
+                    <tr>
+                        <td class="text-muted">Tiến độ</td>
+                        <td>
+                            <div class="progress" style="height:20px">
+                                <div class="progress-bar {% if project.completion_percentage >= 100 %}bg-success{% elif project.completion_percentage >= 50 %}bg-info{% else %}bg-warning{% endif %}"
+                                     style="width:{{ project.completion_percentage or 0 }}%">
+                                    {{ project.completion_percentage or 0 }}%
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="text-muted">Ngày bắt đầu</td>
+                        <td>{{ project.start_date.strftime('%d/%m/%Y') if project.start_date else '-' }}</td>
+                    </tr>
+                    <tr>
+                        <td class="text-muted">Ngày kết thúc</td>
+                        <td>{{ project.end_date.strftime('%d/%m/%Y') if project.end_date else '-' }}</td>
+                    </tr>
+                    <tr>
+                        <td class="text-muted">Dự kiến hoàn thành</td>
+                        <td>{{ project.expected_completion_date.strftime('%d/%m/%Y') if project.expected_completion_date else '-' }}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if project.description %}
+<div class="card mb-3">
+    <div class="card-header"><h5 class="mb-0">Mô tả</h5></div>
+    <div class="card-body">
+        <p class="mb-0">{{ project.description }}</p>
+    </div>
+</div>
+{% endif %}
 {% endblock %}

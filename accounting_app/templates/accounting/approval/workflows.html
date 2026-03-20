@@ -1,13 +1,56 @@
 {% extends "base.html" %}
 
-{% block title %}Page{% endblock %}
-{% block page_title %}{{ self.title() }}{% endblock %}
+{% block title %}Quy trình phê duyệt - VAS Accounting{% endblock %}
+
+{% block page_title %}Quy trình phê duyệt{% endblock %}
 
 {% block main_content %}
 <div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="mb-0">Danh sách quy trình</h5>
+        <a href="{{ url_for('accounting.approval_workflow_create') }}" class="btn btn-primary btn-sm">
+            <i class="fas fa-plus"></i> Thêm quy trình
+        </a>
+    </div>
     <div class="card-body">
-        <h5>{{ self.page_title() }}</h5>
-        <p class="text-muted">Page under construction</p>
+        <table class="table table-striped table-hover">
+            <thead>
+                <tr>
+                    <th>Mã</th>
+                    <th>Tên quy trình</th>
+                    <th>Loại đối tượng</th>
+                    <th>Cấp phê duyệt</th>
+                    <th>Trạng thái</th>
+                    <th>Thao tác</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for wf in workflows %}
+                <tr>
+                    <td>{{ wf.code }}</td>
+                    <td><a href="{{ url_for('accounting.approval_workflow_detail', workflow_id=wf.id) }}">{{ wf.name }}</a></td>
+                    <td>{{ wf.entity_type }}</td>
+                    <td>{{ wf.approval_levels }}</td>
+                    <td>
+                        {% if wf.is_active %}
+                        <span class="badge bg-success">Hoạt động</span>
+                        {% else %}
+                        <span class="badge bg-secondary">Tạm dừng</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <a href="{{ url_for('accounting.approval_workflow_edit', workflow_id=wf.id) }}" class="btn btn-sm btn-outline-primary">
+                            <i class="fas fa-edit"></i>
+                        </a>
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="6" class="text-center text-muted">Chưa có quy trình nào</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
 </div>
 {% endblock %}

@@ -1,13 +1,61 @@
 {% extends "base.html" %}
 
-{% block title %}Page{% endblock %}
-{% block page_title %}{{ self.title() }}{% endblock %}
+{% block title %}Cài đặt kế toán - VAS Accounting{% endblock %}
+
+{% block page_title %}Cài đặt kế toán{% endblock %}
 
 {% block main_content %}
 <div class="card">
+    <div class="card-header">
+        <h5>Cài đặt kế toán</h5>
+    </div>
     <div class="card-body">
-        <h5>{{ self.page_title() }}</h5>
-        <p class="text-muted">Page under construction</p>
+        <form method="POST">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label class="form-label">Năm tài chính bắt đầu</label>
+                    <select class="form-select" name="fiscal_year_start">
+                        <option value="1" {% if settings.fiscal_year_start == 1 %}selected{% endif %}>Tháng 1</option>
+                        <option value="4" {% if settings.fiscal_year_start == 4 %}selected{% endif %}>Tháng 4</option>
+                        <option value="7" {% if settings.fiscal_year_start == 7 %}selected{% endif %}>Tháng 7</option>
+                        <option value="10" {% if settings.fiscal_year_start == 10 %}selected{% endif %}>Tháng 10</option>
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Mã tiền tệ</label>
+                    <input type="text" class="form-control" name="currency_code" value="{{ settings.currency_code }}">
+                </div>
+            </div>
+            
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label class="form-label">Số chữ số thập phân</label>
+                    <input type="number" class="form-control" name="decimal_places" value="{{ settings.decimal_places }}" min="0" max="4">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Tiền tố chứng từ</label>
+                    <input type="text" class="form-control" name="voucher_prefix" value="{{ settings.voucher_prefix }}">
+                </div>
+            </div>
+            
+            <div class="mb-3">
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" name="auto_post_vouchers" id="auto_post_vouchers" {% if settings.auto_post_vouchers %}checked{% endif %}>
+                    <label class="form-check-label" for="auto_post_vouchers">
+                        Tự động ghi sổ chứng từ
+                    </label>
+                </div>
+            </div>
+            
+            <button type="submit" class="btn btn-primary">
+                <i class="fas fa-save"></i> Lưu cài đặt
+            </button>
+            <a href="{{ url_for('settings.index') }}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Quay lại
+            </a>
+        </form>
     </div>
 </div>
 {% endblock %}

@@ -1,13 +1,88 @@
 {% extends "base.html" %}
 
-{% block title %}Page{% endblock %}
-{% block page_title %}{{ self.title() }}{% endblock %}
+{% block title %}Danh sách tài liệu - VAS Accounting{% endblock %}
+
+{% block page_title %}Danh sách tài liệu{% endblock %}
 
 {% block main_content %}
 <div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="mb-0">Tài liệu</h5>
+        <a href="{{ url_for('accounting.document_create') }}" class="btn btn-primary btn-sm">
+            <i class="fas fa-plus"></i> Tạo tài liệu
+        </a>
+    </div>
     <div class="card-body">
-        <h5>{{ self.page_title() }}</h5>
-        <p class="text-muted">Page under construction</p>
+        <form method="GET" class="row g-3 mb-3">
+            <div class="col-md-3">
+                <select class="form-select" name="document_type">
+                    <option value="">Tất cả loại</option>
+                    {% for dt in document_types %}
+                    <option value="{{ dt }}">{{ dt }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-3">
+                <select class="form-select" name="status">
+                    <option value="">Tất cả trạng thái</option>
+                    {% for s in statuses %}
+                    <option value="{{ s }}">{{ s }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-primary">Lọc</button>
+            </div>
+        </form>
+
+        <table class="table table-striped table-hover">
+            <thead>
+                <tr>
+                    <th>Loại</th>
+                    <th>Ngày</th>
+                    <th>Số tham chiếu</th>
+                    <th>Mô tả</th>
+                    <th>Số tiền</th>
+                    <th>Trạng thái</th>
+                    <th>Thao tác</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for doc in documents %}
+                <tr>
+                    <td>{{ doc.document_type }}</td>
+                    <td>{{ doc.document_date.strftime('%d/%m/%Y') if doc.document_date else '—' }}</td>
+                    <td>{{ doc.reference_no or '—' }}</td>
+                    <td>{{ doc.description[:40] if doc.description else '—' }}</td>
+                    <td class="text-end">{{ "{:,.0f}".format(doc.amount) if doc.amount else '—' }}</td>
+                    <td>
+                        {% if doc.status == 'draft' %}
+                        <span class="badge bg-secondary">Nháp</span>
+                        {% elif doc.status == 'pending' %}
+                        <span class="badge bg-warning">Chờ duyệt</span>
+                        {% elif doc.status == 'approved' %}
+                        <span class="badge bg-success">Đã duyệt</span>
+                        {% elif doc.status == 'signed' %}
+                        <span class="badge bg-primary">Đã ký</span>
+                        {% elif doc.status == 'rejected' %}
+                        <span class="badge bg-danger">Từ chối</span>
+                        {% else %}
+                        <span class="badge bg-secondary">{{ doc.status }}</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <a href="{{ url_for('accounting.document_detail', document_id=doc.id) }}" class="btn btn-sm btn-outline-primary">
+                            <i class="fas fa-eye"></i>
+                        </a>
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="7" class="text-center text-muted">Chưa có tài liệu nào</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
 </div>
 {% endblock %}

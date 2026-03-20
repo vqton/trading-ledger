@@ -1,13 +1,64 @@
 {% extends "base.html" %}
 
-{% block title %}Page{% endblock %}
-{% block page_title %}{{ self.title() }}{% endblock %}
+{% block title %}{{ 'Chỉnh sửa' if dividend and dividend.id else 'Tạo mới' }} khoản chi trả{% endblock %}
+{% block page_title %}{{ 'Chỉnh sửa' if dividend and dividend.id else 'Tạo mới' }} khoản chi trả cổ tức{% endblock %}
 
 {% block main_content %}
 <div class="card">
     <div class="card-body">
-        <h5>{{ self.page_title() }}</h5>
-        <p class="text-muted">Page under construction</p>
+        <form method="POST">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Tên cổ đông <span class="text-danger">*</span></label>
+                    <input type="text" name="shareholder_name" class="form-control" value="{{ dividend.shareholder_name if dividend else '' }}" required>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Loại cổ đông <span class="text-danger">*</span></label>
+                    <select name="shareholder_type" class="form-select" required>
+                        <option value="">-- Chọn loại --</option>
+                        {% for value, label in shareholder_types %}
+                        <option value="{{ value }}" {% if dividend and dividend.shareholder_type == value %}selected{% endif %}>{{ label }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-4 mb-3">
+                    <label class="form-label">Số lượng cổ phần <span class="text-danger">*</span></label>
+                    <input type="number" name="share_quantity" class="form-control" step="0.01" value="{{ dividend.share_quantity if dividend else '0' }}" required>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label class="form-label">Cổ tức / 1 cổ phần <span class="text-danger">*</span></label>
+                    <input type="number" name="dividend_per_share" class="form-control" step="0.01" value="{{ dividend.dividend_per_share if dividend else '0' }}" required>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label class="form-label">Tổng tiền (tự tính)</label>
+                    <input type="text" class="form-control" id="gross_amount" readonly
+                        value="{{ '{:,.0f}'.format(dividend.share_quantity * dividend.dividend_per_share) if dividend else '0' }}">
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Ngày tuyên bố <span class="text-danger">*</span></label>
+                    <input type="date" name="declaration_date" class="form-control" value="{{ dividend.declaration_date if dividend else '' }}" required>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Ngày đến hạn</label>
+                    <input type="date" name="due_date" class="form-control" value="{{ dividend.due_date if dividend else '' }}">
+                </div>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Ghi chú</label>
+                <textarea name="notes" class="form-control" rows="3">{{ dividend.notes if dividend else '' }}</textarea>
+            </div>
+            <div class="d-flex gap-2">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save me-1"></i> {{ 'Cập nhật' if dividend and dividend.id else 'Tạo mới' }}
+                </button>
+                <a href="{{ url_for('dividend.dividends') }}" class="btn btn-outline-secondary">Hủy</a>
+            </div>
+        </form>
     </div>
 </div>
 {% endblock %}

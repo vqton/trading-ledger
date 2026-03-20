@@ -1,13 +1,82 @@
 {% extends "base.html" %}
 
-{% block title %}Page{% endblock %}
-{% block page_title %}{{ self.title() }}{% endblock %}
+{% block title %}Máy tính thuế VAT{% endblock %}
+{% block page_title %}Máy tính thuế VAT{% endblock %}
 
 {% block main_content %}
-<div class="card">
-    <div class="card-body">
-        <h5>{{ self.page_title() }}</h5>
-        <p class="text-muted">Page under construction</p>
+<div class="row">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Thông tin tính thuế</h5>
+            </div>
+            <div class="card-body">
+                <form method="POST" action="{{ url_for('tax.calculator') }}">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <div class="mb-3">
+                        <label for="amount" class="form-label">Số tiền</label>
+                        <input type="number" class="form-control" id="amount" name="amount" step="0.01" value="{{ amount or '' }}" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="vat_rate" class="form-label">Thuế suất (%)</label>
+                        <input type="text" class="form-control" id="vat_rate" name="vat_rate" value="{{ vat_rate or '10' }}" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Kiểu tính</label>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="inclusive" id="inclusive_false" value="false" {% if not inclusive %}checked{% endif %}>
+                            <label class="form-check-label" for="inclusive_false">Chưa bao gồm thuế</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="inclusive" id="inclusive_true" value="true" {% if inclusive %}checked{% endif %}>
+                            <label class="form-check-label" for="inclusive_true">Đã bao gồm thuế</label>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-calculator me-1"></i> Tính thuế
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        {% if result %}
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Kết quả tính thuế</h5>
+            </div>
+            <div class="card-body">
+                <table class="table table-bordered">
+                    <tbody>
+                        <tr>
+                            <td class="fw-bold">Số tiền gốc</td>
+                            <td class="text-end">{{ "{:,.2f}".format(result.base_amount) }}</td>
+                        </tr>
+                        <tr>
+                            <td class="fw-bold">Thuế suất</td>
+                            <td class="text-end">{{ result.vat_rate }}%</td>
+                        </tr>
+                        <tr>
+                            <td class="fw-bold">Tiền thuế VAT</td>
+                            <td class="text-end">{{ "{:,.2f}".format(result.vat_amount) }}</td>
+                        </tr>
+                        <tr class="table-primary">
+                            <td class="fw-bold">Tổng cộng</td>
+                            <td class="text-end fw-bold">{{ "{:,.2f}".format(result.total_amount) }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        {% else %}
+        <div class="card">
+            <div class="card-body text-center text-muted py-5">
+                <i class="fas fa-calculator fa-3x mb-3"></i>
+                <p>Nhập thông tin và nhấn "Tính thuế" để xem kết quả</p>
+            </div>
+        </div>
+        {% endif %}
     </div>
 </div>
 {% endblock %}

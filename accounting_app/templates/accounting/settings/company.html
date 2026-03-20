@@ -1,13 +1,52 @@
 {% extends "base.html" %}
 
-{% block title %}Page{% endblock %}
-{% block page_title %}{{ self.title() }}{% endblock %}
+{% block title %}Thông tin công ty - VAS Accounting{% endblock %}
+
+{% block page_title %}Thông tin công ty{% endblock %}
 
 {% block main_content %}
 <div class="card">
+    <div class="card-header">
+        <h5>Thông tin công ty</h5>
+    </div>
     <div class="card-body">
-        <h5>{{ self.page_title() }}</h5>
-        <p class="text-muted">Page under construction</p>
+        <form method="POST">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label class="form-label">Tên công ty</label>
+                    <input type="text" class="form-control" name="name" value="{{ company.name }}">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Mã số thuế</label>
+                    <input type="text" class="form-control" name="tax_id" value="{{ company.tax_id }}">
+                </div>
+            </div>
+            
+            <div class="mb-3">
+                <label class="form-label">Địa chỉ</label>
+                <textarea class="form-control" name="address" rows="3">{{ company.address }}</textarea>
+            </div>
+            
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label class="form-label">Điện thoại</label>
+                    <input type="text" class="form-control" name="phone" value="{{ company.phone }}">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Email</label>
+                    <input type="email" class="form-control" name="email" value="{{ company.email }}">
+                </div>
+            </div>
+            
+            <button type="submit" class="btn btn-primary">
+                <i class="fas fa-save"></i> Lưu thông tin
+            </button>
+            <a href="{{ url_for('settings.index') }}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Quay lại
+            </a>
+        </form>
     </div>
 </div>
 {% endblock %}

@@ -1,13 +1,89 @@
 {% extends "base.html" %}
 
-{% block title %}Page{% endblock %}
-{% block page_title %}{{ self.title() }}{% endblock %}
+{% block title %}Tạo dự án mới{% endblock %}
+{% block page_title %}Tạo dự án mới{% endblock %}
 
 {% block main_content %}
 <div class="card">
     <div class="card-body">
-        <h5>{{ self.page_title() }}</h5>
-        <p class="text-muted">Page under construction</p>
+        <form method="POST">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <div class="row">
+                <div class="col-md-4 mb-3">
+                    <label class="form-label">Mã dự án</label>
+                    <input type="text" name="code" class="form-control" placeholder="Tự sinh nếu để trống">
+                </div>
+                <div class="col-md-8 mb-3">
+                    <label class="form-label">Tên dự án <span class="text-danger">*</span></label>
+                    <input type="text" name="name" class="form-control" required>
+                </div>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Mô tả</label>
+                <textarea name="description" class="form-control" rows="3"></textarea>
+            </div>
+            <div class="row">
+                <div class="col-md-4 mb-3">
+                    <label class="form-label">Ngày bắt đầu</label>
+                    <input type="date" name="start_date" class="form-control">
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label class="form-label">Ngày kết thúc</label>
+                    <input type="date" name="end_date" class="form-control">
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label class="form-label">Ngày dự kiến hoàn thành</label>
+                    <input type="date" name="expected_completion_date" class="form-control">
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-4 mb-3">
+                    <label class="form-label">Trạng thái</label>
+                    <select name="status" class="form-select">
+                        {% for value, label in status_choices %}
+                        <option value="{{ value }}" {% if value == 'planning' %}selected{% endif %}>{{ label }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label class="form-label">Loại dự án</label>
+                    <select name="project_type" class="form-select">
+                        {% for value, label in type_choices %}
+                        <option value="{{ value }}" {% if value == 'service' %}selected{% endif %}>{{ label }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label class="form-label">Giá trị hợp đồng</label>
+                    <input type="number" name="total_contract_value" class="form-control" step="0.01" value="0">
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-4 mb-3">
+                    <label class="form-label">ID quản lý</label>
+                    <input type="number" name="manager_id" class="form-control">
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label class="form-label">ID khách hàng</label>
+                    <input type="number" name="customer_id" class="form-control">
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label class="form-label">Trung tâm chi phí</label>
+                    <select name="cost_center_id" class="form-select">
+                        <option value="">-- Không chọn --</option>
+                        {% for cc in cost_centers %}
+                        <option value="{{ cc.id }}">{{ cc.code }} - {{ cc.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            <div class="d-flex gap-2">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save me-1"></i> Tạo dự án
+                </button>
+                <a href="{{ url_for('project.index') }}" class="btn btn-outline-secondary">Hủy</a>
+            </div>
+        </form>
     </div>
 </div>
 {% endblock %}

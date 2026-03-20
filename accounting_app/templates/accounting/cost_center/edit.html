@@ -1,13 +1,80 @@
 {% extends "base.html" %}
 
-{% block title %}Page{% endblock %}
-{% block page_title %}{{ self.title() }}{% endblock %}
-
 {% block main_content %}
-<div class="card">
+<div class="container-fluid">
+  <div class="mb-4">
+    <h2>Edit Cost Center: {{ cost_center.code }}</h2>
+  </div>
+
+  <div class="card">
     <div class="card-body">
-        <h5>{{ self.page_title() }}</h5>
-        <p class="text-muted">Page under construction</p>
+      <form method="post">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+        <div class="row mb-3">
+          <div class="col-md-6">
+            <label for="name" class="form-label">Name <span class="text-danger">*</span></label>
+            <input type="text" class="form-control" id="name" name="name" value="{{ cost_center.name }}" required>
+          </div>
+          <div class="col-md-6">
+            <label for="code" class="form-label">Code</label>
+            <input type="text" class="form-control" id="code" name="code" value="{{ cost_center.code }}">
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label for="description" class="form-label">Description</label>
+          <textarea class="form-control" id="description" name="description" rows="3">{{ cost_center.description or '' }}</textarea>
+        </div>
+
+        <div class="row mb-3">
+          <div class="col-md-6">
+            <label for="parent_id" class="form-label">Parent Cost Center</label>
+            <select class="form-select" id="parent_id" name="parent_id">
+              <option value="">-- None --</option>
+              {% for pcc in parent_cost_centers %}
+              <option value="{{ pcc.id }}" {% if pcc.id == cost_center.parent_id %}selected{% endif %}>
+                {{ pcc.code }} - {{ pcc.name }}
+              </option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="col-md-6">
+            <label for="department" class="form-label">Department</label>
+            <select class="form-select" id="department" name="department">
+              <option value="">-- Select --</option>
+              {% for dept in departments %}
+              <option value="{{ dept }}" {% if dept == cost_center.department %}selected{% endif %}>
+                {{ dept }}
+              </option>
+              {% endfor %}
+            </select>
+          </div>
+        </div>
+
+        <div class="row mb-3">
+          <div class="col-md-6">
+            <label for="budget_allocated" class="form-label">Budget Allocated</label>
+            <div class="input-group">
+              <span class="input-group-text">VND</span>
+              <input type="number" class="form-control" id="budget_allocated" name="budget_allocated" step="0.01" min="0" value="{{ cost_center.budget_allocated }}">
+            </div>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label d-block">Status</label>
+            <div class="form-check form-switch mt-2">
+              <input class="form-check-input" type="checkbox" id="is_active" name="is_active" {% if cost_center.is_active %}checked{% endif %}>
+              <label class="form-check-label" for="is_active">Active</label>
+            </div>
+          </div>
+        </div>
+
+        <div class="d-flex justify-content-end gap-2">
+          <a href="{{ url_for('accounting.view_cost_center', cost_center_id=cost_center.id) }}" class="btn btn-outline-secondary">Cancel</a>
+          <button type="submit" class="btn btn-primary">Save Changes</button>
+        </div>
+      </form>
     </div>
+  </div>
 </div>
 {% endblock %}

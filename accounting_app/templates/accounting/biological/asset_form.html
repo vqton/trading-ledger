@@ -1,13 +1,73 @@
 {% extends "base.html" %}
 
-{% block title %}Page{% endblock %}
-{% block page_title %}{{ self.title() }}{% endblock %}
+{% block title %}{{ 'Chỉnh sửa' if asset and asset.id else 'Thêm mới' }} tài sản sinh học{% endblock %}
+{% block page_title %}{{ 'Chỉnh sửa' if asset and asset.id else 'Thêm mới' }} tài sản sinh học{% endblock %}
 
 {% block main_content %}
 <div class="card">
     <div class="card-body">
-        <h5>{{ self.page_title() }}</h5>
-        <p class="text-muted">Page under construction</p>
+        <form method="POST">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <div class="row">
+                <div class="col-md-4 mb-3">
+                    <label class="form-label">Mã tài sản <span class="text-danger">*</span></label>
+                    <input type="text" name="code" class="form-control" value="{{ asset.code if asset else '' }}" required>
+                </div>
+                <div class="col-md-8 mb-3">
+                    <label class="form-label">Tên tài sản <span class="text-danger">*</span></label>
+                    <input type="text" name="name" class="form-control" value="{{ asset.name if asset else '' }}" required>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-4 mb-3">
+                    <label class="form-label">Loại tài sản <span class="text-danger">*</span></label>
+                    <select name="asset_type" class="form-select" required>
+                        <option value="">-- Chọn loại --</option>
+                        {% for value, label in asset_types %}
+                        <option value="{{ value }}" {% if asset and asset.asset_type == value %}selected{% endif %}>{{ label }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label class="form-label">Nhóm</label>
+                    <input type="text" name="category" class="form-control" value="{{ asset.category if asset else '' }}">
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label class="form-label">Ngày ghi nhận</label>
+                    <input type="date" name="acquisition_date" class="form-control" value="{{ asset.acquisition_date if asset else '' }}">
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-3 mb-3">
+                    <label class="form-label">Số lượng <span class="text-danger">*</span></label>
+                    <input type="number" name="quantity" class="form-control" step="0.01" value="{{ asset.quantity if asset else '0' }}" required>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <label class="form-label">Đơn vị tính</label>
+                    <input type="text" name="unit" class="form-control" value="{{ asset.unit if asset else '' }}">
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Giá trị ban đầu</label>
+                    <input type="number" name="initial_value" class="form-control" step="0.01" value="{{ asset.initial_value if asset else '0' }}">
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Vị trí</label>
+                    <input type="text" name="location" class="form-control" value="{{ asset.location if asset else '' }}">
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Mô tả</label>
+                    <input type="text" name="description" class="form-control" value="{{ asset.description if asset else '' }}">
+                </div>
+            </div>
+            <div class="d-flex gap-2">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save me-1"></i> {{ 'Cập nhật' if asset and asset.id else 'Tạo mới' }}
+                </button>
+                <a href="{{ url_for('biological.assets') }}" class="btn btn-outline-secondary">Hủy</a>
+            </div>
+        </form>
     </div>
 </div>
 {% endblock %}

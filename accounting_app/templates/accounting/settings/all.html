@@ -1,13 +1,45 @@
 {% extends "base.html" %}
 
-{% block title %}Page{% endblock %}
-{% block page_title %}{{ self.title() }}{% endblock %}
+{% block title %}Tất cả cài đặt - VAS Accounting{% endblock %}
+
+{% block page_title %}Tất cả cài đặt{% endblock %}
 
 {% block main_content %}
 <div class="card">
+    <div class="card-header">
+        <h5>Tất cả cài đặt</h5>
+    </div>
     <div class="card-body">
-        <h5>{{ self.page_title() }}</h5>
-        <p class="text-muted">Page under construction</p>
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Khóa</th>
+                        <th>Giá trị</th>
+                        <th>Danh mục</th>
+                        <th>Mô tả</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for setting in settings_list %}
+                    <tr>
+                        <td><code>{{ setting.key }}</code></td>
+                        <td>{{ setting.value }}</td>
+                        <td>{{ setting.category }}</td>
+                        <td>{{ setting.description }}</td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="4" class="text-center text-muted">Không có cài đặt nào</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        
+        <a href="{{ url_for('settings.index') }}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Quay lại
+        </a>
     </div>
 </div>
 {% endblock %}

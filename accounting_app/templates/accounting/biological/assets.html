@@ -1,13 +1,96 @@
 {% extends "base.html" %}
 
-{% block title %}Page{% endblock %}
-{% block page_title %}{{ self.title() }}{% endblock %}
+{% block title %}Danh sách tài sản sinh học{% endblock %}
+{% block page_title %}Danh sách tài sản sinh học{% endblock %}
 
 {% block main_content %}
+<div class="card mb-3">
+    <div class="card-body">
+        <form method="GET" class="row g-3 align-items-end">
+            <div class="col-md-3">
+                <label class="form-label">Loại tài sản</label>
+                <select name="asset_type" class="form-select">
+                    <option value="">Tất cả</option>
+                    {% for value, label in asset_types %}
+                    <option value="{{ value }}">{{ label }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">Trạng thái</label>
+                <select name="status" class="form-select">
+                    <option value="">Tất cả</option>
+                    {% for value, label in statuses %}
+                    <option value="{{ value }}">{{ label }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-primary w-100">
+                    <i class="fas fa-search me-1"></i> Lọc
+                </button>
+            </div>
+            <div class="col-md-2">
+                <a href="{{ url_for('biological.assets') }}" class="btn btn-outline-secondary w-100">Xóa lọc</a>
+            </div>
+            <div class="col-md-2">
+                <a href="{{ url_for('biological.asset_new') }}" class="btn btn-success w-100">
+                    <i class="fas fa-plus me-1"></i> Thêm mới
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
 <div class="card">
     <div class="card-body">
-        <h5>{{ self.page_title() }}</h5>
-        <p class="text-muted">Page under construction</p>
+        <table class="table table-hover table-striped">
+            <thead>
+                <tr>
+                    <th>Mã</th>
+                    <th>Tên tài sản</th>
+                    <th>Loại</th>
+                    <th class="text-end">Số lượng</th>
+                    <th>Đơn vị</th>
+                    <th class="text-end">Giá trị hiện tại</th>
+                    <th>Ngày ghi nhận</th>
+                    <th>Trạng thái</th>
+                    <th>Thao tác</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for a in assets %}
+                <tr>
+                    <td><a href="{{ url_for('biological.asset_detail', asset_id=a.id) }}">{{ a.code }}</a></td>
+                    <td>{{ a.name }}</td>
+                    <td>{{ a.asset_type }}</td>
+                    <td class="text-end">{{ "{:,.2f}".format(a.quantity) }}</td>
+                    <td>{{ a.unit }}</td>
+                    <td class="text-end">{{ "{:,.0f}".format(a.current_value) }}</td>
+                    <td>{{ a.acquisition_date.strftime('%d/%m/%Y') if a.acquisition_date else '' }}</td>
+                    <td>
+                        <span class="badge bg-{{ 'success' if a.status == 'active' else 'secondary' }}">
+                            {{ a.status }}
+                        </span>
+                    </td>
+                    <td>
+                        <div class="btn-group btn-group-sm">
+                            <a href="{{ url_for('biological.asset_detail', asset_id=a.id) }}" class="btn btn-outline-primary" title="Chi tiết">
+                                <i class="fas fa-eye"></i>
+                            </a>
+                            <a href="{{ url_for('biological.update_value', asset_id=a.id) }}" class="btn btn-outline-info" title="Cập nhật giá trị">
+                                <i class="fas fa-sync"></i>
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="9" class="text-center text-muted py-4">Không có tài sản nào</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
 </div>
 {% endblock %}

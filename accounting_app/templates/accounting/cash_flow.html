@@ -1,13 +1,91 @@
 {% extends "base.html" %}
 
-{% block title %}Page{% endblock %}
-{% block page_title %}{{ self.title() }}{% endblock %}
+{% block title %}Lưu chuyển tiền tệ - VAS Accounting{% endblock %}
+
+{% block page_title %}Lưu chuyển tiền tệ{% endblock %}
 
 {% block main_content %}
-<div class="card">
-    <div class="card-body">
-        <h5>{{ self.page_title() }}</h5>
-        <p class="text-muted">Page under construction</p>
+<div class="py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h3 mb-0">Báo cáo lưu chuyển tiền tệ</h1>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            <form method="get" class="row g-3">
+                <div class="col-auto">
+                    <label class="form-label">Từ ngày:</label>
+                    <input type="date" name="start_date" value="{{ start_date }}" class="form-control">
+                </div>
+                <div class="col-auto">
+                    <label class="form-label">Đến ngày:</label>
+                    <input type="date" name="end_date" value="{{ end_date }}" class="form-control">
+                </div>
+                <div class="col-auto">
+                    <label class="form-label">&nbsp;</label>
+                    <button type="submit" class="btn btn-primary">Xem</button>
+                </div>
+            </form>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Chỉ tiêu</th>
+                            <th class="text-end">Số tiền</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="table-primary fw-bold">
+                            <td colspan="2">1. Lưu chuyển tiền từ hoạt động kinh doanh</td>
+                        </tr>
+                        <tr>
+                            <td>Lợi nhuận trước thuế</td>
+                            <td class="text-end">{{ "{:,.0f}".format(net_profit) }}</td>
+                        </tr>
+                        <tr>
+                            <td>Điều chỉnh cho các khoản: Thay đổi vốn lưu động</td>
+                            <td class="text-end">{{ "{:,.0f}".format(working_capital_change) }}</td>
+                        </tr>
+                        <tr class="fw-bold">
+                            <td>Tiền thu từ hoạt động kinh doanh</td>
+                            <td class="text-end">{{ "{:,.0f}".format(cash_from_operating) }}</td>
+                        </tr>
+
+                        <tr class="table-primary fw-bold">
+                            <td colspan="2">2. Lưu chuyển tiền từ hoạt động đầu tư</td>
+                        </tr>
+                        <tr class="fw-bold">
+                            <td>Tiền chi cho hoạt động đầu tư</td>
+                            <td class="text-end">{{ "{:,.0f}".format(cash_from_investing) }}</td>
+                        </tr>
+
+                        <tr class="table-primary fw-bold">
+                            <td colspan="2">3. Lưu chuyển tiền từ hoạt động tài chính</td>
+                        </tr>
+                        <tr class="fw-bold">
+                            <td>Tiền thu từ hoạt động tài chính</td>
+                            <td class="text-end">{{ "{:,.0f}".format(cash_from_financing) }}</td>
+                        </tr>
+
+                        <tr class="table-success fw-bold">
+                            <td>Lưu chuyển tiền thuần trong kỳ</td>
+                            <td class="text-end">{{ "{:,.0f}".format(net_cash_flow) }}</td>
+                        </tr>
+
+                        <tr class="table-warning fw-bold">
+                            <td>Tiền và tương đương tiền đầu kỳ</td>
+                            <td class="text-end">{{ "{:,.0f}".format(opening_cash) }}</td>
+                        </tr>
+                        <tr class="table-warning fw-bold">
+                            <td>Tiền và tương đương tiền cuối kỳ</td>
+                            <td class="text-end">{{ "{:,.0f}".format(closing_cash) }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
 </div>
 {% endblock %}

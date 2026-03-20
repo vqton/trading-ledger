@@ -1,13 +1,132 @@
 {% extends "base.html" %}
 
-{% block title %}Page{% endblock %}
-{% block page_title %}{{ self.title() }}{% endblock %}
+{% block title %}Tổng hợp dự án{% endblock %}
+{% block page_title %}Tổng hợp dự án{% endblock %}
 
 {% block main_content %}
+<div class="row mb-4">
+    <div class="col-md-3 mb-3">
+        <div class="card bg-primary text-white">
+            <div class="card-body">
+                <h6 class="card-title"><i class="fas fa-project-diagram me-1"></i> Tổng dự án</h6>
+                <h2>{{ summary.get('total_projects', 0) }}</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-3">
+        <div class="card bg-success text-white">
+            <div class="card-body">
+                <h6 class="card-title"><i class="fas fa-check-circle me-1"></i> Hoàn thành</h6>
+                <h2>{{ summary.get('completed', 0) }}</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-3">
+        <div class="card bg-info text-white">
+            <div class="card-body">
+                <h6 class="card-title"><i class="fas fa-coins me-1"></i> Tổng giá trị HĐ</h6>
+                <h2>{{ "{:,.0f}".format(summary.get('total_contract_value', 0)) }}</h2>
+                <small>VNĐ</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-3">
+        <div class="card bg-warning text-white">
+            <div class="card-body">
+                <h6 class="card-title"><i class="fas fa-clock me-1"></i> Đang thực hiện</h6>
+                <h2>{{ summary.get('in_progress', 0) }}</h2>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card mb-3">
+            <div class="card-header"><h5 class="mb-0">Theo trạng thái</h5></div>
+            <div class="card-body">
+                {% if summary.get('by_status') %}
+                <table class="table table-sm">
+                    <thead>
+                        <tr>
+                            <th>Trạng thái</th>
+                            <th class="text-end">Số lượng</th>
+                            <th class="text-end">Giá trị</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in summary.get('by_status', []) %}
+                        <tr>
+                            <td>{{ item.status }}</td>
+                            <td class="text-end">{{ item.count }}</td>
+                            <td class="text-end">{{ "{:,.0f}".format(item.value) }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% else %}
+                <p class="text-muted text-center mb-0">Chưa có dữ liệu</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card mb-3">
+            <div class="card-header"><h5 class="mb-0">Theo loại dự án</h5></div>
+            <div class="card-body">
+                {% if summary.get('by_type') %}
+                <table class="table table-sm">
+                    <thead>
+                        <tr>
+                            <th>Loại dự án</th>
+                            <th class="text-end">Số lượng</th>
+                            <th class="text-end">Giá trị</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in summary.get('by_type', []) %}
+                        <tr>
+                            <td>{{ item.type }}</td>
+                            <td class="text-end">{{ item.count }}</td>
+                            <td class="text-end">{{ "{:,.0f}".format(item.value) }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% else %}
+                <p class="text-muted text-center mb-0">Chưa có dữ liệu</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
 <div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="mb-0">Chi tiết tài chính</h5>
+        <a href="{{ url_for('project.index') }}" class="btn btn-sm btn-outline-primary">Xem danh sách</a>
+    </div>
     <div class="card-body">
-        <h5>{{ self.page_title() }}</h5>
-        <p class="text-muted">Page under construction</p>
+        <table class="table table-sm">
+            <tbody>
+                <tr>
+                    <td class="text-muted">Tổng giá trị hợp đồng</td>
+                    <td class="text-end fw-bold">{{ "{:,.0f}".format(summary.get('total_contract_value', 0)) }} VNĐ</td>
+                </tr>
+                <tr>
+                    <td class="text-muted">Tổng chi phí thực tế</td>
+                    <td class="text-end">{{ "{:,.0f}".format(summary.get('total_actual_cost', 0)) }} VNĐ</td>
+                </tr>
+                <tr>
+                    <td class="text-muted">Tổng doanh thu thực tế</td>
+                    <td class="text-end">{{ "{:,.0f}".format(summary.get('total_actual_revenue', 0)) }} VNĐ</td>
+                </tr>
+                <tr>
+                    <td class="text-muted">Lợi nhuận ước tính</td>
+                    <td class="text-end fw-bold text-success">{{ "{:,.0f}".format(summary.get('total_contract_value', 0) - summary.get('total_actual_cost', 0)) }} VNĐ</td>
+                </tr>
+            </tbody>
+        </table>
     </div>
 </div>
 {% endblock %}

@@ -1,13 +1,141 @@
 {% extends "base.html" %}
 
-{% block title %}Page{% endblock %}
-{% block page_title %}{{ self.title() }}{% endblock %}
+{% block title %}Tổng hợp thuế năm {{ year }}{% endblock %}
+{% block page_title %}Tổng hợp thuế năm {{ year }}{% endblock %}
 
 {% block main_content %}
-<div class="card">
-    <div class="card-body">
-        <h5>{{ self.page_title() }}</h5>
-        <p class="text-muted">Page under construction</p>
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="card text-bg-primary">
+            <div class="card-body">
+                <h6 class="card-title">Doanh thu</h6>
+                <h4>{{ "{:,.0f}".format(tax_summary.get('revenue', 0)) }}</h4>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-bg-info">
+            <div class="card-body">
+                <h6 class="card-title">VAT đầu ra</h6>
+                <h4>{{ "{:,.0f}".format(vat_summary.get('total_output', 0)) }}</h4>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-bg-success">
+            <div class="card-body">
+                <h6 class="card-title">VAT đầu vào</h6>
+                <h4>{{ "{:,.0f}".format(vat_summary.get('total_input', 0)) }}</h4>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-bg-warning">
+            <div class="card-body">
+                <h6 class="card-title">VAT phải nộp</h6>
+                <h4>{{ "{:,.0f}".format(vat_summary.get('total_payable', 0)) }}</h4>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">VAT theo quý</h5>
+            </div>
+            <div class="card-body">
+                <table class="table table-sm">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Quý</th>
+                            <th class="text-end">Đầu ra</th>
+                            <th class="text-end">Đầu vào</th>
+                            <th class="text-end">Phải nộp</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for q in quarterly_vat.get('quarters', []) %}
+                        <tr>
+                            <td>Quý {{ q.quarter }}</th>
+                            <td class="text-end">{{ "{:,.0f}".format(q.vat_output) }}</td>
+                            <td class="text-end">{{ "{:,.0f}".format(q.vat_input) }}</td>
+                            <td class="text-end">{{ "{:,.0f}".format(q.vat_payable) }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                    <tfoot class="table-light">
+                        <tr class="fw-bold">
+                            <td>Tổng</td>
+                            <td class="text-end">{{ "{:,.0f}".format(quarterly_vat.get('total_output', 0)) }}</td>
+                            <td class="text-end">{{ "{:,.0f}".format(quarterly_vat.get('total_input', 0)) }}</td>
+                            <td class="text-end">{{ "{:,.0f}".format(quarterly_vat.get('total_payable', 0)) }}</td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Ước tính thuế TNDN (CIT)</h5>
+            </div>
+            <div class="card-body">
+                <table class="table table-bordered">
+                    <tbody>
+                        <tr>
+                            <td class="fw-bold">Lợi nhuận trước thuế</td>
+                            <td class="text-end">{{ "{:,.0f}".format(cit_estimate.get('profit_before_tax', 0)) }}</td>
+                        </tr>
+                        <tr>
+                            <td class="fw-bold">Điều chỉnh tăng</td>
+                            <td class="text-end">{{ "{:,.0f}".format(cit_estimate.get('adjustment_increase', 0)) }}</td>
+                        </tr>
+                        <tr>
+                            <td class="fw-bold">Điều chỉnh giảm</td>
+                            <td class="text-end">{{ "{:,.0f}".format(cit_estimate.get('adjustment_decrease', 0)) }}</td>
+                        </tr>
+                        <tr>
+                            <td class="fw-bold">Thu nhập chịu thuế</td>
+                            <td class="text-end">{{ "{:,.0f}".format(cit_estimate.get('taxable_income', 0)) }}</td>
+                        </tr>
+                        <tr>
+                            <td class="fw-bold">Thuế suất</td>
+                            <td class="text-end">{{ cit_estimate.get('tax_rate', 20) }}%</td>
+                        </tr>
+                        <tr class="table-primary">
+                            <td class="fw-bold">Thuế TNDN phải nộp</td>
+                            <td class="text-end fw-bold">{{ "{:,.0f}".format(cit_estimate.get('cit_amount', 0)) }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="card-title mb-0">Xuất báo cáo thuế</h5>
+            </div>
+            <div class="card-body">
+                <div class="d-flex gap-2">
+                    <a href="{{ url_for('tax.vat_monthly', year=year) }}" class="btn btn-outline-primary">
+                        <i class="fas fa-calendar-alt me-1"></i> VAT theo tháng
+                    </a>
+                    <a href="{{ url_for('tax.vat_quarterly', year=year) }}" class="btn btn-outline-primary">
+                        <i class="fas fa-chart-bar me-1"></i> VAT theo quý
+                    </a>
+                    <a href="{{ url_for('tax.cit_estimate', year=year) }}" class="btn btn-outline-primary">
+                        <i class="fas fa-file-invoice-dollar me-1"></i> Ước tính CIT
+                    </a>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 {% endblock %}

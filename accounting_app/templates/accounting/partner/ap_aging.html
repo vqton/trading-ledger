@@ -1,13 +1,75 @@
 {% extends "base.html" %}
-
-{% block title %}Page{% endblock %}
-{% block page_title %}{{ self.title() }}{% endblock %}
-
+{% block title %}AP Aging - VAS Accounting{% endblock %}
+{% block page_title %}Báo cáo Công nợ phải trả (AP Aging){% endblock %}
 {% block main_content %}
+<div class="mb-3">
+    <form method="get" class="row g-2 align-items-end">
+        <div class="col-auto">
+            <label class="form-label">Đến ngày</label>
+            <input type="date" name="end_date" class="form-control" value="{{ end_date }}">
+        </div>
+        <div class="col-auto">
+            <button type="submit" class="btn btn-primary"><i class="fas fa-filter"></i> Xem</button>
+        </div>
+    </form>
+</div>
 <div class="card">
     <div class="card-body">
-        <h5>{{ self.page_title() }}</h5>
-        <p class="text-muted">Page under construction</p>
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover">
+                <thead class="table-light">
+                    <tr>
+                        <th>Nhà cung cấp</th>
+                        <th class="text-end">Hiện tại</th>
+                        <th class="text-end">1-30 ngày</th>
+                        <th class="text-end">31-60 ngày</th>
+                        <th class="text-end">61-90 ngày</th>
+                        <th class="text-end">Trên 90 ngày</th>
+                        <th class="text-end">Tổng</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% set total_current = namespace(val=0) %}
+                    {% set total_30 = namespace(val=0) %}
+                    {% set total_60 = namespace(val=0) %}
+                    {% set total_90 = namespace(val=0) %}
+                    {% set total_over = namespace(val=0) %}
+                    {% set total_all = namespace(val=0) %}
+                    {% for row in aging %}
+                    <tr>
+                        <td>{{ row.vendor_name }}</td>
+                        <td class="text-end">{{ "{:,.0f}".format(row.current) }}</td>
+                        <td class="text-end">{{ "{:,.0f}".format(row.days_1_30) }}</td>
+                        <td class="text-end">{{ "{:,.0f}".format(row.days_31_60) }}</td>
+                        <td class="text-end">{{ "{:,.0f}".format(row.days_61_90) }}</td>
+                        <td class="text-end">{{ "{:,.0f}".format(row.over_90) }}</td>
+                        <td class="text-end fw-bold">{{ "{:,.0f}".format(row.total) }}</td>
+                    </tr>
+                    {% set total_current.val = total_current.val + row.current %}
+                    {% set total_30.val = total_30.val + row.days_1_30 %}
+                    {% set total_60.val = total_60.val + row.days_31_60 %}
+                    {% set total_90.val = total_90.val + row.days_61_90 %}
+                    {% set total_over.val = total_over.val + row.over_90 %}
+                    {% set total_all.val = total_all.val + row.total %}
+                    {% else %}
+                    <tr><td colspan="7" class="text-center text-muted">Không có dữ liệu</td></tr>
+                    {% endfor %}
+                </tbody>
+                {% if aging %}
+                <tfoot class="table-light">
+                    <tr class="fw-bold">
+                        <td>Tổng cộng</td>
+                        <td class="text-end">{{ "{:,.0f}".format(total_current.val) }}</td>
+                        <td class="text-end">{{ "{:,.0f}".format(total_30.val) }}</td>
+                        <td class="text-end">{{ "{:,.0f}".format(total_60.val) }}</td>
+                        <td class="text-end">{{ "{:,.0f}".format(total_90.val) }}</td>
+                        <td class="text-end">{{ "{:,.0f}".format(total_over.val) }}</td>
+                        <td class="text-end">{{ "{:,.0f}".format(total_all.val) }}</td>
+                    </tr>
+                </tfoot>
+                {% endif %}
+            </table>
+        </div>
     </div>
 </div>
 {% endblock %}

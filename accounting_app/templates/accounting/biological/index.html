@@ -1,98 +1,92 @@
 {% extends "base.html" %}
 
-{% block title %}Dashboard - VAS Accounting{% endblock %}
-
-{% block page_title %}Tổng quan{% endblock %}
+{% block title %}Tài sản sinh học - Dashboard{% endblock %}
+{% block page_title %}Tài sản sinh học{% endblock %}
 
 {% block main_content %}
-<div class="row">
+<div class="row mb-4">
     <div class="col-md-3 mb-3">
         <div class="card bg-primary text-white">
             <div class="card-body">
-                <h5 class="card-title">Tài khoản</h5>
-                <h2>{{ account_count }}</h2>
-                <small>Đang hoạt động</small>
+                <h6 class="card-title"><i class="fas fa-seedling me-1"></i> Tổng tài sản</h6>
+                <h2>{{ stats.get('total_assets', 0) }}</h2>
+                <small>Số lượng tài sản</small>
             </div>
         </div>
     </div>
     <div class="col-md-3 mb-3">
         <div class="card bg-success text-white">
             <div class="card-body">
-                <h5 class="card-title">Chứng từ</h5>
-                <h2>{{ voucher_count }}</h2>
-                <small>Tổng số</small>
+                <h6 class="card-title"><i class="fas fa-check-circle me-1"></i> Đang nuôi trồng</h6>
+                <h2>{{ stats.get('active_assets', 0) }}</h2>
+                <small>Tài sản hoạt động</small>
             </div>
         </div>
     </div>
     <div class="col-md-3 mb-3">
         <div class="card bg-info text-white">
             <div class="card-body">
-                <h5 class="card-title">Đã ghi sổ</h5>
-                <h2>{{ posted_count }}</h2>
-                <small>Chứng từ hợp lệ</small>
+                <h6 class="card-title"><i class="fas fa-coins me-1"></i> Tổng giá trị</h6>
+                <h2>{{ "{:,.0f}".format(totals.get('total_value', 0)) }}</h2>
+                <small>VNĐ</small>
             </div>
         </div>
     </div>
     <div class="col-md-3 mb-3">
         <div class="card bg-warning text-white">
             <div class="card-body">
-                <h5 class="card-title">Nháp</h5>
-                <h2>{{ draft_count }}</h2>
-                <small>Chờ xử lý</small>
+                <h6 class="card-title"><i class="fas fa-chart-line me-1"></i> Giá trị hợp lý</h6>
+                <h2>{{ "{:,.0f}".format(totals.get('total_fair_value', 0)) }}</h2>
+                <small>VNĐ</small>
             </div>
         </div>
     </div>
 </div>
 
-<div class="row mt-4">
-    <div class="col-md-6">
+<div class="row">
+    <div class="col-md-8">
         <div class="card">
-            <div class="card-header">
-                <h5>Chứng từ gần đây</h5>
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">Phân loại tài sản</h5>
             </div>
             <div class="card-body">
+                {% if stats.get('by_type') %}
                 <table class="table table-sm">
                     <thead>
                         <tr>
-                            <th>Số CT</th>
-                            <th>Ngày</th>
-                            <th>Diễn giải</th>
-                            <th>Số tiền</th>
+                            <th>Loại tài sản</th>
+                            <th class="text-end">Số lượng</th>
+                            <th class="text-end">Giá trị</th>
                         </tr>
                     </thead>
                     <tbody>
-                    {% for voucher in recent_vouchers %}
-                    <tr>
-                        <td><a href="{{ url_for('accounting.view_voucher', voucher_id=voucher.id) }}">{{ voucher.voucher_no }}</a></td>
-                        <td>{{ voucher.voucher_date.strftime('%d/%m/%Y') }}</td>
-                        <td>{{ voucher.description[:30] }}</td>
-                        <td>{{ "{:,.0f}".format(voucher.total_amount) }}</td>
-                    </tr>
-                    {% else %}
-                    <tr>
-                        <td colspan="4" class="text-center text-muted">Chưa có chứng từ nào</td>
-                    </tr>
-                    {% endfor %}
+                        {% for item in stats.get('by_type', []) %}
+                        <tr>
+                            <td>{{ item.name }}</td>
+                            <td class="text-end">{{ item.count }}</td>
+                            <td class="text-end">{{ "{:,.0f}".format(item.value) }}</td>
+                        </tr>
+                        {% endfor %}
                     </tbody>
                 </table>
+                {% else %}
+                <p class="text-muted text-center mb-0">Chưa có dữ liệu phân loại</p>
+                {% endif %}
             </div>
         </div>
     </div>
-    <div class="col-md-6">
+    <div class="col-md-4">
         <div class="card">
             <div class="card-header">
-                <h5>Thao tác nhanh</h5>
+                <h5 class="mb-0">Thao tác nhanh</h5>
             </div>
             <div class="card-body">
                 <div class="d-grid gap-2">
-                    <a href="{{ url_for('accounting.create_voucher') }}" class="btn btn-primary">
-                        <i class="fas fa-plus"></i> Tạo chứng từ mới
+                    <a href="{{ url_for('biological.asset_new') }}" class="btn btn-primary">
+                        <i class="fas fa-plus me-1"></i> Thêm tài sản mới
                     </a>
-                    <a href="{{ url_for('accounting.journal') }}" class="btn btn-outline-secondary">
-                        <i class="fas fa-list"></i> Danh sách chứng từ
-                    </a>
-                    <a href="{{ url_for('accounting.tax_report') }}" class="btn btn-outline-info">
-                        <i class="fas fa-file-invoice-dollar"></i> Báo cáo thuế
+                    <a href="{{ url_for('biological.assets') }}" class="btn btn-outline-secondary">
+                        <i class="fas fa-list me-1"></i> Danh sách tài sản
                     </a>
                 </div>
             </div>

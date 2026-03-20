@@ -1,13 +1,41 @@
 {% extends "base.html" %}
-
-{% block title %}Page{% endblock %}
-{% block page_title %}{{ self.title() }}{% endblock %}
-
+{% block title %}{{ customer.name }} - VAS Accounting{% endblock %}
+{% block page_title %}Chi tiết Khách hàng{% endblock %}
 {% block main_content %}
-<div class="card">
-    <div class="card-body">
-        <h5>{{ self.page_title() }}</h5>
-        <p class="text-muted">Page under construction</p>
+<div class="mb-3">
+    <a href="{{ url_for('accounting.customers') }}" class="btn btn-outline-secondary"><i class="fas fa-arrow-left"></i> Quay lại</a>
+    <a href="{{ url_for('accounting.customer_edit', customer_id=customer.id) }}" class="btn btn-warning"><i class="fas fa-edit"></i> Sửa</a>
+</div>
+<div class="row g-4">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">Thông tin chung</div>
+            <div class="card-body">
+                <table class="table table-borderless mb-0">
+                    <tr><th width="30%">Tên:</th><td>{{ customer.name }}</td></tr>
+                    <tr><th>MST:</th><td>{{ customer.tax_id or '' }}</td></tr>
+                    <tr><th>Email:</th><td>{{ customer.email or '' }}</td></tr>
+                    <tr><th>Điện thoại:</th><td>{{ customer.phone or '' }}</td></tr>
+                    <tr><th>Địa chỉ:</th><td>{{ customer.address or '' }}</td></tr>
+                    <tr><th>Trạng thái:</th><td>{% if customer.is_active %}<span class="badge bg-success">Hoạt động</span>{% else %}<span class="badge bg-secondary">Ngừng</span>{% endif %}</td></tr>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">AR Aging</div>
+            <div class="card-body">
+                <table class="table table-sm mb-0">
+                    <tr><td>Hiện tại:</td><td class="text-end">{{ "{:,.0f}".format(ar_aging.current|default(0)) }}</td></tr>
+                    <tr><td>1-30 ngày:</td><td class="text-end">{{ "{:,.0f}".format(ar_aging.days_1_30|default(0)) }}</td></tr>
+                    <tr><td>31-60 ngày:</td><td class="text-end">{{ "{:,.0f}".format(ar_aging.days_31_60|default(0)) }}</td></tr>
+                    <tr><td>61-90 ngày:</td><td class="text-end">{{ "{:,.0f}".format(ar_aging.days_61_90|default(0)) }}</td></tr>
+                    <tr><td>Trên 90 ngày:</td><td class="text-end">{{ "{:,.0f}".format(ar_aging.over_90|default(0)) }}</td></tr>
+                    <tr class="fw-bold"><td>Tổng:</td><td class="text-end">{{ "{:,.0f}".format(ar_aging.total|default(0)) }}</td></tr>
+                </table>
+            </div>
+        </div>
     </div>
 </div>
 {% endblock %}

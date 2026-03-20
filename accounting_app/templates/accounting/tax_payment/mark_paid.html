@@ -1,13 +1,65 @@
 {% extends "base.html" %}
 
-{% block title %}Page{% endblock %}
-{% block page_title %}{{ self.title() }}{% endblock %}
+{% block title %}Xác nhận nộp thuế - VAS Accounting{% endblock %}
+{% block page_title %}Xác nhận nộp thuế{% endblock %}
 
 {% block main_content %}
-<div class="card">
-    <div class="card-body">
-        <h5>{{ self.page_title() }}</h5>
-        <p class="text-muted">Page under construction</p>
+<div class="mb-3">
+    <a href="{{ url_for('accounting.view_tax_payment', payment_id=payment.id) }}" class="btn btn-outline-secondary"><i class="fas fa-arrow-left"></i> Quay lại</a>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card mb-4">
+            <div class="card-header">Thông tin khoản thuế</div>
+            <div class="card-body">
+                <table class="table table-borderless mb-0">
+                    <tr><th width="40%">Số thanh toán:</th><td>{{ payment.payment_no }}</td></tr>
+                    <tr><th>Loại thuế:</th><td>{{ payment.tax_type }}</td></tr>
+                    <tr><th>Kỳ:</th><td>{{ payment.period_year }}{% if payment.period_month %}/{{ payment.period_month }}{% endif %}</td></tr>
+                    <tr><th>Số thuế:</th><td class="fw-bold">{{ "{:,.0f}".format(payment.tax_amount) }}</td></tr>
+                    <tr><th>Tiền lãi:</th><td>{{ "{:,.0f}".format(payment.interest_amount or 0) }}</td></tr>
+                    <tr><th>Tiền phạt:</th><td>{{ "{:,.0f}".format(payment.penalty_amount or 0) }}</td></tr>
+                    <tr class="table-active"><th>Tổng phải nộp:</th><td class="fw-bold">{{ "{:,.0f}".format(payment.tax_amount + (payment.interest_amount or 0) + (payment.penalty_amount or 0)) }}</td></tr>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">Xác nhận thanh toán</div>
+            <div class="card-body">
+                <form method="post">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+                    <div class="mb-3">
+                        <label class="form-label">Ngày nộp *</label>
+                        <input type="date" name="payment_date" class="form-control" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Phương thức nộp *</label>
+                        <select name="payment_method" class="form-select" required>
+                            <option value="">-- Chọn phương thức --</option>
+                            {% for val, label in payment_method_choices %}
+                            <option value="{{ val }}">{{ label }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Số giao dịch ngân hàng</label>
+                        <input type="text" name="bank_transaction_no" class="form-control">
+                    </div>
+
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-success"><i class="fas fa-check"></i> Xác nhận đã nộp</button>
+                        <a href="{{ url_for('accounting.view_tax_payment', payment_id=payment.id) }}" class="btn btn-secondary">Hủy</a>
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
 </div>
 {% endblock %}
