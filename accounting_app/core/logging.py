@@ -2,11 +2,36 @@ import logging
 import logging.handlers
 import sys
 import json
+import os
 from pathlib import Path
 from datetime import datetime, timezone
 from typing import Optional
 
 from flask import has_request_context, request, g
+
+
+# ANSI color codes for console output
+COLORS = {
+    'DEBUG': '\033[36m',      # Cyan
+    'INFO': '\033[32m',       # Green
+    'WARNING': '\033[33m',    # Yellow
+    'ERROR': '\033[31m',      # Red
+    'CRITICAL': '\033[35m',   # Magenta
+    'RESET': '\033[0m',       # Reset
+    'BOLD': '\033[1m',        # Bold
+    'DIM': '\033[2m',         # Dim
+    'TIMESTAMP': '\033[90m',  # Gray for timestamps
+    'MODULE': '\033[34m',     # Blue for module names
+}
+
+# Check if terminal supports colors
+def supports_color() -> bool:
+    """Check if the terminal supports ANSI colors."""
+    return (
+        hasattr(sys.stdout, 'isatty') and sys.stdout.isatty() and
+        os.environ.get('TERM') != 'dumb' and
+        os.environ.get('NO_COLOR') is None
+    )
 
 
 class StructuredLogger:
@@ -23,7 +48,7 @@ class StructuredLogger:
             from flask_login import current_user
             if current_user.is_authenticated:
                 return current_user.id
-        except:
+        except Exception:
             pass
         return None
     
@@ -67,6 +92,15 @@ class StructuredLogger:
 class JsonFormatter(logging.Formatter):
     """JSON formatter for structured logging."""
     
+    def __init__(self, pretty_print: bool = False):
+        """Initialize JSON formatter.
+        
+        Args:
+            pretty_print: If True, format JSON with indentation for readability
+        """
+        super().__init__()
+        self.pretty_print = pretty_print
+    
     def format(self, record: logging.LogRecord) -> str:
         log_data = {
             "timestamp": datetime.now(timezone.utc).isoformat(),
@@ -100,13 +134,71 @@ class JsonFormatter(logging.Formatter):
         if record.exc_info:
             log_data['exception'] = self.formatException(record.exc_info)
         
-        return json.dumps(log_data)
+        if self.pretty_print:
+            return json.dumps(log_data, indent=2, ensure_ascii=False)
+        return json.dumps(log_data, ensure_ascii=False)
+
+
+class ColoredConsoleFormatter(logging.Formatter):
+    """Colorized console formatter for development."""
+    
+    def __init__(self, fmt: str = None, datefmt: str = None):
+        """Initialize colored console formatter.
+        
+        Args:
+            fmt: Log format string (ignored, using custom format)
+            datefmt: Date format string
+        """
+        super().__init__(datefmt='%Y-%m-%d %H:%M:%S')
+        self.use_colors = supports_color()
+    
+    def format(self, record: logging.LogRecord) -> str:
+        """Format log record with colors and icons."""
+        timestamp = datetime.fromtimestamp(record.created).strftime(self.datefmt)
+        
+        # Get level-specific formatting
+        level = record.levelname
+        if self.use_colors:
+            level_color = COLORS.get(level, '')
+            level_display = f"{level_color}{COLORS['BOLD']}{level:8}{COLORS['RESET']}"
+        else:
+            level_display = f"{level:8}"
+        
+        # Get module name
+        module = record.module
+        if self.use_colors:
+            module_display = f"{COLORS['MODULE']}{module:15}{COLORS['RESET']}"
+        else:
+            module_display = f"{module:15}"
+        
+        # Get message
+        message = record.getMessage()
+        
+        # Format timestamp
+        if self.use_colors:
+            timestamp_display = f"{COLORS['TIMESTAMP']}{timestamp}{COLORS['RESET']}"
+        else:
+            timestamp_display = timestamp
+        
+        # Build the log line
+        line = f"{timestamp_display} {level_display} {module_display} │ {message}"
+        
+        # Add exception info if present
+        if record.exc_info and record.exc_info[0] is not None:
+            exception_text = self.formatException(record.exc_info)
+            if self.use_colors:
+                line += f"\n{COLORS['ERROR']}{exception_text}{COLORS['RESET']}"
+            else:
+                line += f"\n{exception_text}"
+        
+        return line
 
 
 def setup_logging(app) -> None:
     """Configure application logging with rotation."""
     log_file = app.config.get("LOG_FILE")
     log_level = app.config.get("LOG_LEVEL", "INFO")
+    is_debug = app.config.get("DEBUG", False)
     
     # Create logger
     root_logger = logging.getLogger()
@@ -115,14 +207,10 @@ def setup_logging(app) -> None:
     # Clear existing handlers
     root_logger.handlers.clear()
     
-    # Console handler (human readable)
+    # Console handler (colorized for development)
     console_handler = logging.StreamHandler(sys.stdout)
-    console_handler.setLevel(logging.INFO)
-    console_formatter = logging.Formatter(
-        '[%(asctime)s] %(levelname)s in %(module)s: %(message)s',
-        datefmt='%Y-%m-%d %H:%M:%S'
-    )
-    console_handler.setFormatter(console_formatter)
+    console_handler.setLevel(getattr(logging, log_level))
+    console_handler.setFormatter(ColoredConsoleFormatter())
     root_logger.addHandler(console_handler)
     
     # File handler with rotation (JSON format)
@@ -138,13 +226,30 @@ def setup_logging(app) -> None:
             encoding='utf-8'
         )
         file_handler.setLevel(getattr(logging, log_level))
-        file_handler.setFormatter(JsonFormatter())
+        # Use pretty_print in development for easier debugging
+        file_handler.setFormatter(JsonFormatter(pretty_print=is_debug))
         root_logger.addHandler(file_handler)
     
     # Reduce noise from libraries
-    for logger_name in ["sqlalchemy", "werkzeug", "flask_sqlalchemy"]:
+    library_loggers = {
+        "sqlalchemy": logging.WARNING,
+        "werkzeug": logging.WARNING,
+        "flask_sqlalchemy": logging.WARNING,
+        "urllib3": logging.WARNING,
+        "requests": logging.WARNING,
+    }
+    
+    for logger_name, level in library_loggers.items():
         logger = logging.getLogger(logger_name)
-        logger.setLevel(logging.WARNING)
+        logger.setLevel(level)
+    
+    # In development, allow SQLAlchemy INFO for query timing but filter noise
+    if is_debug:
+        sqlalchemy_logger = logging.getLogger("sqlalchemy.engine")
+        sqlalchemy_logger.setLevel(logging.WARNING)  # Disable SQL echo
+        # Only log slow queries (>100ms) at INFO level
+        sqlalchemy_logger = logging.getLogger("sqlalchemy.engine.Engine")
+        sqlalchemy_logger.setLevel(logging.WARNING)
     
     app.logger.info("Logging system initialized")
 
@@ -221,3 +326,77 @@ def log_audit(
 def get_logger(name: str) -> StructuredLogger:
     """Get a structured logger instance."""
     return StructuredLogger(name)
+
+
+def log_accounting_event(
+    event_type: str,
+    description: str,
+    account_code: str = None,
+    amount: float = None,
+    voucher_id: int = None,
+    user_id: int = None,
+):
+    """Log accounting-specific events with structured data.
+    
+    Args:
+        event_type: Type of event (voucher_created, account_updated, etc.)
+        description: Human-readable description
+        account_code: Account code involved (e.g., '111', '511')
+        amount: Monetary amount if applicable
+        voucher_id: Journal voucher ID if applicable
+        user_id: User performing the action
+    """
+    logger = logging.getLogger('accounting')
+    
+    log_data = {
+        "event_type": event_type,
+        "description": description,
+    }
+    
+    if account_code:
+        log_data['account_code'] = account_code
+    if amount is not None:
+        log_data['amount'] = amount
+    if voucher_id:
+        log_data['voucher_id'] = voucher_id
+    if user_id:
+        log_data['user_id'] = user_id
+    
+    # Add request context if available
+    if has_request_context():
+        log_data['ip_address'] = request.remote_addr
+        log_data['method'] = request.method
+        log_data['path'] = request.path
+    
+    logger.info(f"ACCOUNTING: {json.dumps(log_data)}")
+
+
+def log_performance(
+    operation: str,
+    duration_ms: float,
+    details: dict = None,
+):
+    """Log performance metrics for monitoring.
+    
+    Args:
+        operation: Operation name (e.g., 'report_generation', 'db_query')
+        duration_ms: Duration in milliseconds
+        details: Additional details about the operation
+    """
+    logger = logging.getLogger('performance')
+    
+    log_data = {
+        "operation": operation,
+        "duration_ms": round(duration_ms, 2),
+    }
+    
+    if details:
+        log_data.update(details)
+    
+    # Log at different levels based on duration
+    if duration_ms > 5000:  # >5 seconds
+        logger.warning(f"SLOW: {json.dumps(log_data)}")
+    elif duration_ms > 1000:  # >1 second
+        logger.info(f"PERFORMANCE: {json.dumps(log_data)}")
+    else:
+        logger.debug(f"PERFORMANCE: {json.dumps(log_data)}")

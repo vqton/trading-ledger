@@ -1,0 +1,343 @@
+{
+  "metadata": {
+    "circular": "99/2025/TT-BTC",
+    "report": "B01-DN",
+    "description": "Báo cáo tình hình tài chính - TT99 line item mapping",
+    "effective_date": "2026-01-01"
+  },
+  "balance_sheet": {
+    "tai_san": {
+      "100": {
+        "name": "Tài sản ngắn hạn",
+        "type": "subtotal",
+        "children": ["110", "120", "130", "140", "160"]
+      },
+      "110": {
+        "name": "Tiền và các khoản tương đương tiền",
+        "type": "subtotal",
+        "children": ["111", "112"]
+      },
+      "111": {
+        "name": "Tiền",
+        "type": "line",
+        "accounts_debit": ["111", "112", "113"],
+        "accounts_credit": []
+      },
+      "112": {
+        "name": "Các khoản tương đương tiền",
+        "type": "line",
+        "accounts_debit": ["1281"],
+        "accounts_credit": []
+      },
+      "120": {
+        "name": "Đầu tư tài chính ngắn hạn",
+        "type": "line",
+        "accounts_debit": ["121"],
+        "accounts_credit": ["2291"]
+      },
+      "130": {
+        "name": "Các khoản phải thu ngắn hạn",
+        "type": "subtotal",
+        "children": ["131", "135"]
+      },
+      "131": {
+        "name": "Phải thu ngắn hạn của khách hàng",
+        "type": "line",
+        "accounts_debit": ["131"],
+        "accounts_credit": ["2293"]
+      },
+      "135": {
+        "name": "Phải thu ngắn hạn khác",
+        "type": "line",
+        "accounts_debit": ["1388", "141"],
+        "accounts_credit": []
+      },
+      "140": {
+        "name": "Hàng tồn kho",
+        "type": "subtotal",
+        "children": ["141", "142"]
+      },
+      "141": {
+        "name": "Hàng tồn kho",
+        "type": "line",
+        "accounts_debit": ["151", "152", "153", "154", "155", "156", "157", "158"],
+        "accounts_credit": []
+      },
+      "142": {
+        "name": "Dự phòng giảm giá hàng tồn kho",
+        "type": "line_credit",
+        "accounts_debit": [],
+        "accounts_credit": ["2294"]
+      },
+      "160": {
+        "name": "Tài sản ngắn hạn khác",
+        "type": "subtotal",
+        "children": ["161", "162", "163"]
+      },
+      "161": {
+        "name": "Chi phí trả trước ngắn hạn",
+        "type": "line",
+        "accounts_debit": ["242"],
+        "accounts_credit": []
+      },
+      "162": {
+        "name": "Thuế GTGT được khấu trừ",
+        "type": "line",
+        "accounts_debit": ["133"],
+        "accounts_credit": []
+      },
+      "163": {
+        "name": "Thuế và các khoản khác phải thu Nhà nước",
+        "type": "line",
+        "accounts_debit": ["333"],
+        "accounts_credit": []
+      },
+      "200": {
+        "name": "Tài sản dài hạn",
+        "type": "subtotal",
+        "children": ["210", "220", "240", "260", "270"]
+      },
+      "210": {
+        "name": "Các khoản phải thu dài hạn",
+        "type": "line",
+        "accounts_debit": ["136", "1388"],
+        "accounts_credit": ["2293"]
+      },
+      "220": {
+        "name": "Tài sản cố định",
+        "type": "subtotal",
+        "children": ["221", "224", "227"]
+      },
+      "221": {
+        "name": "TSCĐ hữu hình",
+        "type": "net",
+        "accounts_debit": ["211"],
+        "accounts_credit": ["2141"]
+      },
+      "224": {
+        "name": "TSCĐ thuê tài chính",
+        "type": "net",
+        "accounts_debit": ["212"],
+        "accounts_credit": ["2142"]
+      },
+      "227": {
+        "name": "TSCĐ vô hình",
+        "type": "net",
+        "accounts_debit": ["213"],
+        "accounts_credit": ["2143"]
+      },
+      "240": {
+        "name": "Bất động sản đầu tư",
+        "type": "net",
+        "accounts_debit": ["217"],
+        "accounts_credit": ["2147"]
+      },
+      "260": {
+        "name": "Đầu tư tài chính dài hạn",
+        "type": "line",
+        "accounts_debit": ["221", "222", "2282"],
+        "accounts_credit": ["2292"]
+      },
+      "270": {
+        "name": "Tài sản dài hạn khác",
+        "type": "subtotal",
+        "children": ["271", "272"]
+      },
+      "271": {
+        "name": "Chi phí sản xuất kinh doanh dở dang dài hạn",
+        "type": "line",
+        "accounts_debit": ["154"],
+        "accounts_credit": []
+      },
+      "272": {
+        "name": "Xây dựng cơ bản dở dang",
+        "type": "line",
+        "accounts_debit": ["241"],
+        "accounts_credit": []
+      }
+    },
+    "no_phai_tra": {
+      "300": {
+        "name": "Nợ ngắn hạn",
+        "type": "subtotal",
+        "children": ["310", "330", "340", "350"]
+      },
+      "310": {
+        "name": "Phải trả người bán ngắn hạn",
+        "type": "line",
+        "accounts_debit": [],
+        "accounts_credit": ["331"]
+      },
+      "330": {
+        "name": "Thuế và các khoản phải nộp Nhà nước",
+        "type": "line",
+        "accounts_debit": [],
+        "accounts_credit": ["333"]
+      },
+      "340": {
+        "name": "Phải trả người lao động",
+        "type": "line",
+        "accounts_debit": [],
+        "accounts_credit": ["334"]
+      },
+      "350": {
+        "name": "Nợ ngắn hạn khác",
+        "type": "line",
+        "accounts_debit": [],
+        "accounts_credit": ["336", "338", "341"]
+      },
+      "400": {
+        "name": "Nợ dài hạn",
+        "type": "subtotal",
+        "children": ["410", "420"]
+      },
+      "410": {
+        "name": "Phải trả người bán dài hạn",
+        "type": "line",
+        "accounts_debit": [],
+        "accounts_credit": ["331"]
+      },
+      "420": {
+        "name": "Vay và nợ thuê tài chính dài hạn",
+        "type": "line",
+        "accounts_debit": [],
+        "accounts_credit": ["341"]
+      }
+    },
+    "von_chu_so_huu": {
+      "500": {
+        "name": "Vốn chủ sở hữu",
+        "type": "subtotal",
+        "children": ["510", "520"]
+      },
+      "510": {
+        "name": "Vốn đầu tư của chủ sở hữu",
+        "type": "line",
+        "accounts_debit": [],
+        "accounts_credit": ["411"]
+      },
+      "520": {
+        "name": "Lợi nhuận sau thuế chưa phân phối",
+        "type": "line",
+        "accounts_debit": [],
+        "accounts_credit": ["421"]
+      }
+    }
+  },
+  "income_statement": {
+    "10": {
+      "name": "Doanh thu bán hàng và cung cấp dịch vụ",
+      "accounts_credit": ["511"]
+    },
+    "20": {
+      "name": "Các khoản giảm trừ doanh thu",
+      "accounts_debit": ["521"],
+      "sign": "negative"
+    },
+    "30": {
+      "name": "Doanh thu thuần",
+      "formula": "10 - 20"
+    },
+    "40": {
+      "name": "Giá vốn hàng bán",
+      "accounts_debit": ["632"]
+    },
+    "50": {
+      "name": "Lợi nhuận gộp",
+      "formula": "30 - 40"
+    },
+    "60": {
+      "name": "Doanh thu hoạt động tài chính",
+      "accounts_credit": ["515"]
+    },
+    "70": {
+      "name": "Chi phí tài chính",
+      "accounts_debit": ["635"]
+    },
+    "80": {
+      "name": "Chi phí bán hàng",
+      "accounts_debit": ["641"]
+    },
+    "90": {
+      "name": "Chi phí quản lý doanh nghiệp",
+      "accounts_debit": ["642"]
+    },
+    "100": {
+      "name": "Lợi nhuận khác",
+      "accounts_credit": ["711"],
+      "accounts_debit": ["811"]
+    },
+    "110": {
+      "name": "Lợi nhuận khác, chi phí khác",
+      "formula": "100"
+    },
+    "120": {
+      "name": "Lợi nhuận trước thuế TNDN",
+      "formula": "50 + 60 - 70 - 80 - 90 + 110"
+    },
+    "130": {
+      "name": "Chi phí thuế TNDN hiện hành",
+      "accounts_debit": ["8211"]
+    },
+    "140": {
+      "name": "Chi phí thuế TNDN hoãn lại",
+      "accounts_debit": ["8212"]
+    },
+    "150": {
+      "name": "Lợi nhuận sau thuế TNDN",
+      "formula": "120 - 130 - 140"
+    }
+  },
+  "cash_flow": {
+    "operating": {
+      "01": {
+        "name": "Lợi nhuận trước thuế",
+        "source": "income_statement_120"
+      },
+      "02": {
+        "name": "Khấu hao TSCĐ",
+        "accounts_debit": ["2141", "2142", "2143", "2147"],
+        "type": "period_debit"
+      },
+      "11": {
+        "name": "Tăng/giảm các khoản phải thu",
+        "accounts_debit": ["131", "136", "1388"],
+        "type": "period_change_negative"
+      },
+      "12": {
+        "name": "Tăng/giảm hàng tồn kho",
+        "accounts_debit": ["151", "152", "153", "154", "155", "156", "157", "158"],
+        "type": "period_change_negative"
+      },
+      "13": {
+        "name": "Tăng/giảm các khoản phải trả",
+        "accounts_credit": ["331", "333", "334", "338"],
+        "type": "period_change"
+      }
+    },
+    "investing": {
+      "21": {
+        "name": "Mua sắm TSCĐ",
+        "accounts_debit": ["211", "212", "213", "217"],
+        "type": "period_debit_negative"
+      },
+      "22": {
+        "name": "Thu tiền bán TSCĐ",
+        "accounts_credit": ["211", "212", "213"],
+        "type": "period_credit"
+      }
+    },
+    "financing": {
+      "31": {
+        "name": "Vay thêm / trả nợ vay",
+        "accounts_credit": ["341"],
+        "type": "period_change"
+      },
+      "32": {
+        "name": "Vốn góp thêm",
+        "accounts_credit": ["411"],
+        "type": "period_change"
+      }
+    }
+  }
+}

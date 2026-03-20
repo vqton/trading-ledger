@@ -41,7 +41,7 @@ class DevelopmentConfig(Config):
 
     DEBUG = True
     SQLALCHEMY_DATABASE_URI = os.environ.get("DATABASE_URL", f"sqlite:///{BASE_DIR}/accounting.db")
-    SQLALCHEMY_ECHO = True
+    SQLALCHEMY_ECHO = False  # Disable SQL echo - use logging system instead
     LOG_LEVEL = "DEBUG"
 
 

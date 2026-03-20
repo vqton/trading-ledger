@@ -39,13 +39,34 @@ def create_app(config_name: str = None) -> Flask:
         def log_request():
             from flask import request, g
             g.start_time = time.time()
-            request_logger.debug(f"→ {request.method} {request.path} | Args: {request.args} | Form: {request.form}")
         
         @app.after_request
         def log_response(response):
             from flask import request, g
             duration = time.time() - g.get("start_time", time.time())
-            request_logger.debug(f"← {request.method} {request.path} | Status: {response.status_code} | Duration: {duration:.3f}s")
+            duration_ms = duration * 1000
+            
+            # Color code based on status
+            status = response.status_code
+            if status >= 400:
+                status_icon = "✗"
+            elif status >= 300:
+                status_icon = "→"
+            else:
+                status_icon = "✓"
+            
+            # Color code based on duration
+            if duration_ms > 1000:
+                duration_str = f"{duration_ms:.0f}ms"
+            elif duration_ms > 100:
+                duration_str = f"{duration_ms:.0f}ms"
+            else:
+                duration_str = f"{duration_ms:.0f}ms"
+            
+            request_logger.debug(
+                f"{status_icon} {request.method:6} {request.path:40} │ "
+                f"Status: {status:3} │ Duration: {duration_str:>8}"
+            )
             return response
 
     db.init_app(app)

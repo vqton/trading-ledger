@@ -10,14 +10,14 @@ from core.database import db
 
 
 class FinancialReportRepository:
-    """Repository for Financial Report queries."""
+    """Repository for Financial Report queries - TT99/2025/TT-BTC compliant."""
 
     @staticmethod
     def get_account_type_balance(
         account_type: str,
         end_date: Optional[date] = None,
     ) -> Decimal:
-        """Get total balance for an account type.
+        """Get total balance for an account type (cumulative up to end_date).
         
         For asset and expense accounts (debit normal): balance = debit - credit
         For liability, equity, and revenue accounts (credit normal): balance = credit - debit
@@ -136,7 +136,7 @@ class FinancialReportRepository:
         start_date: date,
         end_date: date,
     ) -> Decimal:
-        """Get balance change for accounts with code prefix in period."""
+        """Get balance change for accounts with code prefix in period (debit - credit)."""
         query = db.session.query(
             func.coalesce(func.sum(JournalEntry.debit), Decimal("0")) - 
             func.coalesce(func.sum(JournalEntry.credit), Decimal("0"))
@@ -167,3 +167,190 @@ class FinancialReportRepository:
             result[acc_type] = FinancialReportRepository.get_account_type_balance(acc_type, end_date)
 
         return result
+
+    @staticmethod
+    def get_account_cumulative_balance(
+        account_codes: List[str],
+        end_date: Optional[date] = None,
+        is_debit_normal: bool = True,
+    ) -> Decimal:
+        """Get cumulative balance for specific account codes up to end_date.
+        
+        Args:
+            account_codes: List of exact account codes (e.g. ["111", "112", "113"])
+            end_date: Cut-off date (inclusive)
+            is_debit_normal: True for debit-normal (balance = dr - cr), False for credit-normal
+        """
+        query = db.session.query(
+            func.coalesce(func.sum(JournalEntry.debit), Decimal("0")).label("total_debit"),
+            func.coalesce(func.sum(JournalEntry.credit), Decimal("0")).label("total_credit"),
+        ).join(
+            JournalVoucher, JournalEntry.voucher_id == JournalVoucher.id
+        ).join(
+            Account, JournalEntry.account_id == Account.id
+        ).filter(
+            Account.code.in_(account_codes),
+            Account.is_postable == True,
+            JournalVoucher.status == VoucherStatus.POSTED,
+        )
+
+        if end_date:
+            query = query.filter(JournalVoucher.voucher_date <= end_date)
+
+        result = query.first()
+        if not result:
+            return Decimal("0")
+
+        debit = Decimal(str(result.total_debit))
+        credit = Decimal(str(result.total_credit))
+
+        if is_debit_normal:
+            return debit - credit
+        else:
+            return credit - debit
+
+    @staticmethod
+    def get_account_prefix_balance(
+        account_prefixes: List[str],
+        end_date: Optional[date] = None,
+        is_debit_normal: bool = True,
+    ) -> Decimal:
+        """Get cumulative balance for accounts matching prefixes up to end_date.
+        
+        Args:
+            account_prefixes: List of prefixes (e.g. ["111", "112", "113"] or ["131"])
+            end_date: Cut-off date (inclusive)
+            is_debit_normal: True for debit-normal, False for credit-normal
+        """
+        conditions = []
+        for prefix in account_prefixes:
+            conditions.append(Account.code.like(f"{prefix}%"))
+        
+        query = db.session.query(
+            func.coalesce(func.sum(JournalEntry.debit), Decimal("0")).label("total_debit"),
+            func.coalesce(func.sum(JournalEntry.credit), Decimal("0")).label("total_credit"),
+        ).join(
+            JournalVoucher, JournalEntry.voucher_id == JournalVoucher.id
+        ).join(
+            Account, JournalEntry.account_id == Account.id
+        ).filter(
+            and_(*conditions) if len(conditions) > 1 else conditions[0],
+            Account.is_postable == True,
+            JournalVoucher.status == VoucherStatus.POSTED,
+        )
+
+        if end_date:
+            query = query.filter(JournalVoucher.voucher_date <= end_date)
+
+        result = query.first()
+        if not result:
+            return Decimal("0")
+
+        debit = Decimal(str(result.total_debit))
+        credit = Decimal(str(result.total_credit))
+
+        if is_debit_normal:
+            return debit - credit
+        else:
+            return credit - debit
+
+    @staticmethod
+    def get_period_change_debit_minus_credit(
+        account_codes: List[str],
+        start_date: date,
+        end_date: date,
+    ) -> Decimal:
+        """Get period change (debit - credit) for specific accounts.
+        
+        Used for balance sheet line items that need period-over-period changes.
+        """
+        query = db.session.query(
+            func.coalesce(func.sum(JournalEntry.debit), Decimal("0")) -
+            func.coalesce(func.sum(JournalEntry.credit), Decimal("0"))
+        ).join(
+            JournalVoucher, JournalEntry.voucher_id == JournalVoucher.id
+        ).join(
+            Account, JournalEntry.account_id == Account.id
+        ).filter(
+            Account.code.in_(account_codes),
+            Account.is_postable == True,
+            JournalVoucher.status == VoucherStatus.POSTED,
+            JournalVoucher.voucher_date >= start_date,
+            JournalVoucher.voucher_date <= end_date,
+        )
+
+        result = query.scalar()
+        return Decimal(str(result)) if result else Decimal("0")
+
+    @staticmethod
+    def get_period_change_credit_minus_debit(
+        account_codes: List[str],
+        start_date: date,
+        end_date: date,
+    ) -> Decimal:
+        """Get period change (credit - debit) for specific accounts."""
+        query = db.session.query(
+            func.coalesce(func.sum(JournalEntry.credit), Decimal("0")) -
+            func.coalesce(func.sum(JournalEntry.debit), Decimal("0"))
+        ).join(
+            JournalVoucher, JournalEntry.voucher_id == JournalVoucher.id
+        ).join(
+            Account, JournalEntry.account_id == Account.id
+        ).filter(
+            Account.code.in_(account_codes),
+            Account.is_postable == True,
+            JournalVoucher.status == VoucherStatus.POSTED,
+            JournalVoucher.voucher_date >= start_date,
+            JournalVoucher.voucher_date <= end_date,
+        )
+
+        result = query.scalar()
+        return Decimal(str(result)) if result else Decimal("0")
+
+    @staticmethod
+    def get_period_debit_sum(
+        account_codes: List[str],
+        start_date: date,
+        end_date: date,
+    ) -> Decimal:
+        """Get sum of debits for accounts in period (e.g. depreciation)."""
+        query = db.session.query(
+            func.coalesce(func.sum(JournalEntry.debit), Decimal("0"))
+        ).join(
+            JournalVoucher, JournalEntry.voucher_id == JournalVoucher.id
+        ).join(
+            Account, JournalEntry.account_id == Account.id
+        ).filter(
+            Account.code.in_(account_codes),
+            Account.is_postable == True,
+            JournalVoucher.status == VoucherStatus.POSTED,
+            JournalVoucher.voucher_date >= start_date,
+            JournalVoucher.voucher_date <= end_date,
+        )
+
+        result = query.scalar()
+        return Decimal(str(result)) if result else Decimal("0")
+
+    @staticmethod
+    def get_period_credit_sum(
+        account_codes: List[str],
+        start_date: date,
+        end_date: date,
+    ) -> Decimal:
+        """Get sum of credits for accounts in period."""
+        query = db.session.query(
+            func.coalesce(func.sum(JournalEntry.credit), Decimal("0"))
+        ).join(
+            JournalVoucher, JournalEntry.voucher_id == JournalVoucher.id
+        ).join(
+            Account, JournalEntry.account_id == Account.id
+        ).filter(
+            Account.code.in_(account_codes),
+            Account.is_postable == True,
+            JournalVoucher.status == VoucherStatus.POSTED,
+            JournalVoucher.voucher_date >= start_date,
+            JournalVoucher.voucher_date <= end_date,
+        )
+
+        result = query.scalar()
+        return Decimal(str(result)) if result else Decimal("0")
