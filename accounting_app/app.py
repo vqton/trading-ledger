@@ -52,6 +52,26 @@ def create_app(config_name: str = None) -> Flask:
     login_manager.init_app(app)
     login_manager.login_view = "auth.login"
 
+    @app.template_filter('date')
+    def format_date(value, format='%d/%m/%Y'):
+        """Format date using strftime format."""
+        if value is None:
+            return ''
+        if isinstance(value, str):
+            from datetime import datetime
+            value = datetime.strptime(value, '%Y-%m-%d')
+        return value.strftime(format)
+
+    @app.template_filter('datetime')
+    def format_datetime(value, format='%d/%m/%Y %H:%M'):
+        """Format datetime using strftime format."""
+        if value is None:
+            return ''
+        if isinstance(value, str):
+            from datetime import datetime
+            value = datetime.fromisoformat(value.replace('Z', '+00:00'))
+        return value.strftime(format)
+
     with app.app_context():
         from models.account import Account
         from models.journal import JournalVoucher, JournalEntry
@@ -104,6 +124,12 @@ def create_app(config_name: str = None) -> Flask:
     def shutdown_session(exception=None):
         from core.database import db
         db.session.remove()
+
+    @app.context_processor
+    def inject_now():
+        """Inject current time into all templates."""
+        from datetime import datetime
+        return {'current_time': datetime.now()}
 
     @app.route("/")
     def index():
